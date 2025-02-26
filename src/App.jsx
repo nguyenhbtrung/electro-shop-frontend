@@ -1,7 +1,7 @@
 import React, { createContext, useState } from "react";
 import { Box, CssBaseline, ThemeProvider } from "@mui/material";
 import { ColorModeContext, useMode } from "./theme";
-import { Navbar, SideBar } from "./scenes";
+import { Navbar, SideBar } from "./pages/admin";
 import { Outlet } from "react-router-dom";
 
 export const ToggledContext = createContext(null);

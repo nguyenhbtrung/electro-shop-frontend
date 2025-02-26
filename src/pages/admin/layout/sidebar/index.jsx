@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import { Avatar, Box, IconButton, Typography, useTheme } from "@mui/material";
 import { useContext, useState } from "react";
-import { tokens } from "../../../theme";
+import { tokens } from "../../../../theme";
 import { Menu, MenuItem, Sidebar } from "react-pro-sidebar";
 import {
   BarChartOutlined,
@@ -18,10 +18,10 @@ import {
   TimelineOutlined,
   WavesOutlined,
 } from "@mui/icons-material";
-import avatar from "../../../assets/images/avatar.png";
-import logo from "../../../assets/images/logo.png";
+import avatar from "../../../../assets/images/avatar.png";
+import logo from "../../../../assets/images/logo.png";
 import Item from "./Item";
-import { ToggledContext } from "../../../App";
+import { ToggledContext } from "../../../../App";
 
 const SideBar = () => {
   const [collapsed, setCollapsed] = useState(false);

@@ -1,28 +1,20 @@
-import { Box, useTheme } from "@mui/material";
-import { Header } from "../../components";
-import { DataGrid, GridToolbar } from "@mui/x-data-grid";
-import { mockDataContacts } from "../../data/mockData";
-import { tokens } from "../../theme";
+import { Box, Typography, useTheme } from "@mui/material";
+import { Header } from "../../../components";
+import { DataGrid } from "@mui/x-data-grid";
+import { mockDataInvoices } from "../../../data/mockData";
+import { tokens } from "../../../theme";
 
-const Contacts = () => {
+const Invoices = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
   const columns = [
-    { field: "id", headerName: "ID", flex: 0.5 },
-    { field: "registrarId", headerName: "Registrar ID" },
+    { field: "id", headerName: "ID" },
     {
       field: "name",
       headerName: "Name",
       flex: 1,
       cellClassName: "name-column--cell",
-    },
-    {
-      field: "age",
-      headerName: "Age",
-      type: "number",
-      headerAlign: "left",
-      align: "left",
     },
     {
       field: "phone",
@@ -35,27 +27,24 @@ const Contacts = () => {
       flex: 1,
     },
     {
-      field: "address",
-      headerName: "Address",
+      field: "cost",
+      headerName: "Cost",
       flex: 1,
+      renderCell: (params) => (
+        <Typography color={colors.greenAccent[500]}>
+          ${params.row.cost}
+        </Typography>
+      ),
     },
     {
-      field: "city",
-      headerName: "City",
-      flex: 1,
-    },
-    {
-      field: "zipCode",
-      headerName: "Zip Code",
+      field: "date",
+      headerName: "Date",
       flex: 1,
     },
   ];
   return (
     <Box m="20px">
-      <Header
-        title="CONTACTS"
-        subtitle="List of Contacts for Future Reference"
-      />
+      <Header title="INVOICES" subtitle="List of Invoice Balances" />
       <Box
         mt="40px"
         height="75vh"
@@ -72,7 +61,6 @@ const Contacts = () => {
           },
           "& .MuiDataGrid-columnHeaders": {
             backgroundColor: colors.blueAccent[700],
-            "--DataGrid-containerBackground": "transparent",
             borderBottom: "none",
           },
           "& .MuiDataGrid-virtualScroller": {
@@ -88,15 +76,11 @@ const Contacts = () => {
           "& .MuiDataGrid-iconSeparator": {
             color: colors.primary[100],
           },
-          "& .MuiDataGrid-toolbarContainer .MuiButton-text": {
-            color: `${colors.gray[100]} !important`,
-          },
         }}
       >
         <DataGrid
-          rows={mockDataContacts}
+          rows={mockDataInvoices}
           columns={columns}
-          slots={{ toolbar: GridToolbar }} // Đổi từ 'components' sang 'slots'
           initialState={{
             pagination: {
               paginationModel: {
@@ -106,10 +90,9 @@ const Contacts = () => {
           }}
           checkboxSelection
         />
-
       </Box>
     </Box>
   );
 };
 
-export default Contacts;
+export default Invoices;

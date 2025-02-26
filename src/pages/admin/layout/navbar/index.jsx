@@ -5,7 +5,7 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import { tokens, ColorModeContext } from "../../../theme";
+import { tokens, ColorModeContext } from "../../../../theme";
 import { useContext } from "react";
 import {
   DarkModeOutlined,
@@ -16,7 +16,7 @@ import {
   SearchOutlined,
   SettingsOutlined,
 } from "@mui/icons-material";
-import { ToggledContext } from "../../../App";
+import { ToggledContext } from "../../../../App";
 const Navbar = () => {
   const theme = useTheme();
   const colorMode = useContext(ColorModeContext);

@@ -1,5 +1,5 @@
 import { Box } from "@mui/material";
-import { Header, StreamChart } from "../../components";
+import { Header, StreamChart } from "../../../components";
 
 const Stream = () => {
   return (

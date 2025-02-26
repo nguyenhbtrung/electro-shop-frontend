@@ -12,9 +12,9 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import listPlugin from "@fullcalendar/list";
-import { tokens } from "../../theme";
+import { tokens } from "../../../theme";
 import { useState } from "react";
-import { Header } from "../../components";
+import { Header } from "../../../components";
 import { formatDate } from "@fullcalendar/core";
 
 const Calendar = () => {
@@ -110,13 +110,12 @@ const Calendar = () => {
             headerToolbar={{
               left: `${isSmDevices ? "prev,next" : "prev,next today"}`,
               center: "title",
-              right: `${
-                isXsDevices
+              right: `${isXsDevices
                   ? ""
                   : isSmDevices
-                  ? "dayGridMonth,listMonth"
-                  : "dayGridMonth,timeGridWeek,timeGridDay,listMonth"
-              }`,
+                    ? "dayGridMonth,listMonth"
+                    : "dayGridMonth,timeGridWeek,timeGridDay,listMonth"
+                }`,
             }}
             initialView="dayGridMonth"
             editable={true}

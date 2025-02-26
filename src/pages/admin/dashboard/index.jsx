@@ -13,7 +13,7 @@ import {
   ProgressCircle,
   BarChart,
   GeographyChart,
-} from "../../components";
+} from "../../../components";
 import {
   DownloadOutlined,
   Email,
@@ -21,8 +21,8 @@ import {
   PointOfSale,
   Traffic,
 } from "@mui/icons-material";
-import { tokens } from "../../theme";
-import { mockTransactions } from "../../data/mockData";
+import { tokens } from "../../../theme";
+import { mockTransactions } from "../../../data/mockData";
 
 function Dashboard() {
   const theme = useTheme();
@@ -65,8 +65,8 @@ function Dashboard() {
           isXlDevices
             ? "repeat(12, 1fr)"
             : isMdDevices
-            ? "repeat(6, 1fr)"
-            : "repeat(3, 1fr)"
+              ? "repeat(6, 1fr)"
+              : "repeat(3, 1fr)"
         }
         gridAutoRows="140px"
         gap="20px"
