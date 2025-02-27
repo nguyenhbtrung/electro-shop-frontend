@@ -154,8 +154,8 @@ const SideBar = () => {
           }}
         >
           <Item
-            title="Manage Team"
-            path="/admin/team"
+            title="Manage Users"
+            path="/admin/users"
             colors={colors}
             icon={<PeopleAltOutlined />}
           />

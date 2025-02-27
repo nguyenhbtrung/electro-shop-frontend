@@ -9,7 +9,7 @@ import {
   SecurityOutlined,
 } from "@mui/icons-material";
 
-const Team = () => {
+const User = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
@@ -112,4 +112,4 @@ const Team = () => {
   );
 };
 
-export default Team;
+export default User;

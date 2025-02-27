@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import App from "./App";
 import {
   Dashboard,
-  Team,
   Invoices,
   Contacts,
   Form,
@@ -14,6 +13,7 @@ import {
   Geography,
   Calendar,
   Stream,
+  User,
 } from "./pages/admin";
 
 const AppRouter = () => {
@@ -22,7 +22,7 @@ const AppRouter = () => {
       <Routes>
         <Route path="/admin" element={<App />}>
           <Route path="" element={<Dashboard />} />
-          <Route path="team" element={<Team />} />
+          <Route path="users" element={<User />} />
           <Route path="contacts" element={<Contacts />} />
           <Route path="invoices" element={<Invoices />} />
           <Route path="form" element={<Form />} />
