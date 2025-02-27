@@ -130,7 +130,7 @@ const SideBar = () => {
         >
           <Item
             title="Dashboard"
-            path="/"
+            path="/admin"
             colors={colors}
             icon={<DashboardOutlined />}
           />
@@ -155,19 +155,19 @@ const SideBar = () => {
         >
           <Item
             title="Manage Team"
-            path="/team"
+            path="/admin/team"
             colors={colors}
             icon={<PeopleAltOutlined />}
           />
           <Item
             title="Contacts Information"
-            path="/contacts"
+            path="/admin/contacts"
             colors={colors}
             icon={<ContactsOutlined />}
           />
           <Item
             title="Invoices Balances"
-            path="/invoices"
+            path="/admin/invoices"
             colors={colors}
             icon={<ReceiptOutlined />}
           />
@@ -192,19 +192,19 @@ const SideBar = () => {
         >
           <Item
             title="Profile Form"
-            path="/form"
+            path="/admin/form"
             colors={colors}
             icon={<PersonOutlined />}
           />
           <Item
             title="Calendar"
-            path="/calendar"
+            path="/admin/calendar"
             colors={colors}
             icon={<CalendarTodayOutlined />}
           />
           <Item
             title="FAQ Page"
-            path="/faq"
+            path="/admin/faq"
             colors={colors}
             icon={<HelpOutlineOutlined />}
           />
@@ -229,31 +229,31 @@ const SideBar = () => {
         >
           <Item
             title="Bar Chart"
-            path="/bar"
+            path="/admin/bar"
             colors={colors}
             icon={<BarChartOutlined />}
           />
           <Item
             title="Pie Chart"
-            path="/pie"
+            path="/admin/pie"
             colors={colors}
             icon={<DonutLargeOutlined />}
           />
           <Item
             title="Line Chart"
-            path="/line"
+            path="/admin/line"
             colors={colors}
             icon={<TimelineOutlined />}
           />
           <Item
             title="Geography Chart"
-            path="/geography"
+            path="/admin/geography"
             colors={colors}
             icon={<MapOutlined />}
           />
           <Item
             title="Stream Chart"
-            path="/stream"
+            path="/admin/stream"
             colors={colors}
             icon={<WavesOutlined />}
           />
