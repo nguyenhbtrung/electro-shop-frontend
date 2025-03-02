@@ -1,8 +1,9 @@
 import { Box, Typography, useTheme } from "@mui/material";
 import { Header } from "../../../components";
 import { DataGrid } from "@mui/x-data-grid";
-import { mockDataTeam } from "../../../data/mockData";
 import { tokens } from "../../../theme";
+import { useEffect, useState } from "react";
+import axios from "axios";
 import {
   AdminPanelSettingsOutlined,
   LockOpenOutlined,
@@ -13,26 +14,38 @@ const User = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
+  const [users, setUsers] = useState([]);
+
   const columns = [
-    { field: "id", headerName: "ID" },
     {
-      field: "name",
-      headerName: "Name",
+      field: "userName",
+      headerName: "Tên đăng nhập",
       flex: 1,
       cellClassName: "name-column--cell",
     },
     {
-      field: "age",
-      headerName: "Age",
-      type: "number",
+      field: "fullName",
+      headerName: "Họ và tên",
+      flex: 1,
+      cellClassName: "name-column--cell",
+    },
+    {
+      field: "address",
+      headerName: "Địa chỉ",
       headerAlign: "left",
       align: "left",
     },
-    { field: "phone", headerName: "Phone Number", flex: 1 },
+    { field: "phoneNumber", headerName: "Số điện thoại", flex: 1 },
     { field: "email", headerName: "Email", flex: 1 },
     {
+      field: "emailConfirmed",
+      headerName: "Xác nhận email",
+      type: "Number",
+      flex: 1
+    },
+    {
       field: "access",
-      headerName: "Access Level",
+      headerName: "Vai trò",
       flex: 1,
       renderCell: ({ row: { access } }) => {
         return (
@@ -58,10 +71,38 @@ const User = () => {
         );
       },
     },
+    {
+      field: "userStatus",
+      headerName: "Trạng thái",
+      flex: 1
+    },
+    {
+      field: "createdAt",
+      headerName: "Ngày tạo",
+      flex: 1
+    },
   ];
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get("https://localhost:7169/api/User", {
+          headers: {
+            Authorization: `Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiIzMWJlNGI3NC1iMTFkLTQ2NjctYjAzNC1mNzdkNGQ0Yjg1NDkiLCJ1bmlxdWVfbmFtZSI6ImFkbWluIiwicm9sZSI6IkFkbWluIiwibmJmIjoxNzQwODkwMTE3LCJleHAiOjE3NDE0OTQ5MTcsImlhdCI6MTc0MDg5MDExNywiaXNzIjoiaHR0cHM6Ly9sb2NhbGhvc3Q6NzE2OSIsImF1ZCI6Imh0dHBzOi8vbG9jYWxob3N0OjcxNjkifQ.8QfHR6XpbrggorD5HHEPozwUGkv73TItfh8WnIRRaJ4g5bvpO1hGFJ_u32hvB2iFXNVjO_5giONSF8HFqhRfMw`,
+          },
+        });
+        const data = await response.json();
+        setUsers(data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchData();
+  }, []);
+
   return (
     <Box m="20px">
-      <Header title="TEAM" subtitle="Managing the Team Members" />
+      <Header title="Quản lí người dùng" subtitle="" />
       <Box
         mt="40px"
         height="75vh"
@@ -96,7 +137,7 @@ const User = () => {
         }}
       >
         <DataGrid
-          rows={mockDataTeam}
+          rows={users}
           columns={columns}
           initialState={{
             pagination: {
