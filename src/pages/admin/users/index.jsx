@@ -44,10 +44,10 @@ const User = () => {
       flex: 1
     },
     {
-      field: "access",
+      field: "roles",
       headerName: "Vai trò",
       flex: 1,
-      renderCell: ({ row: { access } }) => {
+      renderCell: ({ row: { roles } }) => {
         return (
           <Box
             width="120px"
@@ -57,16 +57,16 @@ const User = () => {
             justifyContent="center"
             gap={1}
             bgcolor={
-              access === "admin"
+              roles === "admin"
                 ? colors.greenAccent[600]
                 : colors.greenAccent[700]
             }
             borderRadius={1}
           >
-            {access === "admin" && <AdminPanelSettingsOutlined />}
-            {access === "manager" && <SecurityOutlined />}
-            {access === "user" && <LockOpenOutlined />}
-            <Typography textTransform="capitalize">{access}</Typography>
+            {roles === "Admin" && <AdminPanelSettingsOutlined />}
+            {roles === "manager" && <SecurityOutlined />}
+            {roles === "User" && <LockOpenOutlined />}
+            <Typography textTransform="capitalize">{roles}</Typography>
           </Box>
         );
       },
@@ -91,8 +91,9 @@ const User = () => {
             Authorization: `Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiIzMWJlNGI3NC1iMTFkLTQ2NjctYjAzNC1mNzdkNGQ0Yjg1NDkiLCJ1bmlxdWVfbmFtZSI6ImFkbWluIiwicm9sZSI6IkFkbWluIiwibmJmIjoxNzQwODkwMTE3LCJleHAiOjE3NDE0OTQ5MTcsImlhdCI6MTc0MDg5MDExNywiaXNzIjoiaHR0cHM6Ly9sb2NhbGhvc3Q6NzE2OSIsImF1ZCI6Imh0dHBzOi8vbG9jYWxob3N0OjcxNjkifQ.8QfHR6XpbrggorD5HHEPozwUGkv73TItfh8WnIRRaJ4g5bvpO1hGFJ_u32hvB2iFXNVjO_5giONSF8HFqhRfMw`,
           },
         });
-        const data = await response.json();
+        const data = await response.data;
         setUsers(data);
+        console.log(data);
       } catch (error) {
         console.error(error);
       }
@@ -139,6 +140,7 @@ const User = () => {
         <DataGrid
           rows={users}
           columns={columns}
+          getRowId={(row) => row.userName}
           initialState={{
             pagination: {
               paginationModel: {
