@@ -154,12 +154,37 @@ const SideBar = () => {
           }}
         >
           <Item
-            title="Manage Users"
+            title="Người dùng"
             path="/admin/users"
             colors={colors}
             icon={<PeopleAltOutlined />}
           />
 
+        </Menu>
+        <Typography
+          variant="h6"
+          color={colors.gray[300]}
+          sx={{ m: "15px 0 5px 20px" }}
+        >
+          {!collapsed ? "Sản phẩm" : " "}
+        </Typography>
+        <Menu
+          menuItemStyles={{
+            button: {
+              ":hover": {
+                color: "#868dfb",
+                background: "transparent",
+                transition: ".4s ease",
+              },
+            },
+          }}
+        >
+          <Item
+            title="Sản phẩm"
+            path="/admin/products"
+            colors={colors}
+            icon={<ContactsOutlined />}
+          />
         </Menu>
         <Typography
           variant="h6"
@@ -181,6 +206,7 @@ const SideBar = () => {
         >
 
         </Menu>
+
         <Typography
           variant="h6"
           color={colors.gray[300]}

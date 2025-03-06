@@ -14,6 +14,7 @@ import {
   Calendar,
   Stream,
   User,
+  Product
 } from "./pages/admin";
 
 const AppRouter = () => {
@@ -23,6 +24,7 @@ const AppRouter = () => {
         <Route path="/admin" element={<App />}>
           <Route path="" element={<Dashboard />} />
           <Route path="users" element={<User />} />
+          <Route path="products" element={<Product />} />
           <Route path="contacts" element={<Contacts />} />
           <Route path="invoices" element={<Invoices />} />
           <Route path="form" element={<Form />} />
