@@ -1,7 +1,7 @@
 import { useTheme } from "@mui/material";
 import { tokens } from "../../../theme";
 
-const Rating = () => {
+const ManageRating = () => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
     return (
@@ -9,4 +9,4 @@ const Rating = () => {
     );
 };
 
-export default Rating;
+export default ManageRating;

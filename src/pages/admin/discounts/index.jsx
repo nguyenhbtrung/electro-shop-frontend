@@ -1,7 +1,7 @@
 import { useTheme } from "@mui/material";
 import { tokens } from "../../../theme";
 
-const Discount = () => {
+const ManageDiscount = () => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
     return (
@@ -9,4 +9,4 @@ const Discount = () => {
     );
 };
 
-export default Discount;
+export default ManageDiscount;
