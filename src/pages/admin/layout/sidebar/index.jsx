@@ -185,6 +185,18 @@ const SideBar = () => {
             colors={colors}
             icon={<ContactsOutlined />}
           />
+          <Item
+            title="Danh mục"
+            path="/admin/categories"
+            colors={colors}
+            icon={<ContactsOutlined />}
+          />
+          <Item
+            title="Đánh giá"
+            path="/admin/ratings"
+            colors={colors}
+            icon={<ContactsOutlined />}
+          />
         </Menu>
         <Typography
           variant="h6"
@@ -204,7 +216,18 @@ const SideBar = () => {
             },
           }}
         >
-
+          <Item
+            title="Đơn hàng"
+            path="/admin/orders"
+            colors={colors}
+            icon={<ContactsOutlined />}
+          />
+          <Item
+            title="Hoàn trả"
+            path="/admin/returns"
+            colors={colors}
+            icon={<ContactsOutlined />}
+          />
         </Menu>
 
         <Typography
@@ -225,7 +248,18 @@ const SideBar = () => {
             },
           }}
         >
-
+          <Item
+            title="Giảm giá"
+            path="/admin/discounts"
+            colors={colors}
+            icon={<ContactsOutlined />}
+          />
+          <Item
+            title="Voucher"
+            path="/admin/vouchers"
+            colors={colors}
+            icon={<ContactsOutlined />}
+          />
         </Menu>
         <Typography
           variant="h6"
@@ -245,7 +279,12 @@ const SideBar = () => {
             },
           }}
         >
-
+          <Item
+            title="Banner"
+            path="/admin/banners"
+            colors={colors}
+            icon={<ContactsOutlined />}
+          />
         </Menu>
         <Typography
           variant="h6"

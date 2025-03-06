@@ -14,8 +14,15 @@ import {
   Calendar,
   Stream,
   User,
-  Product
 } from "./pages/admin";
+import Product from "./pages/admin/products";
+import Category from "./pages/admin/categories";
+import Rating from "./pages/admin/ratings";
+import Order from "./pages/admin/orders";
+import Return from "./pages/admin/returns";
+import Discount from "./pages/admin/discounts";
+import Voucher from "./pages/admin/vouchers";
+import Banner from "./pages/admin/banners";
 
 const AppRouter = () => {
   return (
@@ -25,6 +32,13 @@ const AppRouter = () => {
           <Route path="" element={<Dashboard />} />
           <Route path="users" element={<User />} />
           <Route path="products" element={<Product />} />
+          <Route path="categories" element={<Category />} />
+          <Route path="ratings" element={<Rating />} />
+          <Route path="orders" element={<Order />} />
+          <Route path="returns" element={<Return />} />
+          <Route path="discounts" element={<Discount />} />
+          <Route path="vouchers" element={<Voucher />} />
+          <Route path="banners" element={<Banner />} />
           <Route path="contacts" element={<Contacts />} />
           <Route path="invoices" element={<Invoices />} />
           <Route path="form" element={<Form />} />
