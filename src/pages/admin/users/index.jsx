@@ -10,7 +10,7 @@ import {
   SecurityOutlined,
 } from "@mui/icons-material";
 
-const User = () => {
+const ManageUser = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
@@ -155,4 +155,4 @@ const User = () => {
   );
 };
 
-export default User;
+export default ManageUser;

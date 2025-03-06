@@ -13,7 +13,7 @@ import {
   Geography,
   Calendar,
   Stream,
-  User,
+  ManageUser,
 } from "./pages/admin";
 import ManageProduct from "./pages/admin/products";
 import ManageCategory from "./pages/admin/categories";
@@ -32,11 +32,11 @@ const AppRouter = () => {
     <Router>
       <Routes>
         <Route path="/" element={<AppUser />} />
-        <Route path="/auth/login" element={<Login />} />
-        <Route path="/auth/register" element={<Register />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
         <Route path="/admin" element={<App />}>
           <Route path="" element={<Dashboard />} />
-          <Route path="users" element={<User />} />
+          <Route path="users" element={<ManageUser />} />
           <Route path="products" element={<ManageProduct />} />
           <Route path="categories" element={<ManageCategory />} />
           <Route path="ratings" element={<ManageRating />} />

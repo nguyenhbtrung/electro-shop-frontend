@@ -1,7 +1,7 @@
 import Navbar from "./layout/navbar";
 import SideBar from "./layout/sidebar";
 import Dashboard from "./dashboard";
-import User from "./users";
+import ManageUser from "./users";
 import Invoices from "./invoices";
 import Contacts from "./contacts";
 import Form from "./form";
@@ -17,7 +17,7 @@ export {
   Navbar,
   SideBar,
   Dashboard,
-  User,
+  ManageUser,
   Invoices,
   Contacts,
   Form,
