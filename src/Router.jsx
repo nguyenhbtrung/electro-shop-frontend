@@ -23,11 +23,17 @@ import ManageReturn from "./pages/admin/returns";
 import ManageDiscount from "./pages/admin/discounts";
 import ManageVoucher from "./pages/admin/vouchers";
 import ManageBanner from "./pages/admin/banners";
+import AppUser from "./pages/user/AppUser";
+import Login from "./pages/auth/Login";
+import Register from "./pages/auth/Register";
 
 const AppRouter = () => {
   return (
     <Router>
       <Routes>
+        <Route path="/" element={<AppUser />} />
+        <Route path="/auth/login" element={<Login />} />
+        <Route path="/auth/register" element={<Register />} />
         <Route path="/admin" element={<App />}>
           <Route path="" element={<Dashboard />} />
           <Route path="users" element={<User />} />
