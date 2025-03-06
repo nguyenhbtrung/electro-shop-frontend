@@ -140,7 +140,7 @@ const SideBar = () => {
           color={colors.gray[300]}
           sx={{ m: "15px 0 5px 20px" }}
         >
-          {!collapsed ? "Data" : " "}
+          {!collapsed ? "Người dùng" : " "}
         </Typography>{" "}
         <Menu
           menuItemStyles={{
@@ -159,25 +159,14 @@ const SideBar = () => {
             colors={colors}
             icon={<PeopleAltOutlined />}
           />
-          <Item
-            title="Contacts Information"
-            path="/admin/contacts"
-            colors={colors}
-            icon={<ContactsOutlined />}
-          />
-          <Item
-            title="Invoices Balances"
-            path="/admin/invoices"
-            colors={colors}
-            icon={<ReceiptOutlined />}
-          />
+
         </Menu>
         <Typography
           variant="h6"
           color={colors.gray[300]}
           sx={{ m: "15px 0 5px 20px" }}
         >
-          {!collapsed ? "Pages" : " "}
+          {!collapsed ? "Đơn hàng" : " "}
         </Typography>
         <Menu
           menuItemStyles={{
@@ -190,6 +179,79 @@ const SideBar = () => {
             },
           }}
         >
+
+        </Menu>
+        <Typography
+          variant="h6"
+          color={colors.gray[300]}
+          sx={{ m: "15px 0 5px 20px" }}
+        >
+          {!collapsed ? "Khuyến mãi" : " "}
+        </Typography>
+        <Menu
+          menuItemStyles={{
+            button: {
+              ":hover": {
+                color: "#868dfb",
+                background: "transparent",
+                transition: ".4s ease",
+              },
+            },
+          }}
+        >
+
+        </Menu>
+        <Typography
+          variant="h6"
+          color={colors.gray[300]}
+          sx={{ m: "15px 0 5px 20px" }}
+        >
+          {!collapsed ? "Khác" : " "}
+        </Typography>
+        <Menu
+          menuItemStyles={{
+            button: {
+              ":hover": {
+                color: "#868dfb",
+                background: "transparent",
+                transition: ".4s ease",
+              },
+            },
+          }}
+        >
+
+        </Menu>
+        <Typography
+          variant="h6"
+          color={colors.gray[300]}
+          sx={{ m: "15px 0 5px 20px" }}
+        >
+          {!collapsed ? "Template" : " "}
+        </Typography>{" "}
+        <Menu
+          menuItemStyles={{
+            button: {
+              ":hover": {
+                color: "#868dfb",
+                background: "transparent",
+                transition: ".4s ease",
+              },
+            },
+          }}
+        >
+          <Item
+            title="Contacts Information"
+            path="/admin/contacts"
+            colors={colors}
+            icon={<ContactsOutlined />}
+          />
+          <Item
+            title="Invoices Balances"
+            path="/admin/invoices"
+            colors={colors}
+            icon={<ReceiptOutlined />}
+          />
+
           <Item
             title="Profile Form"
             path="/admin/form"
@@ -208,25 +270,7 @@ const SideBar = () => {
             colors={colors}
             icon={<HelpOutlineOutlined />}
           />
-        </Menu>
-        <Typography
-          variant="h6"
-          color={colors.gray[300]}
-          sx={{ m: "15px 0 5px 20px" }}
-        >
-          {!collapsed ? "Charts" : " "}
-        </Typography>
-        <Menu
-          menuItemStyles={{
-            button: {
-              ":hover": {
-                color: "#868dfb",
-                background: "transparent",
-                transition: ".4s ease",
-              },
-            },
-          }}
-        >
+
           <Item
             title="Bar Chart"
             path="/admin/bar"
@@ -258,6 +302,7 @@ const SideBar = () => {
             icon={<WavesOutlined />}
           />
         </Menu>
+
       </Box>
     </Sidebar>
   );
