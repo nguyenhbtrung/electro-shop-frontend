@@ -8,7 +8,7 @@ import {
 import { Header } from "../../../components";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../../theme";
-import { CreateDiscount, GetDiscounts } from "../../../services/discountService";
+import { CreateDiscount, DeleteDiscount, GetDiscounts } from "../../../services/discountService";
 import { convertToCustomMonthDate } from "../../../utils/formatDatetime";
 import DiscountPaper from "../../../components/discounts/DiscountPaper";
 import AddIcon from "@mui/icons-material/Add";
@@ -67,18 +67,24 @@ const ManageDiscount = () => {
         // navigate(`/discounts/edit/${row.discountId}`);
     };
 
-    const handleDelete = (row) => {
+    const handleDelete = async (row) => {
         if (
             window.confirm(
                 "Bạn có chắc chắn muốn xóa chương trình giảm giá này không?"
             )
         ) {
-            console.log("Delete discount: ", row.discountId);
-            setDiscounts((prevDiscounts) =>
-                prevDiscounts.filter(
-                    (discount) => discount.discountId !== row.discountId
-                )
-            );
+            console.log("Delete discount: ", row?.discountId);
+            const res = await DeleteDiscount(row?.discountId);
+            if (res?.status === 204) {
+                setDiscounts((prevDiscounts) =>
+                    prevDiscounts.filter(
+                        (discount) => discount.discountId !== row.discountId
+                    )
+                );
+            } else {
+                console.log(">>>Check err:", res);
+            }
+
         }
     };
 
