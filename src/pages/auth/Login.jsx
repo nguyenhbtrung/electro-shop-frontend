@@ -106,20 +106,20 @@ export default function Login(props) {
                 password: password
             }
             const response = await UserLogin(loginData);
-
             console.log("res:", response);
-            console.log("Code:", response.status);
+            console.log("res data:", response.data);
+            console.log("res status:", response.status);
             if (response.status === 200) {
                 console.log('Đăng nhập thành công: ', response);
-                const token = response.token;
-                sessionStorage.setItem('userName', userName);
-                sessionStorage.setItem('token', token);
-                navigate('/home');
+                const token = response.data.token;
+                console.log("token: ", token);
+                localStorage.setItem('access_token', token);
+                navigate('/');
             }
             else {
                 setPasswordError(true);
                 setPasswordErrorMessage(response);
-                //console.log('Đăng nhập thất bại: ', response);
+                console.log('Đăng nhập thất bại: ', response);
             }
         }
         catch (error) {
