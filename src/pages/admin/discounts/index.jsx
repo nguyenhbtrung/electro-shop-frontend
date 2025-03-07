@@ -57,9 +57,9 @@ const ManageDiscount = () => {
         const GetDiscountsData = async () => {
             try {
                 const res = await GetDiscounts();
-                if (res) {
-                    console.log(">>>Check res", res);
-                    setDiscounts(res);
+                if (res?.data) {
+                    console.log(">>>Check res", res.data);
+                    setDiscounts(res.data);
                 }
             } catch (error) {
                 console.log(">>>Check err", error);
