@@ -165,7 +165,6 @@ const ManageDiscount = () => {
 
     return (
         <Box m="20px">
-            {/* Header và nút Thêm chương trình giảm giá */}
             <Box
                 display="flex"
                 justifyContent="space-between"
@@ -176,27 +175,27 @@ const ManageDiscount = () => {
                     title="Quản lý giảm giá"
                     subtitle="Danh sách các chương trình giảm giá"
                 />
-                <Button
-                    variant="contained"
-                    color="secondary"
-                    startIcon={<AddIcon />}
-                    onClick={handleAddDiscount}
-                >
-                    Thêm chương trình giảm giá
-                </Button>
+                <Box display="flex" alignItems="center" gap={2}>
+                    {selectedRows.length > 0 && (
+                        <Button
+                            variant="contained"
+                            color="error"
+                            onClick={handleDeleteSelected}
+                        >
+                            Xoá đã chọn
+                        </Button>
+                    )}
+                    <Button
+                        variant="contained"
+                        color="secondary"
+                        startIcon={<AddIcon />}
+                        onClick={handleAddDiscount}
+                    >
+                        Thêm chương trình giảm giá
+                    </Button>
+                </Box>
             </Box>
 
-            {/* Nút xoá nhiều hàng, chỉ hiển thị khi có hàng được chọn */}
-            {selectedRows.length > 0 && (
-                <Button
-                    variant="contained"
-                    color="error"
-                    onClick={handleDeleteSelected}
-                    sx={{ mb: 2 }}
-                >
-                    Xoá đã chọn
-                </Button>
-            )}
 
             <Box
                 mt="10px"
