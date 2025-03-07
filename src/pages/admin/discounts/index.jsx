@@ -1,4 +1,4 @@
-import { Box, useTheme } from "@mui/material";
+import { Box, Button, useTheme } from "@mui/material";
 import { Header } from "../../../components";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
@@ -6,12 +6,14 @@ import { tokens } from "../../../theme";
 import { GetDiscounts } from "../../../services/discountService";
 import { convertToCustomMonthDate } from "../../../utils/formatDatetime";
 import DiscountPaper from "../../../components/discounts/DiscountPaper";
-
+import AddIcon from "@mui/icons-material/Add";
+import { useNavigate } from "react-router-dom";
 
 const ManageDiscount = () => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
     const [discounts, setDiscounts] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const GetDiscountsData = async () => {
@@ -28,6 +30,11 @@ const ManageDiscount = () => {
 
         GetDiscountsData();
     }, []);
+
+    const handleAddDiscount = () => {
+        // Điều hướng tới trang thêm chương trình giảm giá.
+        navigate("/discounts/add");
+    };
 
     const columns = [
         {
@@ -67,8 +74,7 @@ const ManageDiscount = () => {
                 }
                 return discountValue;
             },
-        }
-        ,
+        },
         {
             field: "startDate",
             headerName: "Ngày bắt đầu",
@@ -89,12 +95,24 @@ const ManageDiscount = () => {
 
     return (
         <Box m="20px">
-            <Header
-                title="Quản lý giảm giá"
-                subtitle="Danh sách các chương trình giảm giá"
-            />
+            {/* Bọc header và nút trong cùng một container Flex */}
+            <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+                <Header
+                    title="Quản lý giảm giá"
+                    subtitle="Danh sách các chương trình giảm giá"
+                />
+                <Button
+                    variant="contained"
+                    color="secondary"
+                    startIcon={<AddIcon />}
+                    onClick={handleAddDiscount}
+                >
+                    Thêm chương trình giảm giá
+                </Button>
+            </Box>
+
             <Box
-                mt="40px"
+                mt="10px"
                 height="75vh"
                 maxWidth="100%"
                 sx={{
