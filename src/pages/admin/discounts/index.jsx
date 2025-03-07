@@ -8,7 +8,7 @@ import {
 import { Header } from "../../../components";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../../theme";
-import { GetDiscounts } from "../../../services/discountService";
+import { CreateDiscount, GetDiscounts } from "../../../services/discountService";
 import { convertToCustomMonthDate } from "../../../utils/formatDatetime";
 import DiscountPaper from "../../../components/discounts/DiscountPaper";
 import AddIcon from "@mui/icons-material/Add";
@@ -48,14 +48,18 @@ const ManageDiscount = () => {
     };
 
     // Xử lý khi nhận được dữ liệu từ dialog
-    const handleAddDialogSubmit = (newDiscount) => {
+    const handleAddDialogSubmit = async (newDiscount) => {
         console.log("New Discount: ", newDiscount);
-        // Ở đây bạn có thể gọi API tạo giảm giá mới.
-        // Ví dụ sau đó cập nhật state discounts:
-        // setDiscounts((prevDiscounts) => [
-        //   ...prevDiscounts,
-        //   { discountId: Date.now(), ...newDiscount },
-        // ]);
+        const res = await CreateDiscount(newDiscount);
+        if (res?.status === 201 && res?.data) {
+            alert("Thêm chương trình giảm giá thành công!");
+            setDiscounts((prev) => [
+                res?.data,
+                ...prev,
+            ]);
+        } else {
+            console.log(">>>Check err:", res);
+        }
     };
 
     const handleEdit = (row) => {
