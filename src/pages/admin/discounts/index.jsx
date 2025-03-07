@@ -1,4 +1,4 @@
-import { Box, Button, useTheme } from "@mui/material";
+import { Box, Button, IconButton, useTheme } from "@mui/material";
 import { Header } from "../../../components";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
@@ -7,12 +7,15 @@ import { GetDiscounts } from "../../../services/discountService";
 import { convertToCustomMonthDate } from "../../../utils/formatDatetime";
 import DiscountPaper from "../../../components/discounts/DiscountPaper";
 import AddIcon from "@mui/icons-material/Add";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { useNavigate } from "react-router-dom";
 
 const ManageDiscount = () => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
     const [discounts, setDiscounts] = useState([]);
+    const [selectedRows, setSelectedRows] = useState([]);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -33,7 +36,45 @@ const ManageDiscount = () => {
 
     const handleAddDiscount = () => {
         // Điều hướng tới trang thêm chương trình giảm giá.
-        navigate("/discounts/add");
+        // navigate("/discounts/add");
+    };
+
+    const handleEdit = (row) => {
+        // Điều hướng tới trang chỉnh sửa với discountId từ row
+        // navigate(`/discounts/edit/${row.discountId}`);
+    };
+
+    const handleDelete = (row) => {
+        if (
+            window.confirm(
+                "Bạn có chắc chắn muốn xóa chương trình giảm giá này không?"
+            )
+        ) {
+            // Gọi API xóa tại đây, ví dụ: await deleteDiscount(row.discountId);
+            console.log("Delete discount: ", row.discountId);
+            setDiscounts((prevDiscounts) =>
+                prevDiscounts.filter(
+                    (discount) => discount.discountId !== row.discountId
+                )
+            );
+        }
+    };
+
+    // Hàm xử lý xoá nhiều hàng được chọn
+    const handleDeleteSelected = () => {
+        if (
+            window.confirm(
+                "Bạn có chắc chắn muốn xoá các chương trình giảm giá đã chọn?"
+            )
+        ) {
+            setDiscounts((prevDiscounts) =>
+                prevDiscounts.filter(
+                    (discount) => !selectedRows.includes(discount.discountId)
+                )
+            );
+            // Reset lại danh sách các hàng được chọn sau khi xoá
+            setSelectedRows([]);
+        }
     };
 
     const columns = [
@@ -64,7 +105,10 @@ const ManageDiscount = () => {
                 const { discountType } = params.row;
                 const discountValue = params.value;
 
-                if (discountType === "Percentage" || discountType === "Flat Amount") {
+                if (
+                    discountType === "Percentage" ||
+                    discountType === "Flat Amount"
+                ) {
                     return (
                         <DiscountPaper
                             discountType={discountType}
@@ -91,12 +135,43 @@ const ManageDiscount = () => {
                 return convertToCustomMonthDate(params.value, "vi-VN", "long");
             },
         },
+        {
+            field: "actions",
+            headerName: "Hành động",
+            flex: 0.6,
+            minWidth: 100,
+            sortable: false,
+            filterable: false,
+            renderCell: (params) => {
+                return (
+                    <>
+                        <IconButton
+                            color={colors.primary[100]}
+                            onClick={() => handleEdit(params.row)}
+                        >
+                            <EditIcon />
+                        </IconButton>
+                        <IconButton
+                            color={colors.primary[100]}
+                            onClick={() => handleDelete(params.row)}
+                        >
+                            <DeleteIcon />
+                        </IconButton>
+                    </>
+                );
+            },
+        },
     ];
 
     return (
         <Box m="20px">
-            {/* Bọc header và nút trong cùng một container Flex */}
-            <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+            {/* Header và nút Thêm chương trình giảm giá */}
+            <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+                mb={2}
+            >
                 <Header
                     title="Quản lý giảm giá"
                     subtitle="Danh sách các chương trình giảm giá"
@@ -110,6 +185,18 @@ const ManageDiscount = () => {
                     Thêm chương trình giảm giá
                 </Button>
             </Box>
+
+            {/* Nút xoá nhiều hàng, chỉ hiển thị khi có hàng được chọn */}
+            {selectedRows.length > 0 && (
+                <Button
+                    variant="contained"
+                    color="error"
+                    onClick={handleDeleteSelected}
+                    sx={{ mb: 2 }}
+                >
+                    Xoá đã chọn
+                </Button>
+            )}
 
             <Box
                 mt="10px"
@@ -144,11 +231,16 @@ const ManageDiscount = () => {
                     rows={discounts}
                     columns={columns}
                     getRowId={(row) => row.discountId}
+                    checkboxSelection
+                    selectionModel={selectedRows}
+                    onRowSelectionModelChange={(ids) => {
+                        console.log("Selected rows: ", ids);
+                        setSelectedRows(ids);
+                    }}
                     slots={{ toolbar: GridToolbar }}
                     initialState={{
                         pagination: { paginationModel: { pageSize: 10 } },
                     }}
-                    checkboxSelection
                 />
             </Box>
         </Box>
