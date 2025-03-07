@@ -1,7 +1,12 @@
-import { Box, Button, IconButton, useTheme } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import {
+    Box,
+    Button,
+    IconButton,
+    useTheme,
+} from "@mui/material";
 import { Header } from "../../../components";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
-import { useEffect, useState } from "react";
 import { tokens } from "../../../theme";
 import { GetDiscounts } from "../../../services/discountService";
 import { convertToCustomMonthDate } from "../../../utils/formatDatetime";
@@ -10,6 +15,8 @@ import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useNavigate } from "react-router-dom";
+import AddDiscountDialog from "../../../components/discounts/AddDiscountDiaglog";
+
 
 const ManageDiscount = () => {
     const theme = useTheme();
@@ -17,6 +24,7 @@ const ManageDiscount = () => {
     const [discounts, setDiscounts] = useState([]);
     const [selectedRows, setSelectedRows] = useState([]);
     const navigate = useNavigate();
+    const [openAddDialog, setOpenAddDialog] = useState(false);
 
     useEffect(() => {
         const GetDiscountsData = async () => {
@@ -34,9 +42,20 @@ const ManageDiscount = () => {
         GetDiscountsData();
     }, []);
 
+    // Mở dialog thêm giảm giá
     const handleAddDiscount = () => {
-        // Điều hướng tới trang thêm chương trình giảm giá.
-        // navigate("/discounts/add");
+        setOpenAddDialog(true);
+    };
+
+    // Xử lý khi nhận được dữ liệu từ dialog
+    const handleAddDialogSubmit = (newDiscount) => {
+        console.log("New Discount: ", newDiscount);
+        // Ở đây bạn có thể gọi API tạo giảm giá mới.
+        // Ví dụ sau đó cập nhật state discounts:
+        // setDiscounts((prevDiscounts) => [
+        //   ...prevDiscounts,
+        //   { discountId: Date.now(), ...newDiscount },
+        // ]);
     };
 
     const handleEdit = (row) => {
@@ -50,7 +69,6 @@ const ManageDiscount = () => {
                 "Bạn có chắc chắn muốn xóa chương trình giảm giá này không?"
             )
         ) {
-            // Gọi API xóa tại đây, ví dụ: await deleteDiscount(row.discountId);
             console.log("Delete discount: ", row.discountId);
             setDiscounts((prevDiscounts) =>
                 prevDiscounts.filter(
@@ -60,7 +78,6 @@ const ManageDiscount = () => {
         }
     };
 
-    // Hàm xử lý xoá nhiều hàng được chọn
     const handleDeleteSelected = () => {
         if (
             window.confirm(
@@ -72,7 +89,6 @@ const ManageDiscount = () => {
                     (discount) => !selectedRows.includes(discount.discountId)
                 )
             );
-            // Reset lại danh sách các hàng được chọn sau khi xoá
             setSelectedRows([]);
         }
     };
@@ -104,7 +120,6 @@ const ManageDiscount = () => {
             renderCell: (params) => {
                 const { discountType } = params.row;
                 const discountValue = params.value;
-
                 if (
                     discountType === "Percentage" ||
                     discountType === "Flat Amount"
@@ -196,7 +211,6 @@ const ManageDiscount = () => {
                 </Box>
             </Box>
 
-
             <Box
                 mt="10px"
                 height="75vh"
@@ -242,6 +256,13 @@ const ManageDiscount = () => {
                     }}
                 />
             </Box>
+
+            {/* Thêm dialog */}
+            <AddDiscountDialog
+                open={openAddDialog}
+                onClose={() => setOpenAddDialog(false)}
+                onSubmit={handleAddDialogSubmit}
+            />
         </Box>
     );
 };
