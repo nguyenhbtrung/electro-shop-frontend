@@ -4,6 +4,7 @@ import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
 import { tokens } from "../../../theme";
 import { GetDiscounts } from "../../../services/discountService";
+import { convertToCustomMonthDate } from "../../../utils/formatDatetime";
 
 const DiscountPaper = ({ discountType, discountValue }) => {
     const theme = useTheme();
@@ -113,11 +114,17 @@ const ManageDiscount = () => {
             field: "startDate",
             headerName: "Ngày bắt đầu",
             flex: 1,
+            renderCell: (params) => {
+                return convertToCustomMonthDate(params.value, "vi-VN", "long");
+            },
         },
         {
             field: "endDate",
             headerName: "Ngày kết thúc",
             flex: 1,
+            renderCell: (params) => {
+                return convertToCustomMonthDate(params.value, "vi-VN", "long");
+            },
         },
     ];
 
