@@ -52,7 +52,7 @@ const SideBar = ({ categories }) => {
                             <Item
                                 key={child.categoryId}
                                 title={child.name}
-                                path={`/admin/categories/${child.categoryId}`}
+                                path={`/categories/${child.categoryId}`}
                                 colors={colors}
                                 icon={<ChevronRightOutlined fontSize="small" />}
                             />
