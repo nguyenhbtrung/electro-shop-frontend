@@ -1,21 +1,23 @@
 // ProductCard.js
 import React, { useState } from "react";
-import { Box, Typography, useTheme } from "@mui/material";
-import StarIcon from '@mui/icons-material/Star';
-import StarHalfIcon from '@mui/icons-material/StarHalf';
-import StarBorderIcon from '@mui/icons-material/StarBorder';
+import { Box, Typography, useTheme, Button } from "@mui/material";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import StarIcon from "@mui/icons-material/Star";
+import StarHalfIcon from "@mui/icons-material/StarHalf";
+import StarBorderIcon from "@mui/icons-material/StarBorder";
 import DiscountPaper from "../discounts/DiscountPaper";
 import { tokens } from "../../theme";
 
-const ProductCard = ({ product }) => {
-    // product object mong đợi có các thuộc tính:
-    // name: string
-    // images: array string (ví dụ: ["url_ảnh_1", "url_ảnh_2"])
-    // originalPrice: number
-    // discountedPrice: number
-    // discountType: string ("Percentage" hoặc "Flat Amount")
-    // discountValue: number
-    // rating: number (ví dụ 4.5)
+const ProductCard = ({ product, onAddToCart }) => {
+    // expected properties of product:
+    // - name: string
+    // - images: array string (ví dụ: ["url_ảnh_1", "url_ảnh_2"])
+    // - originalPrice: number
+    // - discountedPrice: number
+    // - discountType: string ("Percentage" hoặc "Flat Amount")
+    // - discountValue: number
+    // - rating: number (ví dụ 4.5)
+
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
 
@@ -30,7 +32,6 @@ const ProductCard = ({ product }) => {
     } = product;
 
     const [isHovered, setIsHovered] = useState(false);
-
     const visibleImage = isHovered && images[1] ? images[1] : images[0];
 
     const renderStars = (rating) => {
@@ -41,7 +42,10 @@ const ProductCard = ({ product }) => {
 
         for (let i = 0; i < fullStars; i++) {
             stars.push(
-                <StarIcon key={`full-${i}`} sx={{ color: "#FFD700", fontSize: 18 }} />
+                <StarIcon
+                    key={`full-${i}`}
+                    sx={{ color: "#FFD700", fontSize: 18 }}
+                />
             );
         }
         if (halfStar) {
@@ -49,13 +53,23 @@ const ProductCard = ({ product }) => {
                 <StarHalfIcon key="half" sx={{ color: "#FFD700", fontSize: 18 }} />
             );
         }
-
         for (let i = 0; i < emptyStars; i++) {
             stars.push(
-                <StarBorderIcon key={`empty-${i}`} sx={{ color: "#FFD700", fontSize: 18 }} />
+                <StarBorderIcon
+                    key={`empty-${i}`}
+                    sx={{ color: "#FFD700", fontSize: 18 }}
+                />
             );
         }
         return stars;
+    };
+
+    const handleAddToCart = () => {
+        if (onAddToCart) {
+            onAddToCart(product);
+        } else {
+            console.log(`Product ${name} added to cart.`);
+        }
     };
 
     return (
@@ -100,7 +114,7 @@ const ProductCard = ({ product }) => {
             </Box>
 
             {/* Tên sản phẩm */}
-            <Typography variant="h6" gutterBottom noWrap >
+            <Typography variant="h6" gutterBottom noWrap>
                 {name}
             </Typography>
 
@@ -108,11 +122,23 @@ const ProductCard = ({ product }) => {
             <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}>
                 <Typography
                     variant="body2"
-                    sx={{ textDecoration: "line-through", color: colors.gray[400] }}
+                    sx={{
+                        textDecoration: "line-through",
+                        color: colors.gray[400],
+                    }}
                 >
                     {originalPrice.toLocaleString()}đ
                 </Typography>
-                <Typography variant="body1" sx={{ fontWeight: "bold", color: theme.palette.mode === "dark" ? colors.redAccent[400] : "#D32F2F" }}>
+                <Typography
+                    variant="body1"
+                    sx={{
+                        fontWeight: "bold",
+                        color:
+                            theme.palette.mode === "dark"
+                                ? colors.redAccent[400]
+                                : "#D32F2F",
+                    }}
+                >
                     {discountedPrice.toLocaleString()}đ
                 </Typography>
                 <DiscountPaper discountType={discountType} discountValue={discountValue} />
@@ -124,6 +150,18 @@ const ProductCard = ({ product }) => {
                 <Typography variant="body2" sx={{ ml: 0.5 }}>
                     {rating.toFixed(1)}
                 </Typography>
+            </Box>
+
+            {/* Nút Thêm vào giỏ hàng */}
+            <Box sx={{ mt: 2 }}>
+                <Button
+                    variant="contained"
+                    startIcon={<ShoppingCartIcon />}
+                    onClick={handleAddToCart}
+                    fullWidth
+                >
+                    Thêm vào giỏ hàng
+                </Button>
             </Box>
         </Box>
     );
