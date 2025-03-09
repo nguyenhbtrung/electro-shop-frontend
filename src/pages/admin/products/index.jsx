@@ -9,6 +9,8 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useNavigate } from "react-router-dom";
 import AddProductDialog from "../../../components/products/AddProductDialog";
+import AddUpdateProductDialog from "../../../components/products/UpdateProductDialog";
+
 const ManageProduct = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
@@ -16,6 +18,9 @@ const ManageProduct = () => {
   const [selectedRows, setSelectedRows] = useState([]);
   const navigate = useNavigate();
   const [openAddDialog, setOpenAddDialog] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [openEditProductDialog, setEditProductDialog] = useState(false);
+
   const fetchProducts = async () => {
     try {
       const res = await GetAllProduct();
@@ -27,6 +32,7 @@ const ManageProduct = () => {
       console.log(">>>Error fetching products", error);
     }
   };
+
   useEffect(() => {
     fetchProducts();
   }, []);
@@ -34,15 +40,21 @@ const ManageProduct = () => {
   const handleAddProduct = () => {
     setOpenAddDialog(true);
   };
+
   const handleAddDialogSubmit = async (newProduct) => {
     console.log("New Product: ", newProduct);
     const res = await CreateProduct(newProduct);
     if (res?.status === 200 && res?.data) {
       alert("Thêm sản phẩm thành công!");
       fetchProducts();
-    } else{
+    } else {
       console.log(">>>Check err:", res);
     }
+  };
+
+  const handleEdit = (row) => {
+    setSelectedProduct(row);
+    setEditProductDialog(true);
   };
 
   const handleDelete = async (row) => {
@@ -211,10 +223,28 @@ const ManageProduct = () => {
           }}
         />
       </Box>
+
       <AddProductDialog
         open={openAddDialog}
         onClose={() => setOpenAddDialog(false)}
         onSubmit={handleAddDialogSubmit}
+      />
+
+      {/* Dialog cập nhật sản phẩm */}
+      <AddUpdateProductDialog
+        open={openEditProductDialog}
+        onClose={() => setEditProductDialog(false)}
+        onSubmit={(updatedProduct) => {
+          setProducts((prevProducts) =>
+            prevProducts.map((product) =>
+              product.productId === updatedProduct.productId ? updatedProduct : product
+            )
+          );
+          setEditProductDialog(false);
+        }}
+        product={selectedProduct}
+        // Nếu có danh mục sẵn, hãy truyền vào prop categories (ví dụ: categories={listCategories})
+        categories={[]}
       />
     </Box>
   );

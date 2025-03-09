@@ -10,7 +10,7 @@ const GetProduct = (id) => {
 };
 const UpdateProduct = (id,data) => {
     const URL_API = `/api/Product/${id}`;
-    return api.post(URL_API,data);
+    return api.put(URL_API,data);
 };
 const CreateProduct = (data) => {
     const URL_API = "/api/Product";
