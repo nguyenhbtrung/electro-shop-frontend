@@ -28,13 +28,14 @@ import AppUser from "./pages/user/AppUser";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import CategoryPage from "./pages/user/categoryPage";
+import HomePage from "./pages/user/homePage";
 
 const AppRouter = () => {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<AppUser />}>
-          <Route index element={<div>Trang chủ người dùng</div>} />
+          <Route index element={<HomePage />} />
           <Route path="categories/:categoryId" element={<CategoryPage />} />
         </Route>
 
