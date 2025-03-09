@@ -1,6 +1,5 @@
-// HomePage.js
 import React from "react";
-import { Container, Box, Typography } from "@mui/material";
+import { Container, Box, Typography, Paper } from "@mui/material";
 import ProductCard from "../../../components/products/ProductCard";
 import Footer from "../../../components/Footer";
 
@@ -146,6 +145,92 @@ const HomePage = () => {
     return (
         <>
             <Container sx={{ py: 4 }}>
+                {/* Khu vực Banner Quảng Cáo */}
+                <Box sx={{ mb: 4 }}>
+                    <Box sx={{
+                        display: "flex",
+                        gap: 2,
+                        width: "100%",
+                        height: "300px" // Chiều cao tổng thể của khu vực banner
+                    }}>
+                        {/* Banner lớn bên trái */}
+                        <Paper
+                            elevation={3}
+                            sx={{
+                                flex: 2,
+                                height: "100%",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                backgroundImage: "url(https://t3.ftcdn.net/jpg/04/65/46/52/240_F_465465254_1pN9MGrA831idD6zIBL7q8rnZZpUCQTy.jpg)",
+                                backgroundSize: "cover",
+                                backgroundPosition: "center",
+                                cursor: "pointer",
+                                "&:hover": {
+                                    opacity: 0.9
+                                }
+                            }}
+                        >
+                            {/* <Typography variant="h4" color="white" sx={{ textShadow: "1px 1px 2px black" }}>
+                                Khuyến Mãi Đặc Biệt
+                            </Typography> */}
+                        </Paper>
+
+                        {/* Hai banner nhỏ bên phải xếp dọc */}
+                        <Box sx={{
+                            flex: 1,
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: 2,
+                            height: "100%"
+                        }}>
+                            {/* Banner nhỏ trên */}
+                            <Paper
+                                elevation={3}
+                                sx={{
+                                    flex: 1,
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    backgroundImage: "url(https://theme.hstatic.net/1000288298/1001020793/14/banner_top_1_img_large.jpg?v=1421)",
+                                    backgroundSize: "cover",
+                                    backgroundPosition: "center",
+                                    cursor: "pointer",
+                                    "&:hover": {
+                                        opacity: 0.9
+                                    }
+                                }}
+                            >
+                                {/* <Typography variant="h6" color="white" sx={{ textShadow: "1px 1px 2px black" }}>
+                                    Sản Phẩm Mới
+                                </Typography> */}
+                            </Paper>
+
+                            {/* Banner nhỏ dưới */}
+                            <Paper
+                                elevation={3}
+                                sx={{
+                                    flex: 1,
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    backgroundImage: "url(https://theme.hstatic.net/1000288298/1001020793/14/banner_top_3_img_large.jpg?v=1421)",
+                                    backgroundSize: "cover",
+                                    backgroundPosition: "center",
+                                    cursor: "pointer",
+                                    "&:hover": {
+                                        opacity: 0.9
+                                    }
+                                }}
+                            >
+                                {/* <Typography variant="h6" color="white" sx={{ textShadow: "1px 1px 2px black" }}>
+                                    Giảm Giá Cuối Tuần
+                                </Typography> */}
+                            </Paper>
+                        </Box>
+                    </Box>
+                </Box>
+
                 {/* Hàng sản phẩm khuyến mãi */}
                 <Typography variant="h5" sx={{ mb: 2 }}>
                     Sản phẩm khuyến mãi
