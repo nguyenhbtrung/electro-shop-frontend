@@ -19,7 +19,7 @@ function App() {
         const GetTree = async () => {
             const res = await GetCategoryTree();
             if (res?.status === 200 && res?.data) {
-                console.log(">>>Check res", res?.data);
+                setCategoryTree(res?.data);
             }
         };
         GetTree();
@@ -31,7 +31,7 @@ function App() {
                 <CssBaseline />
                 <ToggledContext.Provider value={values}>
                     <Box sx={{ display: "flex", height: "100vh", maxWidth: "100%" }}>
-                        <SideBar />
+                        <SideBar categories={categoryTree} />
                         <Box
                             sx={{
                                 flexGrow: 1,

@@ -1,5 +1,6 @@
+// AppRouter.js
 import React from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes, Outlet } from "react-router-dom";
 import App from "./App";
 import {
   Dashboard,
@@ -26,14 +27,22 @@ import ManageBanner from "./pages/admin/banners";
 import AppUser from "./pages/user/AppUser";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
+import CategoryPage from "./pages/user/categoryPage";
+import HomePage from "./pages/user/homePage";
 
 const AppRouter = () => {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<AppUser />} />
+        <Route path="/" element={<AppUser />}>
+          <Route index element={<HomePage />} />
+          <Route path="categories/:categoryId" element={<CategoryPage />} />
+        </Route>
+
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+
+        {/* Giao diện Admin */}
         <Route path="/admin" element={<App />}>
           <Route path="" element={<Dashboard />} />
           <Route path="users" element={<ManageUser />} />
@@ -62,4 +71,3 @@ const AppRouter = () => {
 };
 
 export default AppRouter;
-//
