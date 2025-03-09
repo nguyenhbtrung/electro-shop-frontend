@@ -33,11 +33,11 @@ const GetAllCategory = (id) => {
     return api.get(URL_API);
 };
 const GetProductsByUser = () => {
-    const URL_API = `/api/Category/by_user`;
+    const URL_API = `/api/Product/by_user`;
     return api.get(URL_API);
 };
 const GetDiscountedProduct = () => {
-    const URL_API = `/api/Category/discounted`;
+    const URL_API = `/api/Product/discounted`;
     return api.get(URL_API);
 };
 
