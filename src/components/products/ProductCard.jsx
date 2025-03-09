@@ -28,7 +28,7 @@ const ProductCard = ({ product, onAddToCart }) => {
         discountedPrice,
         discountType,
         discountValue,
-        rating,
+        averageRating = 0,
     } = product;
 
     const [isHovered, setIsHovered] = useState(false);
@@ -141,14 +141,15 @@ const ProductCard = ({ product, onAddToCart }) => {
                 >
                     {discountedPrice.toLocaleString()}đ
                 </Typography>
-                <DiscountPaper discountType={discountType} discountValue={discountValue} />
+                {discountValue > 0 && (<DiscountPaper discountType={discountType} discountValue={discountValue} />)}
+
             </Box>
 
             {/* Hiển thị đánh giá: sao và giá trị rating */}
             <Box sx={{ display: "flex", alignItems: "center" }}>
-                {renderStars(rating)}
+                {renderStars(averageRating)}
                 <Typography variant="body2" sx={{ ml: 0.5 }}>
-                    {rating.toFixed(1)}
+                    {averageRating.toFixed(1)}
                 </Typography>
             </Box>
 

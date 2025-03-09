@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Container, Box, Typography, Paper } from "@mui/material";
 import ProductCard from "../../../components/products/ProductCard";
 import Footer from "../../../components/Footer";
+import { GetDiscountedProduct, GetProductsByUser } from "../../../services/productService";
 
 // Mẫu dữ liệu sản phẩm khuyến mãi (5 sản phẩm)
 const promotionProducts = [
@@ -73,75 +74,98 @@ const promotionProducts = [
 ];
 
 // Mẫu dữ liệu sản phẩm bán chạy (5 sản phẩm)
-const bestSellingProducts = [
-    {
-        id: 6,
-        name: "Sản phẩm bán chạy 1",
-        images: [
-            "https://via.placeholder.com/300x300?text=BestSeller+Product+1+-+Image+1",
-            "https://via.placeholder.com/300x300?text=BestSeller+Product+1+-+Image+2",
-        ],
-        originalPrice: 550000,
-        discountedPrice: 500000,
-        discountType: "Percentage",
-        discountValue: 9,
-        rating: 4.6,
-    },
-    {
-        id: 7,
-        name: "Sản phẩm bán chạy 2",
-        images: [
-            "https://via.placeholder.com/300x300?text=BestSeller+Product+2+-+Image+1",
-            "https://via.placeholder.com/300x300?text=BestSeller+Product+2+-+Image+2",
-        ],
-        originalPrice: 620000,
-        discountedPrice: 580000,
-        discountType: "Flat Amount",
-        discountValue: 40000,
-        rating: 4.8,
-    },
-    {
-        id: 8,
-        name: "Sản phẩm bán chạy 3",
-        images: [
-            "https://via.placeholder.com/300x300?text=BestSeller+Product+3+-+Image+1",
-            "https://via.placeholder.com/300x300?text=BestSeller+Product+3+-+Image+2",
-        ],
-        originalPrice: 750000,
-        discountedPrice: 700000,
-        discountType: "Percentage",
-        discountValue: 7,
-        rating: 4.3,
-    },
-    {
-        id: 9,
-        name: "Sản phẩm bán chạy 4",
-        images: [
-            "https://via.placeholder.com/300x300?text=BestSeller+Product+4+-+Image+1",
-            "https://via.placeholder.com/300x300?text=BestSeller+Product+4+-+Image+2",
-        ],
-        originalPrice: 820000,
-        discountedPrice: 780000,
-        discountType: "Flat Amount",
-        discountValue: 40000,
-        rating: 4.4,
-    },
-    {
-        id: 10,
-        name: "Sản phẩm bán chạy 5",
-        images: [
-            "https://via.placeholder.com/300x300?text=BestSeller+Product+5+-+Image+1",
-            "https://via.placeholder.com/300x300?text=BestSeller+Product+5+-+Image+2",
-        ],
-        originalPrice: 950000,
-        discountedPrice: 900000,
-        discountType: "Percentage",
-        discountValue: 5,
-        rating: 4.9,
-    },
-];
+// const bestSellingProducts = [
+//     {
+//         id: 6,
+//         name: "Sản phẩm bán chạy 1",
+//         images: [
+//             "https://via.placeholder.com/300x300?text=BestSeller+Product+1+-+Image+1",
+//             "https://via.placeholder.com/300x300?text=BestSeller+Product+1+-+Image+2",
+//         ],
+//         originalPrice: 550000,
+//         discountedPrice: 500000,
+//         discountType: "Percentage",
+//         discountValue: 9,
+//         rating: 4.6,
+//     },
+//     {
+//         id: 7,
+//         name: "Sản phẩm bán chạy 2",
+//         images: [
+//             "https://via.placeholder.com/300x300?text=BestSeller+Product+2+-+Image+1",
+//             "https://via.placeholder.com/300x300?text=BestSeller+Product+2+-+Image+2",
+//         ],
+//         originalPrice: 620000,
+//         discountedPrice: 580000,
+//         discountType: "Flat Amount",
+//         discountValue: 40000,
+//         rating: 4.8,
+//     },
+//     {
+//         id: 8,
+//         name: "Sản phẩm bán chạy 3",
+//         images: [
+//             "https://via.placeholder.com/300x300?text=BestSeller+Product+3+-+Image+1",
+//             "https://via.placeholder.com/300x300?text=BestSeller+Product+3+-+Image+2",
+//         ],
+//         originalPrice: 750000,
+//         discountedPrice: 700000,
+//         discountType: "Percentage",
+//         discountValue: 7,
+//         rating: 4.3,
+//     },
+//     {
+//         id: 9,
+//         name: "Sản phẩm bán chạy 4",
+//         images: [
+//             "https://via.placeholder.com/300x300?text=BestSeller+Product+4+-+Image+1",
+//             "https://via.placeholder.com/300x300?text=BestSeller+Product+4+-+Image+2",
+//         ],
+//         originalPrice: 820000,
+//         discountedPrice: 780000,
+//         discountType: "Flat Amount",
+//         discountValue: 40000,
+//         rating: 4.4,
+//     },
+//     {
+//         id: 10,
+//         name: "Sản phẩm bán chạy 5",
+//         images: [
+//             "https://via.placeholder.com/300x300?text=BestSeller+Product+5+-+Image+1",
+//             "https://via.placeholder.com/300x300?text=BestSeller+Product+5+-+Image+2",
+//         ],
+//         originalPrice: 950000,
+//         discountedPrice: 900000,
+//         discountType: "Percentage",
+//         discountValue: 5,
+//         rating: 4.9,
+//     },
+// ];
 
 const HomePage = () => {
+    const [discountProducts, setDiscountProduct] = useState([]);
+    const [bestSellingProducts, setBestSellingProducts] = useState([]);
+
+    useEffect(() => {
+        const GetDiscountedProductsList = async () => {
+            const res = await GetDiscountedProduct();
+            if (res?.status === 200 && res?.data) {
+                console.log("check discounted: ", res.data)
+                setDiscountProduct(res?.data);
+            }
+        }
+
+        const GetBestSellingsList = async () => {
+            const res = await GetProductsByUser();
+            if (res?.status === 200 && res?.data) {
+                setBestSellingProducts(res?.data);
+            }
+        }
+
+        GetDiscountedProductsList();
+        GetBestSellingsList();
+    }, []);
+
     return (
         <>
             <Container sx={{ py: 4 }}>
@@ -235,18 +259,21 @@ const HomePage = () => {
                 <Typography variant="h5" sx={{ mb: 2 }}>
                     Sản phẩm khuyến mãi
                 </Typography>
-                <Box
-                    sx={{
-                        display: "grid",
-                        gridTemplateColumns: "repeat(5, 1fr)", // 5 sản phẩm trên 1 hàng
-                        gap: 2,
-                        mb: 4,
-                    }}
-                >
-                    {promotionProducts.map((product) => (
-                        <ProductCard key={product.id} product={product} />
-                    ))}
-                </Box>
+                {discountProducts?.length > 0 && (
+                    <Box
+                        sx={{
+                            display: "grid",
+                            gridTemplateColumns: "repeat(5, 1fr)", // 5 sản phẩm trên 1 hàng
+                            gap: 2,
+                            mb: 4,
+                        }}
+                    >
+                        {discountProducts?.map((product) => (
+                            <ProductCard key={product.productId} product={product} />
+                        ))}
+                    </Box>
+                )}
+
 
                 {/* Hàng sản phẩm bán chạy */}
                 <Typography variant="h5" sx={{ mb: 2 }}>
@@ -260,7 +287,7 @@ const HomePage = () => {
                     }}
                 >
                     {bestSellingProducts.map((product) => (
-                        <ProductCard key={product.id} product={product} />
+                        <ProductCard key={product.productId} product={product} />
                     ))}
                 </Box>
             </Container>
