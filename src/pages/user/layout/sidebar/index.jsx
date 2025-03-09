@@ -35,10 +35,10 @@ const SideBar = () => {
                 border: 0,
                 height: "100%",
             }}
-            collapsed={collapsed}
+            // collapsed={collapsed}
             onBackdropClick={() => setToggled(false)}
             toggled={toggled}
-            breakPoint="md"
+            breakPoint="xxl"
         >
             <Menu
                 menuItemStyles={{
@@ -80,7 +80,7 @@ const SideBar = () => {
                                 </Typography>
                             </Box>
                         )}
-                        <IconButton onClick={() => setCollapsed(!collapsed)}>
+                        <IconButton onClick={() => setToggled(false)}>
                             <MenuOutlined />
                         </IconButton>
                     </Box>

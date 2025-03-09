@@ -2,6 +2,7 @@ import {
     Box,
     IconButton,
     InputBase,
+    Typography,
     useMediaQuery,
     useTheme,
 } from "@mui/material";
@@ -17,6 +18,7 @@ import {
 } from "@mui/icons-material";
 import { ColorModeContext, tokens } from "../../../../theme";
 import { ToggledContext } from "../../AppUser";
+import logo from "../../../../assets/images/logo.png";
 
 const Navbar = () => {
     const theme = useTheme();
@@ -34,11 +36,25 @@ const Navbar = () => {
         >
             <Box display="flex" alignItems="center" gap={2}>
                 <IconButton
-                    sx={{ display: `${isMdDevices ? "flex" : "none"}` }}
+                    sx={{ display: `${isMdDevices ? "flex" : "flex"}` }}
                     onClick={() => setToggled(!toggled)}
                 >
                     <MenuOutlined />
                 </IconButton>
+                <img
+                    style={{ width: "30px", height: "30px", borderRadius: "8px" }}
+                    src={logo}
+                    alt="Argon"
+                />
+                <Typography
+                    variant="h4"
+                    fontWeight="bold"
+                    textTransform="capitalize"
+                    color={colors.greenAccent[500]}
+                    sx={{ display: `${isXsDevices ? "none" : "flex"}` }}
+                >
+                    Argon
+                </Typography>
                 <Box
                     display="flex"
                     alignItems="center"
