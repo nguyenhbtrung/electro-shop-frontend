@@ -8,15 +8,15 @@ const GetProduct = (id) => {
     const URL_API = `/api/Product/${id}`;
     return api.get(URL_API);
 };
-const UpdateProduct = (id,data) => {
+const UpdateProduct = (id, data) => {
     const URL_API = `/api/Product/${id}`;
-    return api.put(URL_API,data);
+    return api.put(URL_API, data);
 };
 const CreateProduct = (data) => {
     const URL_API = "/api/Product";
     return api.post(URL_API, data);
 };
-const CreateProductImage = (id,data) => {
+const CreateProductImage = (id, data) => {
     const URL_API = `/api/Product/${id}/Image`;
     return api.post(URL_API, data);
 };
@@ -32,6 +32,16 @@ const GetAllCategory = (id) => {
     const URL_API = `/api/Category`;
     return api.get(URL_API);
 };
+const GetProductsByUser = () => {
+    const URL_API = `/api/Category/by_user`;
+    return api.get(URL_API);
+};
+const GetDiscountedProduct = () => {
+    const URL_API = `/api/Category/discounted`;
+    return api.get(URL_API);
+};
+
+
 export {
     GetAllProduct,
     GetProduct,
@@ -40,5 +50,7 @@ export {
     UpdateProduct,
     DeleteProductImage,
     DeleteProduct,
-    GetAllCategory
+    GetAllCategory,
+    GetProductsByUser,
+    GetDiscountedProduct
 };
