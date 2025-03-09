@@ -3,130 +3,140 @@ import { Box, Button, IconButton, useTheme } from "@mui/material";
 import { Header } from "../../../components";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../../theme";
-import { CreateProduct, DeleteProduct, GetAllProduct } from "../../../services/productService";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { useNavigate } from "react-router-dom";
-import AddProductDialog from "../../../components/products/AddProductDialog";
-const ManageProduct = () => {
+import { GetAllCategory, CreateCategory, UpdateCategory, DeleteCategory } from "../../../services/categoryService";
+import AddCategoryDialog from "../../../components/categories/AddCategoryDialog";
+import UpdateCategoryDialog from "../../../components/categories/UpdateCategoryDialog";
+
+const ManageCategory = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [selectedRows, setSelectedRows] = useState([]);
-  const navigate = useNavigate();
   const [openAddDialog, setOpenAddDialog] = useState(false);
-  const fetchProducts = async () => {
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [openEditDialog, setOpenEditDialog] = useState(false);
+
+  const fetchCategories = async () => {
     try {
-      const res = await GetAllProduct();
+      const res = await GetAllCategory();
       if (res?.data) {
-        console.log(">>>Products: ", res.data);
-        setProducts(res.data);
+        console.log(">>>Categories: ", res.data);
+        setCategories(res.data);
       }
     } catch (error) {
-      console.log(">>>Error fetching products", error);
+      console.log(">>>Error fetching categories", error);
     }
   };
+
   useEffect(() => {
-    fetchProducts();
+    fetchCategories();
   }, []);
 
-  const handleAddProduct = () => {
+  const handleAddCategory = () => {
     setOpenAddDialog(true);
   };
-  const handleAddDialogSubmit = async (newProduct) => {
-    console.log("New Product: ", newProduct);
-    const res = await CreateProduct(newProduct);
-    if (res?.status === 200 && res?.data) {
-      alert("Thêm sản phẩm thành công!");
-      fetchProducts();
-    } else{
-      console.log(">>>Check err:", res);
+
+  const handleAddDialogSubmit = async (newCategory) => {
+    try {
+      const res = await CreateCategory(newCategory);
+      if (res?.status === 200 && res?.data) {
+        alert("Thêm category thành công!");
+        fetchCategories();
+        setOpenAddDialog(false);
+      } else {
+        console.log(">>>Error creating category:", res);
+      }
+    } catch (error) {
+      console.log(">>>Error creating category:", error);
+    }
+  };
+
+  const handleEdit = (row) => {
+    setSelectedCategory(row);
+    setOpenEditDialog(true);
+  };
+
+  const handleEditDialogSubmit = async (updatedCategory) => {
+    try {
+      const res = await UpdateCategory(selectedCategory.CategoryId, updatedCategory);
+      if (res?.status === 200 && res?.data) {
+        alert("Cập nhật category thành công!");
+        fetchCategories();
+        setOpenEditDialog(false);
+      } else {
+        console.log(">>>Error updating category:", res);
+      }
+    } catch (error) {
+      console.log(">>>Error updating category:", error);
     }
   };
 
   const handleDelete = async (row) => {
-    if (window.confirm("Bạn có chắc chắn muốn xóa sản phẩm này không?")) {
-      console.log("Delete product: ", row?.productId);
+    if (window.confirm("Bạn có chắc chắn muốn xóa category này không?")) {
       try {
-        const res = await DeleteProduct(row?.productId);
+        const res = await DeleteCategory(row.CategoryId);
         if (res?.status === 204) {
-          setProducts((prevProducts) =>
-            prevProducts.filter((product) => product.productId !== row.productId)
+          setCategories((prev) =>
+            prev.filter((category) => category.CategoryId !== row.CategoryId)
           );
         } else {
-          console.log(">>>Error deleting product:", res);
+          console.log(">>>Error deleting category:", res);
         }
       } catch (error) {
-        console.log(">>>Error deleting product:", error);
+        console.log(">>>Error deleting category:", error);
       }
     }
   };
 
-  const handleDeleteSelected = () => {
-    if (window.confirm("Bạn có chắc chắn muốn xóa các sản phẩm đã chọn không?")) {
-      setProducts((prevProducts) =>
-        prevProducts.filter((product) => !selectedRows.includes(product.productId))
-      );
-      setSelectedRows([]);
+  const handleDeleteSelected = async () => {
+    if (window.confirm("Bạn có chắc chắn muốn xóa các category đã chọn không?")) {
+      try {
+        const deletePromises = selectedRows.map((id) => DeleteCategory(id));
+        await Promise.all(deletePromises);
+        setCategories((prev) =>
+          prev.filter((category) => !selectedRows.includes(category.CategoryId))
+        );
+        setSelectedRows([]);
+      } catch (error) {
+        console.log(">>>Error deleting selected categories:", error);
+      }
     }
   };
 
   const columns = [
     {
-      field: "productId",
+      field: "categoryId",
       headerName: "ID",
       flex: 0.5,
     },
     {
       field: "name",
-      headerName: "Tên sản phẩm",
-      cellClassName: "name-column--cell",
+      headerName: "Tên category",
       flex: 1,
     },
     {
-      field: "info",
-      headerName: "Thông tin",
+      field: "description",
+      headerName: "Mô tả",
       flex: 1,
     },
     {
-      field: "price",
-      headerName: "Giá",
-      type: "number",
+      field: "parentCategoryId",
+      headerName: "Parent Category ID",
       flex: 0.7,
-      minWidth: 120,
     },
     {
-      field: "stock",
-      headerName: "Số lượng",
-      type: "number",
-      flex: 0.7,
-      minWidth: 120,
-    },
-    {
-      field: "ratingCount",
-      headerName: "Số đánh giá",
-      type: "number",
-      flex: 0.5,
-      minWidth: 100,
-    },
-    {
-      field: "averageRating",
-      headerName: "Đánh giá trung bình",
-      type: "number",
-      flex: 0.5,
-      minWidth: 150,
-    },
-    {
-      field: "categories",
-      headerName: "Danh mục",
+      field: "imageUrl",
+      headerName: "Ảnh",
       flex: 1,
-      minWidth: 150,
       renderCell: (params) => {
-        if (Array.isArray(params.value)) {
-          return params.value.map((cat) => cat.categoryId).join(", ");
-        }
-        return "";
+        return params.value ? (
+          <img src={params.value} alt={params.row.Name} style={{ height: "40px" }} />
+        ) : (
+          ""
+        );
       },
     },
     {
@@ -154,15 +164,15 @@ const ManageProduct = () => {
   return (
     <Box m="20px">
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-        <Header title="Quản lý sản phẩm" subtitle="Danh sách các sản phẩm" />
+        <Header title="Quản lý category" subtitle="Danh sách các category" />
         <Box display="flex" alignItems="center" gap={2}>
           {selectedRows.length > 0 && (
             <Button variant="contained" color="error" onClick={handleDeleteSelected}>
               Xoá đã chọn
             </Button>
           )}
-          <Button variant="contained" color="secondary" startIcon={<AddIcon />} onClick={handleAddProduct}>
-            Thêm sản phẩm
+          <Button variant="contained" color="secondary" startIcon={<AddIcon />} onClick={handleAddCategory}>
+            Thêm category
           </Button>
         </Box>
       </Box>
@@ -174,7 +184,6 @@ const ManageProduct = () => {
         sx={{
           "& .MuiDataGrid-root": { border: "none" },
           "& .MuiDataGrid-cell": { border: "none" },
-          "& .name-column--cell": { color: colors.greenAccent[300] },
           "& .MuiDataGrid-columnHeaders": {
             backgroundColor: colors.blueAccent[700],
             borderBottom: "none",
@@ -189,35 +198,36 @@ const ManageProduct = () => {
           "& .MuiCheckbox-root": {
             color: `${colors.greenAccent[200]} !important`,
           },
-          "& .MuiDataGrid-iconSeparator": { color: colors.primary[100] },
-          "& .MuiDataGrid-toolbarContainer .MuiButton-text": {
-            color: `${colors.gray[100]} !important`,
-          },
         }}
       >
         <DataGrid
-          rows={products}
+          rows={categories}
           columns={columns}
-          getRowId={(row) => row.productId}
+          getRowId={(row) => row.categoryId}
           checkboxSelection
           selectionModel={selectedRows}
-          onRowSelectionModelChange={(ids) => {
-            console.log("Selected rows: ", ids);
-            setSelectedRows(ids);
-          }}
+          onRowSelectionModelChange={(ids) => setSelectedRows(ids)}
           slots={{ toolbar: GridToolbar }}
           initialState={{
             pagination: { paginationModel: { pageSize: 10 } },
           }}
         />
       </Box>
-      <AddProductDialog
+
+      <AddCategoryDialog
         open={openAddDialog}
         onClose={() => setOpenAddDialog(false)}
         onSubmit={handleAddDialogSubmit}
+      />
+
+      <UpdateCategoryDialog
+        open={openEditDialog}
+        onClose={() => setOpenEditDialog(false)}
+        onSubmit={handleEditDialogSubmit}
+        category={selectedCategory}
       />
     </Box>
   );
 };
 
-export default ManageProduct;
+export default ManageCategory;

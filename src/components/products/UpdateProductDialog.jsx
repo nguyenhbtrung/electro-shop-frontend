@@ -12,8 +12,7 @@ import Autocomplete from "@mui/material/Autocomplete";
 import { UpdateProduct } from "../../services/productService";
 
 const AddUpdateProductDialog = ({ open, onClose, onSubmit, product, categories }) => {
-  // product: sản phẩm đang chọn (để cập nhật)
-  // categories: mảng các danh mục có sẵn, mỗi mục có cấu trúc { categoryId, name }
+
 
   const [formValues, setFormValues] = useState({
     name: "",
