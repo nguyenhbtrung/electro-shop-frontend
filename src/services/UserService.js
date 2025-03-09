@@ -2,7 +2,6 @@ import axiosInstance from './axios/axios.customize'
 const url = '/api/User';
 
 export const UserRegister = (data) => {
-    
     return axiosInstance.post(url + '/register', data);
 };
 

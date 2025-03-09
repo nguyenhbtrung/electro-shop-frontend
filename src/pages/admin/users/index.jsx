@@ -9,6 +9,7 @@ import {
   LockOpenOutlined,
   SecurityOutlined,
 } from "@mui/icons-material";
+import { GridToolbar } from "@mui/x-data-grid";
 
 const ManageUser = () => {
   const theme = useTheme();
@@ -103,11 +104,14 @@ const ManageUser = () => {
 
   return (
     <Box m="20px">
-      <Header title="Quản lí người dùng" subtitle="" />
+      <Header
+        title="CONTACTS"
+        subtitle="List of Contacts for Future Reference"
+      />
       <Box
         mt="40px"
         height="75vh"
-        flex={1}
+        maxWidth="100%"
         sx={{
           "& .MuiDataGrid-root": {
             border: "none",
@@ -120,6 +124,7 @@ const ManageUser = () => {
           },
           "& .MuiDataGrid-columnHeaders": {
             backgroundColor: colors.blueAccent[700],
+            "--DataGrid-containerBackground": "transparent",
             borderBottom: "none",
           },
           "& .MuiDataGrid-virtualScroller": {
@@ -135,12 +140,15 @@ const ManageUser = () => {
           "& .MuiDataGrid-iconSeparator": {
             color: colors.primary[100],
           },
+          "& .MuiDataGrid-toolbarContainer .MuiButton-text": {
+            color: `${colors.gray[100]} !important`,
+          },
         }}
       >
         <DataGrid
           rows={users}
           columns={columns}
-          getRowId={(row) => row.userName}
+          slots={{ toolbar: GridToolbar }} // Đổi từ 'components' sang 'slots'
           initialState={{
             pagination: {
               paginationModel: {
@@ -150,6 +158,7 @@ const ManageUser = () => {
           }}
           checkboxSelection
         />
+
       </Box>
     </Box>
   );

@@ -114,7 +114,7 @@ export default function Login(props) {
                 const token = response.data.token;
                 console.log("token: ", token);
                 localStorage.setItem('access_token', token);
-                navigate('/');
+                navigate('/admin');
             }
             else {
                 setPasswordError(true);
@@ -129,11 +129,11 @@ export default function Login(props) {
 
     const navigate = useNavigate();
     const handleSignUpClick = () => {
-        navigate('/sign-up');
+        navigate('/register');
     };
 
     const handleClickHome = () => {
-        navigate('/home');
+        navigate('/');
     };
 
     return (
