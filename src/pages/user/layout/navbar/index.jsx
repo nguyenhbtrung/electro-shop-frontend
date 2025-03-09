@@ -5,6 +5,7 @@ import {
     Typography,
     useMediaQuery,
     useTheme,
+    Button,
 } from "@mui/material";
 import { useContext } from "react";
 import {
@@ -15,6 +16,7 @@ import {
     PersonOutlined,
     SearchOutlined,
     SettingsOutlined,
+    ShoppingCartOutlined,
 } from "@mui/icons-material";
 import { ColorModeContext, tokens } from "../../../../theme";
 import { ToggledContext } from "../../AppUser";
@@ -27,13 +29,10 @@ const Navbar = () => {
     const isMdDevices = useMediaQuery("(max-width:768px)");
     const isXsDevices = useMediaQuery("(max-width:466px)");
     const colors = tokens(theme.palette.mode);
+
     return (
-        <Box
-            display="flex"
-            alignItems="center"
-            justifyContent="space-between"
-            p={2}
-        >
+        <Box display="flex" alignItems="center" justifyContent="space-between" p={2}>
+            {/* Phần bên trái: menu, logo, title và tìm kiếm */}
             <Box display="flex" alignItems="center" gap={2}>
                 <IconButton
                     sx={{ display: `${isMdDevices ? "flex" : "flex"}` }}
@@ -69,7 +68,13 @@ const Navbar = () => {
                 </Box>
             </Box>
 
-            <Box>
+            <Box display="flex" alignItems="center" gap={1}>
+                <Button variant="text" color={colors.primary[400]}>Đơn Hàng</Button>
+                <Button variant="text" color={colors.primary[400]}>Lịch Sử Duyệt Sản Phẩm</Button>
+                <Button variant="text" color={colors.primary[400]}>Hoàn Trả</Button>
+                <IconButton>
+                    <ShoppingCartOutlined />
+                </IconButton>
                 <IconButton onClick={colorMode.toggleColorMode}>
                     {theme.palette.mode === "dark" ? (
                         <LightModeOutlined />
@@ -81,11 +86,9 @@ const Navbar = () => {
                     <NotificationsOutlined />
                 </IconButton>
                 <IconButton>
-                    <SettingsOutlined />
-                </IconButton>
-                <IconButton>
                     <PersonOutlined />
                 </IconButton>
+                <Button variant="text" color={colors.primary[400]}>Đăng nhập</Button>
             </Box>
         </Box>
     );
