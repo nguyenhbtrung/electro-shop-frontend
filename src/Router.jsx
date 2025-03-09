@@ -29,7 +29,7 @@ import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import CategoryPage from "./pages/user/categoryPage";
 import HomePage from "./pages/user/homePage";
-import AddUserForm from "./pages/admin/users/adduser";
+import AddUserForm from "./pages/admin/users/addUser";
 
 const AppRouter = () => {
   return (
