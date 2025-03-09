@@ -2,6 +2,7 @@
 import React from "react";
 import { Container, Box, Typography } from "@mui/material";
 import ProductCard from "../../../components/products/ProductCard";
+import Footer from "../../../components/Footer";
 
 // Mẫu dữ liệu sản phẩm khuyến mãi (5 sản phẩm)
 const promotionProducts = [
@@ -143,40 +144,45 @@ const bestSellingProducts = [
 
 const HomePage = () => {
     return (
-        <Container sx={{ py: 4 }}>
-            {/* Hàng sản phẩm khuyến mãi */}
-            <Typography variant="h5" sx={{ mb: 2 }}>
-                Sản phẩm khuyến mãi
-            </Typography>
-            <Box
-                sx={{
-                    display: "grid",
-                    gridTemplateColumns: "repeat(5, 1fr)", // 5 sản phẩm trên 1 hàng
-                    gap: 2,
-                    mb: 4, // khoảng cách dưới của hàng khuyến mãi
-                }}
-            >
-                {promotionProducts.map((product) => (
-                    <ProductCard key={product.id} product={product} />
-                ))}
-            </Box>
+        <>
+            <Container sx={{ py: 4 }}>
+                {/* Hàng sản phẩm khuyến mãi */}
+                <Typography variant="h5" sx={{ mb: 2 }}>
+                    Sản phẩm khuyến mãi
+                </Typography>
+                <Box
+                    sx={{
+                        display: "grid",
+                        gridTemplateColumns: "repeat(5, 1fr)", // 5 sản phẩm trên 1 hàng
+                        gap: 2,
+                        mb: 4,
+                    }}
+                >
+                    {promotionProducts.map((product) => (
+                        <ProductCard key={product.id} product={product} />
+                    ))}
+                </Box>
 
-            {/* Hàng sản phẩm bán chạy */}
-            <Typography variant="h5" sx={{ mb: 2 }}>
-                Sản phẩm bán chạy
-            </Typography>
-            <Box
-                sx={{
-                    display: "grid",
-                    gridTemplateColumns: "repeat(5, 1fr)", // 5 sản phẩm trên 1 hàng
-                    gap: 2,
-                }}
-            >
-                {bestSellingProducts.map((product) => (
-                    <ProductCard key={product.id} product={product} />
-                ))}
-            </Box>
-        </Container>
+                {/* Hàng sản phẩm bán chạy */}
+                <Typography variant="h5" sx={{ mb: 2 }}>
+                    Sản phẩm bán chạy
+                </Typography>
+                <Box
+                    sx={{
+                        display: "grid",
+                        gridTemplateColumns: "repeat(5, 1fr)",
+                        gap: 2,
+                    }}
+                >
+                    {bestSellingProducts.map((product) => (
+                        <ProductCard key={product.id} product={product} />
+                    ))}
+                </Box>
+            </Container>
+
+            {/* Footer sẽ xuất hiện ngay sau nội dung trang */}
+            <Footer />
+        </>
     );
 };
 
