@@ -24,10 +24,10 @@ const UpdateCategoryDialog = ({ open, onClose, onSubmit, category }) => {
   useEffect(() => {
     if (category) {
       setFormValues({
-        name: category.Name || "",
-        description: category.Description || "",
-        parentCategoryId: category.ParentCategoryId ?? "",
-        imageUrl: category.ImageUrl || "",
+        name: category.name || "",
+        description: category.description || "",
+        parentCategoryId: category.parentCategoryId ?? "",
+        imageUrl: category.imageUrl || "",
       });
     } else {
       setFormValues({
