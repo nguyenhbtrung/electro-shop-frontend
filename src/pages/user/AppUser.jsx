@@ -1,10 +1,11 @@
-import React, { createContext, useState } from "react";
+import React, { createContext, useEffect, useState } from "react";
 import { Box, CssBaseline, ThemeProvider } from "@mui/material";
 
 import { Outlet } from "react-router-dom";
 import { ColorModeContext, useMode } from "../../theme";
 import Navbar from "./layout/navbar";
 import SideBar from "./layout/sidebar";
+import { GetCategoryTree } from "../../services/categoryService";
 
 export const ToggledContext = createContext(null);
 
@@ -12,6 +13,17 @@ function App() {
     const [theme, colorMode] = useMode();
     const [toggled, setToggled] = useState(false);
     const values = { toggled, setToggled };
+    const [categoryTree, setCategoryTree] = useState([]);
+
+    useEffect(() => {
+        const GetTree = async () => {
+            const res = await GetCategoryTree();
+            if (res?.status === 200 && res?.data) {
+                console.log(">>>Check res", res?.data);
+            }
+        };
+        GetTree();
+    }, []);
 
     return (
         <ColorModeContext.Provider value={colorMode}>
