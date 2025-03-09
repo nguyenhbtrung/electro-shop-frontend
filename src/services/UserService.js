@@ -9,10 +9,11 @@ export const UserLogin = (data) => {
     return axiosInstance.post(url + '/login', data);
 };
 
-// export const GetProfileData = (userName) => {
-//     return axios.get(url + `/profile/by-username/${userName}`);
-// };
+export const GetAllUsers = () => {
+    return axiosInstance.get(url);
+};
 
-// export const GetProfilePosts = (userName, PageNumber, config) => {
-//     return axios.get(url + `/profile/by-username/${userName}/posts?PageNumber=${PageNumber}`, config);
-// };
+export const GetUserProfileData = (userName) => {
+    return axios.get(url + `/${userName}`);
+};
+
