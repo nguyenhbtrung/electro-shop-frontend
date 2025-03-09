@@ -13,6 +13,16 @@ export const GetAllUsers = () => {
     return axiosInstance.get(url);
 };
 
+export const AddUser = (data) => {
+    return axiosInstance.post(url + '/addUser', data);
+};
+
+export const DeleteUser = (userName) => {
+    return axiosInstance.delete(url + '/admin', {
+        params: { userName }
+    });
+};
+
 export const GetUserProfileData = (userName) => {
     return axios.get(url + `/${userName}`);
 };

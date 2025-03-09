@@ -1,23 +1,25 @@
-import { Box, Typography, useTheme } from "@mui/material";
+import { Box, Typography, useTheme, Button } from "@mui/material";
 import { Header } from "../../../components";
 import { DataGrid } from "@mui/x-data-grid";
 import { tokens } from "../../../theme";
 import { useEffect, useState } from "react";
-import {
-  AdminPanelSettingsOutlined,
-  LockOpenOutlined,
-  SecurityOutlined,
-} from "@mui/icons-material";
+import { Co2Sharp, Edit } from "@mui/icons-material";
 import { GridToolbar } from "@mui/x-data-grid";
-import { GetAllUsers } from "../../../services/UserService";
+import { GetAllUsers, DeleteUser } from "../../../services/UserService";
 import { convertToCustomMonthDate } from "../../../utils/formatDatetime";
+import AddIcon from "@mui/icons-material/Add";
+import DeleteIcon from '@mui/icons-material/Delete';
+import { useNavigate } from "react-router-dom";
+import PersonIcon from '@mui/icons-material/Person';
+import SecurityIcon from '@mui/icons-material/Security';
+import ReplayIcon from '@mui/icons-material/Replay';
 
 const ManageUser = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-
+  const [selectedRows, setSelectedRows] = useState([]);
   const [users, setUsers] = useState([]);
-
+  const navigate = useNavigate();
 
 
   const columns = [
@@ -52,6 +54,7 @@ const ManageUser = () => {
       headerName: "Vai trò",
       flex: 1,
       renderCell: ({ row: { roles } }) => {
+        const roleText = roles === "Admin" ? "Quản lý" : "Người dùng";
         return (
           <Box
             width="120px"
@@ -67,10 +70,9 @@ const ManageUser = () => {
             }
             borderRadius={1}
           >
-            {roles === "Admin" && <AdminPanelSettingsOutlined />}
-            {roles === "manager" && <SecurityOutlined />}
-            {roles === "User" && <LockOpenOutlined />}
-            <Typography textTransform="capitalize">{roles}</Typography>
+            {roles === "Admin" && <SecurityIcon />}
+            {roles === "User" && <PersonIcon />}
+            <Typography textTransform="capitalize">{roleText}</Typography>
           </Box>
         );
       },
@@ -90,28 +92,103 @@ const ManageUser = () => {
     },
   ];
 
+  const GetAllUser = async () => {
+    try {
+      const response = await GetAllUsers();
+      const data = await response.data;
+      setUsers(data);
+      console.log(data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
+    GetAllUser();
+  }, []);
+
+  const handleAddUser = () => {
+    navigate("/admin/users/add");
+  }
+
+  const handleDeleteSelected = async () => {
+    if (selectedRows.length === 0) {
+      alert("Vui lòng chọn người dùng cần xoá!");
+      return;
+    } else {
       try {
-        const response = await GetAllUsers();
-        const data = await response.data;
-        setUsers(data);
-        console.log(data);
+        for (const userName of selectedRows) {
+          await DeleteUser(userName);
+        }
+        alert("Xoá thành công!");
       } catch (error) {
         console.error(error);
       }
-    };
-    fetchData();
-  }, []);
+    }
+  };
+
+  const handleEditSelected = () => {
+    if (selectedRows.length === 0) {
+      alert("Vui lòng chọn người dùng cần chỉnh sửa!");
+      return;
+    } else if (selectedRows.length > 1) {
+      alert("Chỉ được chọn 1 người dùng để chỉnh sửa!");
+      return;
+    } else {
+      navigate(`/admin/users/edit/${selectedRows[0]}`);
+    }
+  }
 
   return (
     <Box m="20px">
-      <Header
-        title="Người dùng"
-        subtitle="Danh sách người dùng trong hệ thống"
-      />
       <Box
-        mt="40px"
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        mb={2}
+        marginBottom={0}
+      >
+        <Header
+          title="Người dùng"
+          subtitle="Danh sách người dùng trong hệ thống"
+        />
+        <Box display="flex" alignItems="center" gap={2}>
+          <Button
+            variant="contained"
+            color="info"
+            startIcon={<ReplayIcon />}
+            onClick={GetAllUser}
+          >
+            Làm mới
+          </Button>
+          <Button
+            variant="contained"
+            color="secondary"
+            startIcon={<AddIcon />}
+            onClick={handleAddUser}
+          >
+            Thêm người dùng
+          </Button>
+          <Button
+            variant="contained"
+            color="warning"
+            startIcon={<Edit />}
+            onClick={handleEditSelected}
+          >
+            Chỉnh sửa
+          </Button>
+          <Button
+            variant="contained"
+            color="error"
+            startIcon={<DeleteIcon />}
+            onClick={handleDeleteSelected}
+          >
+            Xoá đã chọn
+          </Button>
+        </Box>
+      </Box>
+      <Box
+        mt="0px"
         height="75vh"
         maxWidth="100%"
         sx={{
@@ -122,10 +199,10 @@ const ManageUser = () => {
             border: "none",
           },
           "& .name-column--cell": {
-            color: colors.greenAccent[300],
+            color: colors.greenAccent[0],
           },
           "& .MuiDataGrid-columnHeaders": {
-            backgroundColor: colors.blueAccent[700],
+            backgroundColor: colors.blueAccent[500],
             "--DataGrid-containerBackground": "transparent",
             borderBottom: "none",
           },
@@ -134,7 +211,7 @@ const ManageUser = () => {
           },
           "& .MuiDataGrid-footerContainer": {
             borderTop: "none",
-            backgroundColor: colors.blueAccent[700],
+            backgroundColor: colors.blueAccent[600],
           },
           "& .MuiCheckbox-root": {
             color: `${colors.greenAccent[200]} !important`,
@@ -151,6 +228,10 @@ const ManageUser = () => {
           rows={users}
           columns={columns}
           getRowId={(row) => row.userName}
+          onRowSelectionModelChange={(ids) => {
+            console.log("Selected rows: ", ids);
+            setSelectedRows(ids);
+          }}
           slots={{ toolbar: GridToolbar }} // Đổi từ 'components' sang 'slots'
           initialState={{
             pagination: {

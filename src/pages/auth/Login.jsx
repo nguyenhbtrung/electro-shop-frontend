@@ -114,7 +114,11 @@ export default function Login(props) {
                 const token = response.data.token;
                 console.log("token: ", token);
                 localStorage.setItem('access_token', token);
-                navigate('/admin');
+                if (response.data.roles === "User") {
+                    navigate('/user');
+                } else if (response.data.roles === "Admin") {
+                    navigate('/admin');
+                }
             }
             else {
                 setPasswordError(true);
