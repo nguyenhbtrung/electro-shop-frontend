@@ -29,32 +29,27 @@ const ProductCard = ({ product }) => {
         rating,
     } = product;
 
-    // state để theo dõi hover lên ảnh
     const [isHovered, setIsHovered] = useState(false);
 
-    // Chọn ảnh hiển thị: nếu hover và có ảnh thứ 2 thì sử dụng ảnh thứ 2, ngược lại thì dùng ảnh đầu tiên.
     const visibleImage = isHovered && images[1] ? images[1] : images[0];
 
-    // Hàm render sao theo rating
     const renderStars = (rating) => {
         const fullStars = Math.floor(rating);
         const halfStar = rating - fullStars >= 0.5 ? 1 : 0;
         const emptyStars = 5 - fullStars - halfStar;
         let stars = [];
 
-        // full stars
         for (let i = 0; i < fullStars; i++) {
             stars.push(
                 <StarIcon key={`full-${i}`} sx={{ color: "#FFD700", fontSize: 18 }} />
             );
         }
-        // half star
         if (halfStar) {
             stars.push(
                 <StarHalfIcon key="half" sx={{ color: "#FFD700", fontSize: 18 }} />
             );
         }
-        // empty stars
+
         for (let i = 0; i < emptyStars; i++) {
             stars.push(
                 <StarBorderIcon key={`empty-${i}`} sx={{ color: "#FFD700", fontSize: 18 }} />
