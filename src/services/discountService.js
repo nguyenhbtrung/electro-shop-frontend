@@ -15,8 +15,14 @@ const DeleteDiscount = (id) => {
     return api.delete(URL_API);
 };
 
+const UpdateDiscount = (id, data) => {
+    const URL_API = `/api/Discount/${id}`;
+    return api.put(URL_API, data);
+}
+
 export {
     GetDiscounts,
     CreateDiscount,
-    DeleteDiscount
+    DeleteDiscount,
+    UpdateDiscount
 };

@@ -8,7 +8,12 @@ import {
 import { Header } from "../../../components";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../../theme";
-import { CreateDiscount, DeleteDiscount, GetDiscounts } from "../../../services/discountService";
+import {
+    CreateDiscount,
+    DeleteDiscount,
+    GetDiscounts,
+    UpdateDiscount,
+} from "../../../services/discountService";
 import { convertToCustomMonthDate } from "../../../utils/formatDatetime";
 import DiscountPaper from "../../../components/discounts/DiscountPaper";
 import AddIcon from "@mui/icons-material/Add";
@@ -16,7 +21,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useNavigate } from "react-router-dom";
 import AddDiscountDialog from "../../../components/discounts/AddDiscountDiaglog";
-
+import UpdateDiscountDialog from "../../../components/discounts/UpdateDiscountDialog";
 
 const ManageDiscount = () => {
     const theme = useTheme();
@@ -25,46 +30,69 @@ const ManageDiscount = () => {
     const [selectedRows, setSelectedRows] = useState([]);
     const navigate = useNavigate();
     const [openAddDialog, setOpenAddDialog] = useState(false);
+    const [openUpdateDialog, setOpenUpdateDialog] = useState(false);
+    const [selectedDiscount, setSelectedDiscount] = useState(null);
 
     useEffect(() => {
         const GetDiscountsData = async () => {
             try {
                 const res = await GetDiscounts();
                 if (res?.data) {
-                    console.log(">>>Check res", res.data);
                     setDiscounts(res.data);
                 }
             } catch (error) {
-                console.log(">>>Check err", error);
+                console.log("Lỗi lấy dữ liệu:", error);
             }
         };
 
         GetDiscountsData();
     }, []);
 
-    // Mở dialog thêm giảm giá
+    // Xử lý mở dialog thêm giảm giá
     const handleAddDiscount = () => {
         setOpenAddDialog(true);
     };
 
-    // Xử lý khi nhận được dữ liệu từ dialog
+    // Xử lý submit từ dialog thêm giảm giá
     const handleAddDialogSubmit = async (newDiscount) => {
-        console.log("New Discount: ", newDiscount);
-        const res = await CreateDiscount(newDiscount);
-        if (res?.status === 201 && res?.data) {
-            alert("Thêm chương trình giảm giá thành công!");
-            setDiscounts((prev) => [
-                res?.data,
-                ...prev,
-            ]);
-        } else {
-            console.log(">>>Check err:", res);
+        try {
+            const res = await CreateDiscount(newDiscount);
+            if (res?.status === 201 && res?.data) {
+                alert("Thêm chương trình giảm giá thành công!");
+                setDiscounts((prev) => [res.data, ...prev]);
+            } else {
+                console.log("Lỗi thêm:", res);
+            }
+        } catch (error) {
+            console.log("Lỗi:", error);
         }
     };
 
+    // Xử lý mở dialog cập nhật giảm giá
     const handleEdit = (row) => {
-        // Điều hướng tới trang chỉnh sửa với discountId từ row
-        // navigate(`/discounts/edit/${row.discountId}`);
+        setSelectedDiscount(row);
+        setOpenUpdateDialog(true);
+    };
+
+    // Xử lý submit từ dialog cập nhật giảm giá
+    const handleUpdateDialogSubmit = async (updatedDiscount) => {
+        try {
+            const res = await UpdateDiscount(updatedDiscount?.discountId, updatedDiscount);
+            if (res?.status === 200 && res?.data) {
+                alert("Cập nhật chương trình giảm giá thành công!");
+                setDiscounts((prevDiscounts) =>
+                    prevDiscounts.map((discount) =>
+                        discount.discountId === updatedDiscount.discountId ? res.data : discount
+                    )
+                );
+            } else {
+                console.log("Lỗi cập nhật:", res);
+            }
+        } catch (error) {
+            console.log("Lỗi:", error);
+        }
+        // console.log(">>>Check discount:", updatedDiscount);
+        setOpenUpdateDialog(false);
     };
 
     const handleDelete = async (row) => {
@@ -73,18 +101,20 @@ const ManageDiscount = () => {
                 "Bạn có chắc chắn muốn xóa chương trình giảm giá này không?"
             )
         ) {
-            console.log("Delete discount: ", row?.discountId);
-            const res = await DeleteDiscount(row?.discountId);
-            if (res?.status === 204) {
-                setDiscounts((prevDiscounts) =>
-                    prevDiscounts.filter(
-                        (discount) => discount.discountId !== row.discountId
-                    )
-                );
-            } else {
-                console.log(">>>Check err:", res);
+            try {
+                const res = await DeleteDiscount(row.discountId);
+                if (res?.status === 204) {
+                    setDiscounts((prevDiscounts) =>
+                        prevDiscounts.filter(
+                            (discount) => discount.discountId !== row.discountId
+                        )
+                    );
+                } else {
+                    console.log("Lỗi xóa:", res);
+                }
+            } catch (error) {
+                console.log("Lỗi:", error);
             }
-
         }
     };
 
@@ -257,7 +287,6 @@ const ManageDiscount = () => {
                     checkboxSelection
                     selectionModel={selectedRows}
                     onRowSelectionModelChange={(ids) => {
-                        console.log("Selected rows: ", ids);
                         setSelectedRows(ids);
                     }}
                     slots={{ toolbar: GridToolbar }}
@@ -267,11 +296,19 @@ const ManageDiscount = () => {
                 />
             </Box>
 
-            {/* Thêm dialog */}
+            {/* Dialog thêm giảm giá */}
             <AddDiscountDialog
                 open={openAddDialog}
                 onClose={() => setOpenAddDialog(false)}
                 onSubmit={handleAddDialogSubmit}
+            />
+
+            {/* Dialog cập nhật giảm giá */}
+            <UpdateDiscountDialog
+                open={openUpdateDialog}
+                onClose={() => setOpenUpdateDialog(false)}
+                onSubmit={handleUpdateDialogSubmit}
+                discount={selectedDiscount}
             />
         </Box>
     );
