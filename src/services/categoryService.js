@@ -24,11 +24,16 @@ const DeleteCategory = (id) => {
     const URL_API = `/api/Category/${id}`;
     return api.delete(URL_API);
 };
+const GetProductByCategoryId = (id) => {
+    const URL_API = `/api/Category/${id}/Product`;
+    return api.get(URL_API);
+};
 export {
     GetCategoryTree,
     GetCategory,
     UpdateCategory,
     CreateCategory,
     DeleteCategory,
-    GetAllCategory
+    GetAllCategory,
+    GetProductByCategoryId
 };
