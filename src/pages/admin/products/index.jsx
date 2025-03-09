@@ -16,7 +16,6 @@ const ManageProduct = () => {
   const colors = tokens(theme.palette.mode);
   const [products, setProducts] = useState([]);
   const [selectedRows, setSelectedRows] = useState([]);
-  const navigate = useNavigate();
   const [openAddDialog, setOpenAddDialog] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [openEditProductDialog, setEditProductDialog] = useState(false);
