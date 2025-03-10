@@ -121,6 +121,7 @@ const ManageUser = () => {
           await DeleteUser(userName);
         }
         alert("Xoá thành công!");
+        GetAllUser();
       } catch (error) {
         console.error(error);
       }
