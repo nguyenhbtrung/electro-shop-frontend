@@ -3,7 +3,7 @@ import { Header } from "../../../components";
 import { DataGrid } from "@mui/x-data-grid";
 import { tokens } from "../../../theme";
 import { useEffect, useState } from "react";
-import { Co2Sharp, Edit } from "@mui/icons-material";
+import { Edit } from "@mui/icons-material";
 import { GridToolbar } from "@mui/x-data-grid";
 import { GetAllUsers, DeleteUser } from "../../../services/UserService";
 import { convertToCustomMonthDate } from "../../../utils/formatDatetime";
@@ -13,6 +13,16 @@ import { useNavigate } from "react-router-dom";
 import PersonIcon from '@mui/icons-material/Person';
 import SecurityIcon from '@mui/icons-material/Security';
 import ReplayIcon from '@mui/icons-material/Replay';
+
+/*
+- Đăng nhập với google, X ,...
+- Thêm hàm đổi mật khẩu cho admin, user
+- Quên mật khẩu cho user đồng thời phải có xác thực email
+- Cho người dùng có thể có nhiều địa chỉ nhận hàng
+- Thay cách hiện thị thông báo bằng cửa sổ component riêng chứ không dùng cửa sổ alert mặc định
+- Chỉnh sửa, tút tát lại trang đkí, đăng nhập
+- Quản lí nhập hàng: thêm, sửa, xoá, xem chi tiết, Data gồm có: {Id, Tên sản phẩm, Số lượng, Đơn giá, Trạng thái lô, Ngày nhập, Nhà cung cấp, (Ghi chú)}
+*/
 
 const ManageUser = () => {
   const theme = useTheme();

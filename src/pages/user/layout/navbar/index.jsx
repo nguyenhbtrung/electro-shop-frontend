@@ -21,6 +21,7 @@ import {
 import { ColorModeContext, tokens } from "../../../../theme";
 import { ToggledContext } from "../../AppUser";
 import logo from "../../../../assets/images/logo.png";
+import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
     const theme = useTheme();
@@ -29,6 +30,11 @@ const Navbar = () => {
     const isMdDevices = useMediaQuery("(max-width:768px)");
     const isXsDevices = useMediaQuery("(max-width:466px)");
     const colors = tokens(theme.palette.mode);
+    const navigate = useNavigate();
+
+    const handleLogin = () => {
+        navigate("/login");
+    }
 
     return (
         <Box display="flex" alignItems="center" justifyContent="space-between" p={2}>
@@ -88,7 +94,7 @@ const Navbar = () => {
                 <IconButton>
                     <PersonOutlined />
                 </IconButton>
-                <Button variant="text" color={colors.primary[400]}>Đăng nhập</Button>
+                <Button variant="text" color={colors.primary[400]} onClick={handleLogin}>Đăng nhập</Button>
             </Box>
         </Box>
     );
