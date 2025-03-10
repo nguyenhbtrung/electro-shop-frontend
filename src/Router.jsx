@@ -30,6 +30,7 @@ import Register from "./pages/auth/Register";
 import CategoryPage from "./pages/user/categoryPage";
 import HomePage from "./pages/user/homePage";
 import AddUserForm from "./pages/admin/users/addUser";
+import UpdateUserForm from "./pages/admin/users/updateUser";
 
 const AppRouter = () => {
   return (
@@ -48,6 +49,7 @@ const AppRouter = () => {
           <Route path="" element={<Dashboard />} />
           <Route path="users" element={<ManageUser />} />
           <Route path="users/add" element={<AddUserForm />} />
+          <Route path="users/edit/:userName" element={<UpdateUserForm />} />
           <Route path="products" element={<ManageProduct />} />
           <Route path="categories" element={<ManageCategory />} />
           <Route path="ratings" element={<ManageRating />} />

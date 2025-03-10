@@ -3,17 +3,16 @@ import { Header } from "../../../components";
 import { Formik } from "formik";
 import * as yup from "yup";
 import { Select, MenuItem, FormControl, InputLabel } from "@mui/material";
-import { useNavigate } from "react-router-dom";
-import { AddUser } from "../../../services/UserService";
+import { useNavigate, useParams } from "react-router-dom";
+import { GetUserProfileData, UpdateUser } from "../../../services/UserService";
+import { useEffect, useState } from "react";
+
 
 const phoneRegExp =
 	/^((\+[1-9]{1,4}[ -]?)|(\([0-9]{2,3}\)[ -]?)|([0-9]{2,4})[ -]?)*?[0-9]{3,4}[ -]?[0-9]{3,4}$/;
 
 const checkoutSchema = yup.object().shape({
-	userName: yup.string().required("Không được để trống."),
-	email: yup.string().email("Email không hợp lệ.").required("Không được để trống."),
-	role: yup.string().required("Không được để trống."),
-	password: yup.string().required("Không được để trống"),
+	email: yup.string().email("Email không hợp lệ."),
 	contact: yup
 		.string()
 		.matches(phoneRegExp, "Số điện thoại không hợp lệ."),
@@ -21,16 +20,47 @@ const checkoutSchema = yup.object().shape({
 
 const UpdateUserForm = () => {
 	const isNonMobile = useMediaQuery("(min-width:600px)");
+	const userName = useParams().userName;
 	const navigate = useNavigate();
+	const [initialValues, setValues] = useState({
+		email: '',
+		roles: '',
+		password: '',
+		contact: '',
+		userName: '',
+		address: '',
+		fullName: '',
+		avatarImg: '',
+		phoneNumber: '',
+		userStatus: '',
+	});
 
+	useEffect(() => {
+		const getUserData = async () => {
+			var response = await GetUserProfileData(userName);
+			if (response.status === 200) {
+				setValues(response.data);
+				console.log(response.data);
+			} else {
+				alert("Lỗi khi lấy dữ liệu người dùng!");
+			}
+		};
+		getUserData();
+	}, []);
 
 	const handleFormSubmit = async (values) => {
-		var response = await AddUser(values);
-		if (response.status === 200) {
-			alert("Thêm người dùng thành công!");
-			navigate("/admin/users");
-		} else {
-			alert("Thêm người dùng thất bại!");
+		try {
+			console.log(values);
+			const response = await UpdateUser(values);
+			if (response.status === 200) {
+				alert('Cập nhật người dùng thành công!');
+				navigate('/admin/users');
+			} else {
+				alert('Lỗi khi cập nhật người dùng!');
+			}
+		} catch (error) {
+			console.error('Error updating user:', error);
+			alert('Lỗi khi cập nhật người dùng!');
 		}
 	};
 
@@ -52,6 +82,7 @@ const UpdateUserForm = () => {
 				onSubmit={handleFormSubmit}
 				initialValues={initialValues}
 				validationSchema={checkoutSchema}
+				enableReinitialize={true}
 			>
 				{({
 					values,
@@ -79,7 +110,8 @@ const UpdateUserForm = () => {
 								label="Tên đăng nhập"
 								onBlur={handleBlur}
 								onChange={handleChange}
-								value={values.userName}
+								value={values.userName || ""}
+								autoFocus={true}
 								name="userName"
 								error={touched.userName && errors.userName}
 								helperText={touched.userName && errors.userName}
@@ -94,7 +126,7 @@ const UpdateUserForm = () => {
 								label="Mật khẩu"
 								onBlur={handleBlur}
 								onChange={handleChange}
-								value={values.password}
+								value={values.password || ""}
 								name="password"
 								error={touched.password && errors.password}
 								helperText={touched.password && errors.password}
@@ -109,7 +141,7 @@ const UpdateUserForm = () => {
 								label="Email"
 								onBlur={handleBlur}
 								onChange={handleChange}
-								value={values.email}
+								value={values.email || ""}
 								name="email"
 								error={touched.email && errors.email}
 								helperText={touched.email && errors.email}
@@ -119,18 +151,18 @@ const UpdateUserForm = () => {
 								<InputLabel>Vai trò</InputLabel>
 								<Select
 									label="Vai trò"
-									name="role"
-									value={values.role}
+									name="roles"
+									value={values.roles}
 									onChange={handleChange}
 									onBlur={handleBlur}
-									error={touched.role && Boolean(errors.role)}
+									error={touched.roles && Boolean(errors.roles)}
 								>
 									<MenuItem value="Admin">Quản lý</MenuItem>
 									<MenuItem value="User">Người dùng</MenuItem>
 								</Select>
-								{touched.role && errors.role && (
+								{touched.roles && errors.roles && (
 									<Box color="error.main" mt={1}>
-										{errors.role}
+										{errors.roles}
 									</Box>
 								)}
 							</FormControl>
@@ -141,7 +173,7 @@ const UpdateUserForm = () => {
 								label="Tên người dùng"
 								onBlur={handleBlur}
 								onChange={handleChange}
-								value={values.fullname}
+								value={values.fullname || ""}
 								name="fullname"
 								error={touched.fullname && errors.fullname}
 								helperText={touched.fullname && errors.fullname}
@@ -154,7 +186,7 @@ const UpdateUserForm = () => {
 								label="Số điện thoại"
 								onBlur={handleBlur}
 								onChange={handleChange}
-								value={values.phoneNumber}
+								value={values.phoneNumber || ""}
 								name="phoneNumber"
 								error={touched.phoneNumber && errors.phoneNumber}
 								helperText={touched.phoneNumber && errors.phoneNumber}
@@ -186,7 +218,7 @@ const UpdateUserForm = () => {
 								label="Địa chỉ"
 								onBlur={handleBlur}
 								onChange={handleChange}
-								value={values.address}
+								value={values.address || ""}
 								name="address"
 								error={touched.address && errors.address}
 								helperText={touched.address && errors.address}
@@ -199,7 +231,7 @@ const UpdateUserForm = () => {
 								label="Ảnh đại diện"
 								onBlur={handleBlur}
 								onChange={handleChange}
-								value={values.avatarImg}
+								value={values.avatarImg || ""}
 								name="avatarImg"
 								error={touched.avatarImg && errors.avatarImg}
 								helperText={touched.avatarImg && errors.avatarImg}
@@ -216,7 +248,7 @@ const UpdateUserForm = () => {
 								Hủy
 							</Button>
 							<Button type="submit" color="secondary" variant="contained">
-								Thêm người dùng mới
+								Cập nhập người dùng
 							</Button>
 						</Box>
 					</form>
