@@ -120,15 +120,18 @@ const ProductCard = ({ product, onAddToCart }) => {
 
             {/* Giá sản phẩm: Giá gốc (có đường gạch ngang) & Giá giảm kèm DiscountPaper */}
             <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}>
-                <Typography
-                    variant="body2"
-                    sx={{
-                        textDecoration: "line-through",
-                        color: colors.gray[400],
-                    }}
-                >
-                    {originalPrice.toLocaleString()}đ
-                </Typography>
+                {discountedPrice != originalPrice && (
+                    <Typography
+                        variant="body2"
+                        sx={{
+                            textDecoration: "line-through",
+                            color: colors.gray[400],
+                        }}
+                    >
+                        {originalPrice.toLocaleString()}đ
+                    </Typography>
+                )}
+
                 <Typography
                     variant="body1"
                     sx={{
