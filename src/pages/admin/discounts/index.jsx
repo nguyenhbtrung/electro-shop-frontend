@@ -22,6 +22,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { useNavigate } from "react-router-dom";
 import AddDiscountDialog from "../../../components/discounts/AddDiscountDiaglog";
 import UpdateDiscountDialog from "../../../components/discounts/UpdateDiscountDialog";
+import ApplyDiscountDialog from "../../../components/discounts/ApplyDiscountDialog";
 
 const ManageDiscount = () => {
     const theme = useTheme();
@@ -32,6 +33,8 @@ const ManageDiscount = () => {
     const [openAddDialog, setOpenAddDialog] = useState(false);
     const [openUpdateDialog, setOpenUpdateDialog] = useState(false);
     const [selectedDiscount, setSelectedDiscount] = useState(null);
+    const [openProductDialog, setOpenProductDialog] = useState(false);
+    const [selectedPromotionId, setSelectedPromotionId] = useState(null);
 
     useEffect(() => {
         const GetDiscountsData = async () => {
@@ -47,6 +50,19 @@ const ManageDiscount = () => {
 
         GetDiscountsData();
     }, []);
+
+    const handleOpenProductDialog = (discountId) => {
+        setSelectedPromotionId(discountId);
+        setOpenProductDialog(true);
+    };
+
+    const handleUpdateProductCount = (count) => {
+        // setDiscounts(prev => prev.map(d => 
+        //     d.discountId === selectedPromotionId 
+        //         ? { ...d, products: Array(count).fill({}) } // Thay bằng real data nếu cần
+        //         : d
+        // ));
+    };
 
     // Xử lý mở dialog thêm giảm giá
     const handleAddDiscount = () => {
@@ -191,6 +207,25 @@ const ManageDiscount = () => {
             },
         },
         {
+            field: "productCount",
+            headerName: "Sản phẩm",
+            flex: 1,
+            renderCell: (params) => {
+                const productCount = params.row.productCount || 0;
+                return (
+                    <Button
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            handleOpenProductDialog(params.row.discountId);
+                        }}
+                        sx={{ color: colors.blueAccent[400] }}
+                    >
+                        {productCount} sản phẩm
+                    </Button>
+                );
+            },
+        },
+        {
             field: "actions",
             headerName: "Hành động",
             flex: 0.6,
@@ -309,6 +344,13 @@ const ManageDiscount = () => {
                 onClose={() => setOpenUpdateDialog(false)}
                 onSubmit={handleUpdateDialogSubmit}
                 discount={selectedDiscount}
+            />
+
+            <ApplyDiscountDialog
+                open={openProductDialog}
+                onClose={() => setOpenProductDialog(false)}
+                promotionId={selectedPromotionId}
+                onSave={handleUpdateProductCount}
             />
         </Box>
     );

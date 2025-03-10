@@ -41,6 +41,17 @@ const GetDiscountedProduct = () => {
     return api.get(URL_API);
 };
 
+const GetProductByDiscountId = (discountId, searchQuery) => {
+    const URL_API = `/api/Product/by_discount`;
+
+    return api.get(URL_API, {
+        params: {
+            discount_id: promotionId,
+            search: searchQuery
+        }
+    });
+}
+
 
 export {
     GetAllProduct,
@@ -52,5 +63,6 @@ export {
     DeleteProduct,
     GetAllCategory,
     GetProductsByUser,
-    GetDiscountedProduct
+    GetDiscountedProduct,
+    GetProductByDiscountId
 };
