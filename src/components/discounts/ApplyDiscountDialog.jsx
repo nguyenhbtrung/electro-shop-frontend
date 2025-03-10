@@ -61,11 +61,11 @@ const ApplyDiscountDialog = ({
     };
 
     const handleToggleProduct = (productId) => {
-        const currentIndex = selectedProducts.findIndex(p => p.id === productId);
+        const currentIndex = selectedProducts.findIndex(p => p.productId === productId);
         const newSelected = [...selectedProducts];
 
         if (currentIndex === -1) {
-            const productToAdd = availableProducts.find(p => p.id === productId);
+            const productToAdd = availableProducts.find(p => p.productId === productId);
             if (productToAdd) newSelected.push(productToAdd);
         } else {
             newSelected.splice(currentIndex, 1);
@@ -132,14 +132,14 @@ const ApplyDiscountDialog = ({
                             </Box>
                             <List dense sx={{ border: `1px solid ${colors.gray[400]}`, borderRadius: 1 }}>
                                 {availableProducts?.map((product) => (
-                                    <ListItem key={product.id}>
+                                    <ListItem key={product.productId}>
                                         <Checkbox
-                                            checked={selectedProducts.some(p => p.id === product.id)}
-                                            onChange={() => handleToggleProduct(product.id)}
+                                            checked={selectedProducts.some(p => p.productId === product.productId)}
+                                            onChange={() => handleToggleProduct(product.productId)}
                                         />
                                         <ListItemText
                                             primary={product.name}
-                                            secondary={`SKU: ${product.sku}`}
+                                            secondary={`ID: ${product.productId}`}
                                         />
                                     </ListItem>
                                 ))}
@@ -156,14 +156,14 @@ const ApplyDiscountDialog = ({
                             <Typography variant="h6" mb={1}>Sản phẩm đã chọn</Typography>
                             <List dense sx={{ border: `1px solid ${colors.gray[400]}`, borderRadius: 1 }}>
                                 {selectedProducts?.map((product) => (
-                                    <ListItem key={product.id}>
+                                    <ListItem key={product.productId}>
                                         <Checkbox
                                             checked
-                                            onChange={() => handleToggleProduct(product.id)}
+                                            onChange={() => handleToggleProduct(product.productId)}
                                         />
                                         <ListItemText
                                             primary={product.name}
-                                            secondary={`SKU: ${product.sku}`}
+                                            secondary={`ID: ${product.productId}`}
                                         />
                                     </ListItem>
                                 ))}

@@ -46,7 +46,7 @@ const GetProductByDiscountId = (discountId, searchQuery) => {
 
     return api.get(URL_API, {
         params: {
-            discount_id: promotionId,
+            discount_id: discountId,
             search: searchQuery
         }
     });
