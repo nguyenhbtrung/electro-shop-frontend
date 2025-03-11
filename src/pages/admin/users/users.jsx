@@ -13,6 +13,7 @@ import { useNavigate } from "react-router-dom";
 import PersonIcon from '@mui/icons-material/Person';
 import SecurityIcon from '@mui/icons-material/Security';
 import ReplayIcon from '@mui/icons-material/Replay';
+import AlertDialog from "../../../components/AlertDialog";
 
 /*
 - Đăng nhập với google, X ,...
@@ -30,6 +31,9 @@ const ManageUser = () => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [users, setUsers] = useState([]);
   const navigate = useNavigate();
+  const [response, setResponse] = useState(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogQuestion, setDialogQuestion] = useState('');
 
 
   const columns = [
@@ -121,9 +125,9 @@ const ManageUser = () => {
     navigate("/admin/users/add");
   }
 
-  const handleDeleteSelected = async () => {
-    if (selectedRows.length === 0) {
-      alert("Vui lòng chọn người dùng cần xoá!");
+  const handleDeleteSelected = async (userResponse) => {
+    setDialogOpen(false);
+    if (!userResponse) {
       return;
     } else {
       try {
@@ -136,6 +140,15 @@ const ManageUser = () => {
         console.error(error);
       }
     }
+  };
+
+  const handleDeleteDialog = () => {
+    if (selectedRows.length === 0) {
+      alert("Vui lòng chọn người dùng cần xoá!");
+      return;
+    }
+    setDialogQuestion(`Bạn có muốn xóa ${selectedRows.length} người dùng đã chọn?`);
+    setDialogOpen(true);
   };
 
   const handleEditSelected = () => {
@@ -169,6 +182,7 @@ const ManageUser = () => {
             color="info"
             startIcon={<ReplayIcon />}
             onClick={GetAllUser}
+            sx={{ color: 'text.primary' }}
           >
             Làm mới
           </Button>
@@ -177,6 +191,7 @@ const ManageUser = () => {
             color="secondary"
             startIcon={<AddIcon />}
             onClick={handleAddUser}
+            sx={{ color: 'text.primary' }}
           >
             Thêm người dùng
           </Button>
@@ -185,6 +200,7 @@ const ManageUser = () => {
             color="warning"
             startIcon={<Edit />}
             onClick={handleEditSelected}
+            sx={{ color: 'text.primary' }}
           >
             Chỉnh sửa
           </Button>
@@ -192,7 +208,8 @@ const ManageUser = () => {
             variant="contained"
             color="error"
             startIcon={<DeleteIcon />}
-            onClick={handleDeleteSelected}
+            onClick={handleDeleteDialog}
+            sx={{ color: 'text.primary' }}
           >
             Xoá đã chọn
           </Button>
@@ -255,6 +272,11 @@ const ManageUser = () => {
         />
 
       </Box>
+      <AlertDialog
+        open={dialogOpen}
+        question={dialogQuestion}
+        onClose={handleDeleteSelected}
+      />
     </Box>
   );
 };
