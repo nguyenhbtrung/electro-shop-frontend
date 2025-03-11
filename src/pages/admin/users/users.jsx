@@ -14,15 +14,16 @@ import PersonIcon from '@mui/icons-material/Person';
 import SecurityIcon from '@mui/icons-material/Security';
 import ReplayIcon from '@mui/icons-material/Replay';
 import AlertDialog from "../../../components/AlertDialog";
+import InfoDialog from "../../../components/InfoDialog";
 
 /*
-- Đăng nhập với google, X ,...
-- Thêm hàm đổi mật khẩu cho admin, user
-- Quên mật khẩu cho user đồng thời phải có xác thực email
-- Cho người dùng có thể có nhiều địa chỉ nhận hàng
-- Thay cách hiện thị thông báo bằng cửa sổ component riêng chứ không dùng cửa sổ alert mặc định
-- Chỉnh sửa, tút tát lại trang đkí, đăng nhập
-- Quản lí nhập hàng: thêm, sửa, xoá, xem chi tiết, Data gồm có: {Id, Tên sản phẩm, Số lượng, Đơn giá, Trạng thái lô, Ngày nhập, Nhà cung cấp, (Ghi chú)}
+- ✓ Thay cách hiện thị thông báo bằng cửa sổ component riêng chứ không dùng cửa sổ alert mặc định
+- ✖  Quên mật khẩu cho user đồng thời phải có xác thực email
+- ✖ Thêm hàm đổi mật khẩu cho admin, user
+- ✖ Cho người dùng có thể có nhiều địa chỉ nhận hàng
+- ✖ Quản lí nhập hàng: thêm, sửa, xoá, xem chi tiết, Data gồm có: {Id, Tên sản phẩm, Số lượng, Đơn giá, Trạng thái lô, Ngày nhập, Nhà cung cấp, (Ghi chú)}
+- ✖ Chỉnh sửa, tút tát lại trang đkí, đăng nhập
+- ✖ Đăng nhập với google, X ,...
 */
 
 const ManageUser = () => {
@@ -34,7 +35,8 @@ const ManageUser = () => {
   const [response, setResponse] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogQuestion, setDialogQuestion] = useState('');
-
+  const [infoDialogOpen, setInfoDialogOpen] = useState(false);
+  const [info, setInfo] = useState('');
 
   const columns = [
     {
@@ -113,6 +115,8 @@ const ManageUser = () => {
       setUsers(data);
       console.log(data);
     } catch (error) {
+      setInfo(`Làm mới danh sách không thành công!`);
+      setInfoDialogOpen(true);
       console.error(error);
     }
   };
@@ -120,6 +124,12 @@ const ManageUser = () => {
   useEffect(() => {
     GetAllUser();
   }, []);
+
+  const handleRefresh = () => {
+    setInfo(`Làm mới danh sách thành công!`);
+    setInfoDialogOpen(true);
+    GetAllUser();
+  };
 
   const handleAddUser = () => {
     navigate("/admin/users/add");
@@ -134,9 +144,12 @@ const ManageUser = () => {
         for (const userName of selectedRows) {
           await DeleteUser(userName);
         }
-        alert("Xoá thành công!");
+        setInfo(`Đã xoá ${selectedRows.length} người dùng!`);
+        setInfoDialogOpen(true);
         GetAllUser();
       } catch (error) {
+        setInfo(`Có lỗi khi xóa người dùng!`);
+        setInfoDialogOpen(true);
         console.error(error);
       }
     }
@@ -144,7 +157,8 @@ const ManageUser = () => {
 
   const handleDeleteDialog = () => {
     if (selectedRows.length === 0) {
-      alert("Vui lòng chọn người dùng cần xoá!");
+      setInfo(`Vui lòng chọn người dùng cần xoá!`);
+      setInfoDialogOpen(true);
       return;
     }
     setDialogQuestion(`Bạn có muốn xóa ${selectedRows.length} người dùng đã chọn?`);
@@ -153,14 +167,20 @@ const ManageUser = () => {
 
   const handleEditSelected = () => {
     if (selectedRows.length === 0) {
-      alert("Vui lòng chọn người dùng cần chỉnh sửa!");
+      setInfo(`Vui lòng chọn người dùng cần chỉnh sửa!`);
+      setInfoDialogOpen(true);
       return;
     } else if (selectedRows.length > 1) {
-      alert("Chỉ được chọn 1 người dùng để chỉnh sửa!");
+      setInfo(`Chỉ được chọn 1 người dùng để chỉnh sửa!`);
+      setInfoDialogOpen(true);
       return;
     } else {
       navigate(`/admin/users/edit/${selectedRows[0]}`);
     }
+  }
+
+  const closeInfoDialog = () => {
+    setInfoDialogOpen(false);
   }
 
   return (
@@ -181,7 +201,7 @@ const ManageUser = () => {
             variant="contained"
             color="info"
             startIcon={<ReplayIcon />}
-            onClick={GetAllUser}
+            onClick={handleRefresh}
             sx={{ color: 'text.primary' }}
           >
             Làm mới
@@ -270,12 +290,16 @@ const ManageUser = () => {
           }}
           checkboxSelection
         />
-
       </Box>
       <AlertDialog
         open={dialogOpen}
         question={dialogQuestion}
         onClose={handleDeleteSelected}
+      />
+      <InfoDialog
+        open={infoDialogOpen}
+        question={info}
+        onClose={closeInfoDialog}
       />
     </Box>
   );

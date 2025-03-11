@@ -8,7 +8,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import { useTheme } from '@mui/material/styles';
 import { tokens } from '../theme';
 
-const AlertDialog = ({ open, question, onClose }) => {
+const InfoDialog = ({ open, question, onClose }) => {
 	const theme = useTheme();
 	const colors = tokens(theme.palette.mode);
 
@@ -31,8 +31,8 @@ const AlertDialog = ({ open, question, onClose }) => {
 				},
 			}}
 		>
-			<DialogTitle id="alert-dialog-title" sx={{ fontSize: '1.2rem', color: colors.red[600] }}>
-				Cảnh báo
+			<DialogTitle id="alert-dialog-title" sx={{ fontSize: '1.2rem', color: colors.primary }}>
+				Thông báo
 			</DialogTitle>
 			<DialogContent>
 				<DialogContentText id="alert-dialog-description" sx={{ fontSize: '1.2rem' }}>
@@ -40,7 +40,6 @@ const AlertDialog = ({ open, question, onClose }) => {
 				</DialogContentText>
 			</DialogContent>
 			<DialogActions>
-				<Button sx={{ fontSize: '1.1rem', color: colors.red[500] }} onClick={() => handleClose(false)}>Hủy</Button>
 				<Button sx={{ fontSize: '1.1rem', color: colors.greenAccent[500] }} onClick={() => handleClose(true)} autoFocus>
 					Đồng ý
 				</Button>
@@ -49,4 +48,4 @@ const AlertDialog = ({ open, question, onClose }) => {
 	);
 };
 
-export default AlertDialog;
+export default InfoDialog;

@@ -5,6 +5,10 @@ import * as yup from "yup";
 import { Select, MenuItem, FormControl, InputLabel } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { AddUser } from "../../../services/UserService";
+import InfoDialog from "../../../components/InfoDialog";
+import { useState } from "react";
+import AlertDialog from "../../../components/AlertDialog";
+
 
 const initialValues = {
 	userName: "",
@@ -32,26 +36,38 @@ const checkoutSchema = yup.object().shape({
 const AddUserForm = () => {
 	const isNonMobile = useMediaQuery("(min-width:600px)");
 	const navigate = useNavigate();
-
+	const [infoDialogOpen, setInfoDialogOpen] = useState(false);
+	const [info, setInfo] = useState('');
+	const [dialogOpen, setDialogOpen] = useState(false);
+	const [dialogQuestion, setDialogQuestion] = useState('');
 
 	const handleFormSubmit = async (values) => {
 		var response = await AddUser(values);
 		if (response.status === 200) {
-			alert("Thêm người dùng thành công!");
-			navigate("/admin/users");
+			setInfo(`Thêm người dùng thành công!`);
+			setInfoDialogOpen(true);
 		} else {
-			alert("Thêm người dùng thất bại!");
+			setInfo(`Thêm người dùng thất bại!`);
+			setInfoDialogOpen(true);
 		}
 	};
 
-	const handleCancel = () => {
-		if (
-			window.confirm(
-				"Bạn có chắc chắn muốn hủy thêm người dùng?"
-			)
-		) {
-			navigate("/admin/users");
+	const closeInfoDialog = () => {
+		navigate("/admin/users");
+		setInfoDialogOpen(false);
+	}
+
+	const handleOpenDialog = () => {
+		setDialogQuestion("Bạn có chắc chắn muốn hủy bỏ việc thêm người dùng?");
+		setDialogOpen(true);
+	};
+
+	const handleCancel = async (userResponse) => {
+		if (!userResponse) {
+			setDialogOpen(false);
+			return;
 		}
+		navigate("/admin/users");
 	};
 
 	return (
@@ -222,7 +238,7 @@ const AddUserForm = () => {
 							justifyContent="end"
 							mt="20px"
 						>
-							<Button color="error" variant="contained" onClick={handleCancel}>
+							<Button color="error" variant="contained" onClick={handleOpenDialog}>
 								Hủy
 							</Button>
 							<Button type="submit" color="secondary" variant="contained">
@@ -232,6 +248,16 @@ const AddUserForm = () => {
 					</form>
 				)}
 			</Formik>
+			<AlertDialog
+				open={dialogOpen}
+				question={dialogQuestion}
+				onClose={handleCancel}
+			/>
+			<InfoDialog
+				open={infoDialogOpen}
+				question={info}
+				onClose={closeInfoDialog}
+			/>
 		</Box>
 	);
 };
