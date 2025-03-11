@@ -32,6 +32,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import SearchIcon from '@mui/icons-material/Search';
 import InputAdornment from '@mui/material/InputAdornment';
+import { GetDiscountedProducts } from '../../services/discountService';
 
 const ApplyDiscountDialog = ({ open, onClose, discountInfo, onSave }) => {
     // State cho danh sách sản phẩm
@@ -53,29 +54,50 @@ const ApplyDiscountDialog = ({ open, onClose, discountInfo, onSave }) => {
 
     // Mock data cho demo - trong thực tế bạn sẽ lấy từ API
     useEffect(() => {
-        const thumbnailUrl = "https://product.hstatic.net/1000288298/product/dsc03886_2_fe261d7a9e75446492cf913fe83d06ba_1024x1024.jpg";
-
-        const mockProducts = [
-            { id: '1001', name: 'Laptop Lenovo', price: 10000000, stock: 10, brand: 'Lenovo', image: thumbnailUrl },
-            { id: '1002', name: 'Laptop Dell', price: 15000000, stock: 20, brand: 'Dell', image: thumbnailUrl },
-            { id: '1003', name: 'PC Gaming', price: 20000000, stock: 15, brand: 'Custom', image: thumbnailUrl },
-            { id: '1004', name: 'Quần jean Slim Fit', price: 500000, stock: 50, brand: 'Levis', image: thumbnailUrl },
-            { id: '1005', name: 'Áo sơ mi Classic', price: 450000, stock: 35, brand: 'Uniqlo', image: thumbnailUrl },
-            { id: '1006', name: 'Điện thoại iPhone 13', price: 24000000, stock: 25, brand: 'Apple', image: thumbnailUrl },
-            { id: '1007', name: 'Tai nghe Bluetooth', price: 2000000, stock: 30, brand: 'Sony', image: thumbnailUrl },
-        ];
-
-        setProducts(mockProducts);
-        setFilteredProducts(mockProducts);
-
-        // Giả sử có sản phẩm đã được chọn trước đó
-        if (discountInfo.selectedProductIds) {
-            const preSelectedProducts = mockProducts.filter(product =>
-                discountInfo.selectedProductIds.includes(product.id)
-            );
-            setSelectedProducts(preSelectedProducts);
+        if (!discountInfo?.discountId || !open) {
+            return;
         }
-    }, [discountInfo]);
+        console.log("check");
+
+        const GetDiscountedProductData = async () => {
+            const res = await GetDiscountedProducts(discountInfo?.discountId);
+            if (res?.status === 200 && res?.data) {
+                setProducts(res?.data?.products);
+                setFilteredProducts(res?.data?.products);
+                // Giả sử có sản phẩm đã được chọn trước đó
+                if (res?.data?.selectedProductIds) {
+                    const preSelectedProducts = res?.data?.products?.filter(product =>
+                        res?.data?.selectedProductIds.includes(product.id)
+                    );
+                    setSelectedProducts(preSelectedProducts);
+                }
+            }
+        }
+
+        GetDiscountedProductData();
+        // const thumbnailUrl = "https://product.hstatic.net/1000288298/product/dsc03886_2_fe261d7a9e75446492cf913fe83d06ba_1024x1024.jpg";
+
+        // const mockProducts = [
+        //     { id: '1001', name: 'Laptop Lenovo', price: 10000000, stock: 10, brand: 'Lenovo', image: thumbnailUrl },
+        //     { id: '1002', name: 'Laptop Dell', price: 15000000, stock: 20, brand: 'Dell', image: thumbnailUrl },
+        //     { id: '1003', name: 'PC Gaming', price: 20000000, stock: 15, brand: 'Custom', image: thumbnailUrl },
+        //     { id: '1004', name: 'Quần jean Slim Fit', price: 500000, stock: 50, brand: 'Levis', image: thumbnailUrl },
+        //     { id: '1005', name: 'Áo sơ mi Classic', price: 450000, stock: 35, brand: 'Uniqlo', image: thumbnailUrl },
+        //     { id: '1006', name: 'Điện thoại iPhone 13', price: 24000000, stock: 25, brand: 'Apple', image: thumbnailUrl },
+        //     { id: '1007', name: 'Tai nghe Bluetooth', price: 2000000, stock: 30, brand: 'Sony', image: thumbnailUrl },
+        // ];
+
+        // setProducts(mockProducts);
+        // setFilteredProducts(mockProducts);
+
+        // // Giả sử có sản phẩm đã được chọn trước đó
+        // if (discountInfo?.selectedProductIds) {
+        //     const preSelectedProducts = mockProducts.filter(product =>
+        //         discountInfo?.selectedProductIds.includes(product.id)
+        //     );
+        //     setSelectedProducts(preSelectedProducts);
+        // }
+    }, [discountInfo, open]);
 
     // Xử lý tìm kiếm
     useEffect(() => {
@@ -262,7 +284,7 @@ const ApplyDiscountDialog = ({ open, onClose, discountInfo, onSave }) => {
                             onChange={(e) => setBrandFilter(e.target.value)}
                         >
                             <MenuItem value="">Tất cả</MenuItem>
-                            {Array.from(new Set(products.map(p => p.brand))).map(brand => (
+                            {Array.from(new Set(products?.map(p => p.brand))).map(brand => (
                                 <MenuItem key={brand} value={brand}>{brand}</MenuItem>
                             ))}
                         </Select>
@@ -309,17 +331,17 @@ const ApplyDiscountDialog = ({ open, onClose, discountInfo, onSave }) => {
                     <Typography variant="subtitle1" fontWeight="bold">Thông tin khuyến mãi:</Typography>
                     <Grid container spacing={2}>
                         <Grid item xs={4}>
-                            <Typography variant="body2">- Tên: {discountInfo.name}</Typography>
+                            <Typography variant="body2">- Tên: {discountInfo?.name}</Typography>
                         </Grid>
                         <Grid item xs={4}>
                             <Typography variant="body2">
-                                - Loại: {discountInfo.discountType === 'Percentage' ? 'Phần trăm' : 'Số tiền cố định'}
-                                ({discountInfo.discountType === 'Percentage' ? `${discountInfo.discountValue}%` : formatPrice(discountInfo.discountValue)})
+                                - Loại: {discountInfo?.discountType === 'Percentage' ? 'Phần trăm' : 'Số tiền cố định'}
+                                ({discountInfo?.discountType === 'Percentage' ? `${discountInfo?.discountValue}%` : formatPrice(discountInfo?.discountValue)})
                             </Typography>
                         </Grid>
                         <Grid item xs={4}>
                             <Typography variant="body2">
-                                - Thời gian: {new Date(discountInfo.startDate).toLocaleDateString('vi-VN')} - {new Date(discountInfo.endDate).toLocaleDateString('vi-VN')}
+                                - Thời gian: {new Date(discountInfo?.startDate).toLocaleDateString('vi-VN')} - {new Date(discountInfo?.endDate).toLocaleDateString('vi-VN')}
                             </Typography>
                         </Grid>
                     </Grid>
@@ -369,8 +391,8 @@ const ApplyDiscountDialog = ({ open, onClose, discountInfo, onSave }) => {
                                                     onChange={handleSelectAll}
                                                     color="primary"
                                                     indeterminate={
-                                                        selectedProducts.length > 0 &&
-                                                        selectedProducts.length < filteredProducts.slice(
+                                                        selectedProducts?.length > 0 &&
+                                                        selectedProducts?.length < filteredProducts?.slice(
                                                             page * rowsPerPage,
                                                             page * rowsPerPage + rowsPerPage
                                                         ).length
@@ -386,8 +408,8 @@ const ApplyDiscountDialog = ({ open, onClose, discountInfo, onSave }) => {
                                     </TableHead>
                                     <TableBody>
                                         {filteredProducts
-                                            .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                            .map((product) => {
+                                            ?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                            ?.map((product) => {
                                                 const selected = isSelected(product.id);
 
                                                 return (
@@ -425,7 +447,7 @@ const ApplyDiscountDialog = ({ open, onClose, discountInfo, onSave }) => {
                             </TableContainer>
                             <TablePagination
                                 component="div"
-                                count={filteredProducts.length}
+                                count={filteredProducts?.length}
                                 rowsPerPage={rowsPerPage}
                                 page={page}
                                 onPageChange={handleChangePage}
@@ -442,7 +464,7 @@ const ApplyDiscountDialog = ({ open, onClose, discountInfo, onSave }) => {
                         <Paper sx={{ height: 400, overflow: 'auto', p: 1 }}>
                             <Typography variant="subtitle2" sx={{ p: 1 }}>Danh sách đã chọn</Typography>
                             <Divider />
-                            {selectedProducts.length === 0 ? (
+                            {selectedProducts?.length === 0 ? (
                                 <Box sx={{ p: 2, textAlign: 'center' }}>
                                     <Typography variant="body2" color="text.secondary">
                                         Chưa có sản phẩm nào được chọn
@@ -450,7 +472,7 @@ const ApplyDiscountDialog = ({ open, onClose, discountInfo, onSave }) => {
                                 </Box>
                             ) : (
                                 <List>
-                                    {selectedProducts.map((product) => (
+                                    {selectedProducts?.map((product) => (
                                         <Box
                                             key={product.id}
                                             sx={{
@@ -492,7 +514,7 @@ const ApplyDiscountDialog = ({ open, onClose, discountInfo, onSave }) => {
             <DialogActions sx={{ p: 2, justifyContent: 'space-between' }}>
                 <Box>
                     <Typography variant="body2">
-                        Tổng số sản phẩm đã chọn: {selectedProducts.length}
+                        Tổng số sản phẩm đã chọn: {selectedProducts?.length}
                     </Typography>
                 </Box>
                 <Box>
