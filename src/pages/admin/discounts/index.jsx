@@ -51,8 +51,9 @@ const ManageDiscount = () => {
         GetDiscountsData();
     }, []);
 
-    const handleOpenProductDialog = (discountId) => {
-        setSelectedPromotionId(discountId);
+    const handleOpenProductDialog = (row) => {
+        setSelectedPromotionId(row?.discountId);
+        setSelectedDiscount(row);
         setOpenProductDialog(true);
     };
 
@@ -216,7 +217,7 @@ const ManageDiscount = () => {
                     <Button
                         onClick={(e) => {
                             e.stopPropagation();
-                            handleOpenProductDialog(params.row.discountId);
+                            handleOpenProductDialog(params.row);
                         }}
                         sx={{ color: colors.blueAccent[400] }}
                     >
@@ -349,7 +350,7 @@ const ManageDiscount = () => {
             <ApplyDiscountDialog
                 open={openProductDialog}
                 onClose={() => setOpenProductDialog(false)}
-                promotionId={selectedPromotionId}
+                discountInfo={selectedDiscount}
                 onSave={handleUpdateProductCount}
             />
         </Box>
