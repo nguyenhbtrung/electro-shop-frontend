@@ -32,6 +32,11 @@ import HomePage from "./pages/user/homePage";
 import AddUserForm from "./pages/admin/users/addUser";
 import UpdateUserForm from "./pages/admin/users/updateUser";
 import DiscountManagerTest from "./components/discounts/ApplyDiscountNew";
+import ProductViewHistoryPage from "./pages/user/ProductViewHistoryPage";
+import Cart from "./pages/user/cartPage";
+import CheckoutPage from "./pages/user/paymentPage";
+import OrdersPage from "./pages/user/ordersPage";
+import ReturnsPage from "./pages/user/ReturnsPage";
 
 const AppRouter = () => {
   return (
@@ -40,6 +45,9 @@ const AppRouter = () => {
         <Route path="/" element={<AppUser />}>
           <Route index element={<HomePage />} />
           <Route path="categories/:categoryId" element={<CategoryPage />} />
+          <Route path="history" element={<ProductViewHistoryPage />} />
+          <Route path="orders" element={<OrdersPage />} />
+          <Route path="returns" element={<ReturnsPage />} />
         </Route>
 
         <Route path="/login" element={<Login />} />

@@ -15,7 +15,6 @@ import {
     NotificationsOutlined,
     PersonOutlined,
     SearchOutlined,
-    SettingsOutlined,
     ShoppingCartOutlined,
 } from "@mui/icons-material";
 import { ColorModeContext, tokens } from "../../../../theme";
@@ -41,6 +40,18 @@ const Navbar = () => {
     const handleLogout = () => {
         logout();
         navigate("/login");
+    };
+
+    const handleOrdersClick = () => {
+        navigate("/orders");
+    };
+
+    const handleHistoryClick = () => {
+        navigate("/history");
+    };
+
+    const handleReturnsClick = () => {
+        navigate("/returns");
     };
 
     return (
@@ -81,10 +92,21 @@ const Navbar = () => {
                 </Box>
             </Box>
 
+            {/* Phần bên phải: các nút và icon */}
             <Box display="flex" alignItems="center" gap={1}>
-                <Button variant="text" color={colors.primary[400]}>Đơn Hàng</Button>
-                <Button variant="text" color={colors.primary[400]}>Lịch Sử Duyệt Sản Phẩm</Button>
-                <Button variant="text" color={colors.primary[400]}>Hoàn Trả</Button>
+                {isLoggedIn && (
+                    <>
+                        <Button onClick={handleOrdersClick} variant="text" color={colors.primary[400]}>
+                            Đơn Hàng
+                        </Button>
+                        <Button onClick={handleHistoryClick} variant="text" color={colors.primary[400]}>
+                            Lịch Sử Duyệt Sản Phẩm
+                        </Button>
+                        <Button onClick={handleReturnsClick} variant="text" color={colors.primary[400]}>
+                            Hoàn Trả
+                        </Button>
+                    </>
+                )}
                 <IconButton>
                     <ShoppingCartOutlined />
                 </IconButton>
@@ -102,11 +124,19 @@ const Navbar = () => {
                     <PersonOutlined />
                 </IconButton>
                 {isLoggedIn ? (
-                    <Button variant="text" color={colors.primary[400]} onClick={handleLogout}>
+                    <Button
+                        variant="text"
+                        color={colors.primary[400]}
+                        onClick={handleLogout}
+                    >
                         Đăng xuất
                     </Button>
                 ) : (
-                    <Button variant="text" color={colors.primary[400]} onClick={handleLogin}>
+                    <Button
+                        variant="text"
+                        color={colors.primary[400]}
+                        onClick={handleLogin}
+                    >
                         Đăng nhập
                     </Button>
                 )}
