@@ -31,6 +31,7 @@ import CategoryPage from "./pages/user/categoryPage";
 import HomePage from "./pages/user/homePage";
 import AddUserForm from "./pages/admin/users/addUser";
 import UpdateUserForm from "./pages/admin/users/updateUser";
+import DiscountManagerTest from "./components/discounts/ApplyDiscountNew";
 
 const AppRouter = () => {
   return (
@@ -68,6 +69,7 @@ const AppRouter = () => {
           <Route path="line" element={<Line />} />
           <Route path="faq" element={<FAQ />} />
           <Route path="geography" element={<Geography />} />
+          <Route path="test" element={<DiscountManagerTest />} />
         </Route>
       </Routes>
     </Router>

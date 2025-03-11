@@ -47,8 +47,6 @@ const ApplyDiscountDialog = ({
             setLoading(true);
             const response = await GetProductByDiscountId(promotionId, searchQuery);
 
-            console.log(">>check", response.data);
-
             setAvailableProducts(response.data.available);
             setSelectedProducts(response.data.selected);
             setError(null);
