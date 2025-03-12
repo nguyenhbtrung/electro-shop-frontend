@@ -1,6 +1,12 @@
 // ProductCard.js
 import React, { useState } from "react";
-import { Box, Typography, useTheme, Button } from "@mui/material";
+import {
+    Box,
+    Typography,
+    useTheme,
+    Button,
+    Tooltip,
+} from "@mui/material";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import StarIcon from "@mui/icons-material/Star";
 import StarHalfIcon from "@mui/icons-material/StarHalf";
@@ -10,15 +16,6 @@ import { tokens } from "../../theme";
 import AddToCartDialog from "./AddToCartDialog";
 
 const ProductCard = ({ product }) => {
-    // expected properties of product:
-    // - name: string
-    // - images: array string (ví dụ: ["url_ảnh_1", "url_ảnh_2"])
-    // - originalPrice: number
-    // - discountedPrice: number
-    // - discountType: string ("Percentage" hoặc "Flat Amount")
-    // - discountValue: number
-    // - rating: number (ví dụ 4.5)
-
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
     const [openAddToCart, setOpenAddToCart] = useState(false);
@@ -44,10 +41,7 @@ const ProductCard = ({ product }) => {
 
         for (let i = 0; i < fullStars; i++) {
             stars.push(
-                <StarIcon
-                    key={`full-${i}`}
-                    sx={{ color: "#FFD700", fontSize: 18 }}
-                />
+                <StarIcon key={`full-${i}`} sx={{ color: "#FFD700", fontSize: 18 }} />
             );
         }
         if (halfStar) {
@@ -81,6 +75,9 @@ const ProductCard = ({ product }) => {
                 "&:hover": {
                     boxShadow: "0 4px 8px rgba(0,0,0,0.2)",
                 },
+                display: "flex",
+                flexDirection: "column",
+                height: "100%", // Giúp card có chiều cao đồng nhất khi nằm trong grid
             }}
         >
             {/* Hộp ảnh sản phẩm */}
@@ -88,7 +85,7 @@ const ProductCard = ({ product }) => {
                 sx={{
                     width: "100%",
                     height: 0,
-                    paddingTop: "100%", // tỉ lệ khối vuông
+                    paddingTop: "100%", // duy trì tỉ lệ vuông
                     position: "relative",
                     mb: 1,
                     cursor: "pointer",
@@ -111,51 +108,98 @@ const ProductCard = ({ product }) => {
                 />
             </Box>
 
-            {/* Tên sản phẩm */}
-            <Typography variant="h6" gutterBottom noWrap>
-                {name}
-            </Typography>
-
-            {/* Giá sản phẩm: Giá gốc (có đường gạch ngang) & Giá giảm kèm DiscountPaper */}
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}>
-                {discountedPrice != originalPrice && (
-                    <Typography
-                        variant="body2"
-                        sx={{
-                            textDecoration: "line-through",
-                            color: colors.gray[400],
-                        }}
-                    >
-                        {originalPrice.toLocaleString()}đ
-                    </Typography>
-                )}
-
+            {/* Tên sản phẩm: Giới hạn tối đa 2 dòng, hiển thị full qua Tooltip */}
+            <Tooltip title={name}>
                 <Typography
-                    variant="body1"
+                    variant="h6"
                     sx={{
-                        fontWeight: "bold",
-                        color:
-                            theme.palette.mode === "dark"
-                                ? colors.redAccent[400]
-                                : "#D32F2F",
+                        display: "-webkit-box",
+                        WebkitLineClamp: 2, // giới hạn 2 dòng
+                        WebkitBoxOrient: "vertical",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        mb: 1,
                     }}
                 >
-                    {discountedPrice.toLocaleString()}đ
+                    {name}
                 </Typography>
-                {discountValue > 0 && (<DiscountPaper discountType={discountType} discountValue={discountValue} />)}
+            </Tooltip>
 
+            {/* Container chung của 2 hàng giữa */}
+            <Box
+                sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-evenly",
+                    height: "64px", // Tổng chiều cao dành cho 2 hàng (có thể điều chỉnh tùy ý)
+                    mb: 1,
+                }}
+            >
+                {/* Hàng 1: Nội dung đánh giá và DiscountPaper */}
+                <Box
+                    sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        height: "32px", // Chiều cao cố định cho hàng này
+                    }}
+                >
+                    <Box sx={{ display: "flex", alignItems: "center" }}>
+                        {renderStars(averageRating)}
+                        <Typography variant="body2" sx={{ ml: 0.5 }}>
+                            {averageRating.toFixed(1)}
+                        </Typography>
+                    </Box>
+                    {discountValue > 0 ? (
+                        <DiscountPaper
+                            discountType={discountType}
+                            discountValue={discountValue}
+                        />
+                    ) : (
+                        // Placeholder giữ cùng chiều cao khi không có DiscountPaper
+                        <Box sx={{ width: "50px", height: "32px" }} />
+                    )}
+                </Box>
+
+                {/* Hàng 2: Giá sản phẩm */}
+                <Box
+                    sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 1,
+                        height: "32px", // Chiều cao cố định cho hàng này
+                    }}
+                >
+                    {discountedPrice !== originalPrice && (
+                        <Typography
+                            variant="body2"
+                            sx={{
+                                textDecoration: "line-through",
+                                color: colors.gray[400],
+                                whiteSpace: "nowrap",
+                            }}
+                        >
+                            {originalPrice.toLocaleString()}đ
+                        </Typography>
+                    )}
+                    <Typography
+                        variant="body1"
+                        sx={{
+                            fontWeight: "bold",
+                            color:
+                                theme.palette.mode === "dark"
+                                    ? colors.redAccent[400]
+                                    : "#D32F2F",
+                            whiteSpace: "nowrap",
+                        }}
+                    >
+                        {discountedPrice.toLocaleString()}đ
+                    </Typography>
+                </Box>
             </Box>
 
-            {/* Hiển thị đánh giá: sao và giá trị rating */}
-            <Box sx={{ display: "flex", alignItems: "center" }}>
-                {renderStars(averageRating)}
-                <Typography variant="body2" sx={{ ml: 0.5 }}>
-                    {averageRating.toFixed(1)}
-                </Typography>
-            </Box>
-
-            {/* Nút Thêm vào giỏ hàng */}
-            <Box sx={{ mt: 2 }}>
+            {/* Nút Thêm vào giỏ hàng - được đẩy xuống cuối card */}
+            <Box sx={{ mt: "auto" }}>
                 <Button
                     variant="contained"
                     startIcon={<ShoppingCartIcon />}
@@ -165,6 +209,7 @@ const ProductCard = ({ product }) => {
                     Thêm vào giỏ hàng
                 </Button>
             </Box>
+
             <AddToCartDialog
                 open={openAddToCart}
                 onClose={handleCloseAddToCart}
