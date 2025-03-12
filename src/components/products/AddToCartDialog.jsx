@@ -189,6 +189,9 @@ const AddToCartDialog = ({
     const [product, setProduct] = useState({});
 
     useEffect(() => {
+        if (!open) {
+            return;
+        }
         const GetProductInfo = async () => {
             const res = await GetProduct(productId);
             if (res?.status === 200 && res?.data) {
@@ -207,7 +210,7 @@ const AddToCartDialog = ({
         };
 
         GetProductInfo();
-    }, []);
+    }, [open]);
 
     // Calculate savings
     const savings = product.originalPrice - product.discountedPrice;
@@ -487,49 +490,3 @@ const AddToCartDialog = ({
 };
 
 export default AddToCartDialog;
-
-
-function ProductPageTest() {
-    const [open, setOpen] = useState(false);
-
-    const handleOpen = () => {
-        setOpen(true);
-    };
-
-    const handleClose = () => {
-        setOpen(false);
-    };
-
-    // Dữ liệu sản phẩm mẫu
-    const productData = {
-        id: '123',
-        name: 'Smartphone XYZ 2025',
-        images: [
-            'https://product.hstatic.net/1000288298/product/dsc07158_470fb23e6ff74fd490307cd22d7c342b_master.jpg',
-            'https://product.hstatic.net/1000288298/product/dsc07171_03750644895e4bd5a53e6ab29d2f0e7a_master.jpg',
-            'https://product.hstatic.net/1000288298/product/dsc07164_ef93aa367e9a42cd91db2733870e321c_master.jpg',
-            'https://product.hstatic.net/1000288298/product/dsc07168_339fe0e134bd44afb441426bd5829eb9_master.jpg',
-        ],
-        inStock: true,
-        originalPrice: 5990000,
-        discountedPrice: 4790000,
-        url: '/products/smartphone-xyz-2025'
-    };
-
-    return (
-        <div>
-            <Button variant="contained" color="primary" onClick={handleOpen}>
-                Mua Ngay
-            </Button>
-
-            <AddToCartDialog
-                open={open}
-                onClose={handleClose}
-                productId={15}
-                discountedPrice={20000000}
-            />
-        </div>
-    );
-}
-
-// export default ProductPageTest;

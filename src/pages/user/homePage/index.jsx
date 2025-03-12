@@ -81,7 +81,6 @@ const HomePage = () => {
         const GetDiscountedProductsList = async () => {
             const res = await GetDiscountedProduct();
             if (res?.status === 200 && res?.data) {
-                console.log("check discounted: ", res.data)
                 setDiscountProduct(res?.data);
             }
         }
