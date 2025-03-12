@@ -75,39 +75,17 @@ const ApplyDiscountDialog = ({ open, onClose, discountInfo, onSave }) => {
         }
 
         GetDiscountedProductData();
-        // const thumbnailUrl = "https://product.hstatic.net/1000288298/product/dsc03886_2_fe261d7a9e75446492cf913fe83d06ba_1024x1024.jpg";
-
-        // const mockProducts = [
-        //     { id: '1001', name: 'Laptop Lenovo', price: 10000000, stock: 10, brand: 'Lenovo', image: thumbnailUrl },
-        //     { id: '1002', name: 'Laptop Dell', price: 15000000, stock: 20, brand: 'Dell', image: thumbnailUrl },
-        //     { id: '1003', name: 'PC Gaming', price: 20000000, stock: 15, brand: 'Custom', image: thumbnailUrl },
-        //     { id: '1004', name: 'Quần jean Slim Fit', price: 500000, stock: 50, brand: 'Levis', image: thumbnailUrl },
-        //     { id: '1005', name: 'Áo sơ mi Classic', price: 450000, stock: 35, brand: 'Uniqlo', image: thumbnailUrl },
-        //     { id: '1006', name: 'Điện thoại iPhone 13', price: 24000000, stock: 25, brand: 'Apple', image: thumbnailUrl },
-        //     { id: '1007', name: 'Tai nghe Bluetooth', price: 2000000, stock: 30, brand: 'Sony', image: thumbnailUrl },
-        // ];
-
-        // setProducts(mockProducts);
-        // setFilteredProducts(mockProducts);
-
-        // // Giả sử có sản phẩm đã được chọn trước đó
-        // if (discountInfo?.selectedProductIds) {
-        //     const preSelectedProducts = mockProducts.filter(product =>
-        //         discountInfo?.selectedProductIds.includes(product.id)
-        //     );
-        //     setSelectedProducts(preSelectedProducts);
-        // }
     }, [discountInfo, open]);
 
     // Xử lý tìm kiếm
     useEffect(() => {
         let result = [...products];
-
+        console.log(">>>check result", result);
         // Áp dụng tìm kiếm
         if (searchQuery) {
             result = result.filter(product =>
                 product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                product.id.includes(searchQuery)
+                product.id.toString().includes(searchQuery)
             );
         }
 
