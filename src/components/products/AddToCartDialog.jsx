@@ -20,6 +20,7 @@ import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import ZoomInIcon from '@mui/icons-material/ZoomIn';
 import { GetProduct } from '../../services/productService';
+import { AddToCart } from '../../services/CartService';
 
 // Styled components
 const StrikethroughText = styled(Typography)({
@@ -257,11 +258,20 @@ const AddToCartDialog = ({
         setZoomOpen(false);
     };
 
-    // Handle actions
-    const handleAddToCart = () => {
-        console.log(`Added ${quantity} of ${product?.name} to cart`);
-        // Implement your add to cart logic here
-        onClose();
+    const handleAddToCart = async () => {
+        if (quantity > product.inStock) {
+            alert("Sản phẩm không đủ tồn kho");
+            return;
+        }
+        const res = await AddToCart(product.id, quantity);
+        if (res?.status === 200 && res?.data) {
+            onClose();
+            console.log(">>>check add to cart:", res?.data);
+            alert("Thêm vào giỏ hàng thành công");
+        }
+        else {
+            alert("Có lỗi xảy ra khi thêm vào giỏ hàng");
+        }
     };
 
     const handleBuyNow = () => {
