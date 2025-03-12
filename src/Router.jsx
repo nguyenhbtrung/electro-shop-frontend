@@ -37,6 +37,7 @@ import Cart from "./pages/user/cartPage";
 import CheckoutPage from "./pages/user/paymentPage";
 import OrdersPage from "./pages/user/ordersPage";
 import ReturnsPage from "./pages/user/ReturnsPage";
+import ProductPageTest from "./components/products/AddToCartDialog";
 
 const AppRouter = () => {
   return (
@@ -49,6 +50,7 @@ const AppRouter = () => {
           <Route path="orders" element={<OrdersPage />} />
           <Route path="returns" element={<ReturnsPage />} />
           <Route path="cart" element={<Cart />} />
+          <Route path="test" element={<ProductPageTest />} />
         </Route>
 
         <Route path="/login" element={<Login />} />
