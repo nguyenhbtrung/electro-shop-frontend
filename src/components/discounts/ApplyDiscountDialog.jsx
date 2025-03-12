@@ -80,7 +80,7 @@ const ApplyDiscountDialog = ({ open, onClose, discountInfo, onSave }) => {
     // Xử lý tìm kiếm
     useEffect(() => {
         let result = [...products];
-        console.log(">>>check result", result);
+
         // Áp dụng tìm kiếm
         if (searchQuery) {
             result = result.filter(product =>
