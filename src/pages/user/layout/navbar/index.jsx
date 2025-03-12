@@ -54,6 +54,10 @@ const Navbar = () => {
         navigate("/returns");
     };
 
+    const handleCartClick = () => {
+        navigate("/cart");
+    };
+
     return (
         <Box display="flex" alignItems="center" justifyContent="space-between" p={2}>
             {/* Phần bên trái: menu, logo, title và tìm kiếm */}
@@ -107,7 +111,7 @@ const Navbar = () => {
                         </Button>
                     </>
                 )}
-                <IconButton>
+                <IconButton onClick={handleCartClick}>
                     <ShoppingCartOutlined />
                 </IconButton>
                 <IconButton onClick={colorMode.toggleColorMode}>

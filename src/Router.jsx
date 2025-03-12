@@ -48,6 +48,7 @@ const AppRouter = () => {
           <Route path="history" element={<ProductViewHistoryPage />} />
           <Route path="orders" element={<OrdersPage />} />
           <Route path="returns" element={<ReturnsPage />} />
+          <Route path="cart" element={<Cart />} />
         </Route>
 
         <Route path="/login" element={<Login />} />
