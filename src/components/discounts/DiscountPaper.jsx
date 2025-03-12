@@ -8,7 +8,7 @@ const DiscountPaper = ({ discountType, discountValue }) => {
 
     const getPaperStyle = (type) => {
         if (type === "Percentage") {
-            return { backgroundColor: colors.red || "#FF0000", color: "#d0d1d5" };
+            return { backgroundColor: colors.red[500] || "#FF0000", color: "#d0d1d5" };
         }
         if (type === "Flat Amount") {
             return { backgroundColor: colors.orange || "#FFA500", color: "#292929" };
