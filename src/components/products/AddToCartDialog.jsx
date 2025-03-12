@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Dialog,
     DialogTitle,
@@ -19,6 +19,7 @@ import RemoveIcon from '@mui/icons-material/Remove';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import ZoomInIcon from '@mui/icons-material/ZoomIn';
+import { GetProduct } from '../../services/productService';
 
 // Styled components
 const StrikethroughText = styled(Typography)({
@@ -179,25 +180,34 @@ const CloseModalButton = styled(IconButton)({
 const AddToCartDialog = ({
     open,
     onClose,
-    product = {
-        id: '1',
-        name: 'Smartphone XYZ 2025',
-        images: [
-            '/images/product-1.jpg',
-            '/images/product-2.jpg',
-            '/images/product-3.jpg',
-            '/images/product-4.jpg',
-            '/images/product-5.jpg',
-        ],
-        inStock: true,
-        originalPrice: 5990000,
-        discountedPrice: 4790000,
-        url: '/products/smartphone-xyz-2025'
-    }
+    productId,
+    discountedPrice,
 }) => {
     const [quantity, setQuantity] = useState(1);
     const [activeImageIndex, setActiveImageIndex] = useState(0);
     const [zoomOpen, setZoomOpen] = useState(false);
+    const [product, setProduct] = useState({});
+
+    useEffect(() => {
+        const GetProductInfo = async () => {
+            const res = await GetProduct(productId);
+            if (res?.status === 200 && res?.data) {
+                console.log(">>>check product:", res?.data);
+                const productInfo = {
+                    id: res?.data?.productId,
+                    name: res?.data?.name,
+                    images: res?.data?.productImages?.map(item => item.imageUrl),
+                    inStock: res?.data?.stock,
+                    originalPrice: res?.data?.price,
+                    discountedPrice: discountedPrice,
+                    url: '/products/smartphone-xyz-2025'
+                };
+                setProduct(productInfo);
+            }
+        };
+
+        GetProductInfo();
+    }, []);
 
     // Calculate savings
     const savings = product.originalPrice - product.discountedPrice;
@@ -224,11 +234,11 @@ const AddToCartDialog = ({
 
     // Handle image navigation
     const goToNextImage = () => {
-        setActiveImageIndex((prev) => (prev + 1) % product.images.length);
+        setActiveImageIndex((prev) => (prev + 1) % product?.images?.length);
     };
 
     const goToPrevImage = () => {
-        setActiveImageIndex((prev) => (prev - 1 + product.images.length) % product.images.length);
+        setActiveImageIndex((prev) => (prev - 1 + product?.images?.length) % product?.images?.length);
     };
 
     const handleThumbnailClick = (index) => {
@@ -246,13 +256,13 @@ const AddToCartDialog = ({
 
     // Handle actions
     const handleAddToCart = () => {
-        console.log(`Added ${quantity} of ${product.name} to cart`);
+        console.log(`Added ${quantity} of ${product?.name} to cart`);
         // Implement your add to cart logic here
         onClose();
     };
 
     const handleBuyNow = () => {
-        console.log(`Buying ${quantity} of ${product.name} now`);
+        console.log(`Buying ${quantity} of ${product?.name} now`);
         // Implement your buy now logic here
         onClose();
     };
@@ -267,7 +277,7 @@ const AddToCartDialog = ({
             >
                 <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <Typography variant="h6" component="div">
-                        {product.name}
+                        {product?.name}
                     </Typography>
                     <IconButton aria-label="close" onClick={onClose}>
                         <CloseIcon />
@@ -286,8 +296,8 @@ const AddToCartDialog = ({
                                     <ArrowBackIosNewIcon fontSize="small" />
                                 </NavigationButton>
                                 <MainImage
-                                    src={product.images[activeImageIndex]}
-                                    alt={`${product.name} - Hình ${activeImageIndex + 1}`}
+                                    src={product?.images?.[activeImageIndex]}
+                                    alt={`${product?.name} - Hình ${activeImageIndex + 1}`}
                                     onError={(e) => {
                                         e.target.src = 'https://via.placeholder.com/400x300?text=No+Image';
                                     }}
@@ -308,7 +318,7 @@ const AddToCartDialog = ({
                             </MainImageContainer>
 
                             <ThumbnailContainer>
-                                {product.images.map((image, index) => (
+                                {product?.images?.map((image, index) => (
                                     <Thumbnail
                                         key={index}
                                         active={index === activeImageIndex}
@@ -351,15 +361,20 @@ const AddToCartDialog = ({
                             <Box sx={{ mb: 2 }}>
                                 <Typography variant="subtitle1" fontWeight="bold">Giá:</Typography>
                                 <Box sx={{ display: 'flex', alignItems: 'center', mt: 0.5 }}>
-                                    <StrikethroughText variant="body1">
-                                        {formatPrice(product.originalPrice)}
-                                    </StrikethroughText>
+                                    {product.originalPrice !== product.discountedPrice && (
+                                        <StrikethroughText variant="body1">
+                                            {formatPrice(product.originalPrice)}
+                                        </StrikethroughText>
+                                    )}
+
                                     <DiscountText variant="h6">
                                         {formatPrice(product.discountedPrice)}
                                     </DiscountText>
-                                    <SavingsText variant="body2">
-                                        Tiết kiệm {savingsPercentage}%
-                                    </SavingsText>
+                                    {product.originalPrice !== product.discountedPrice && (
+                                        <SavingsText variant="body2">
+                                            Tiết kiệm {savingsPercentage}%
+                                        </SavingsText>
+                                    )}
                                 </Box>
                             </Box>
 
@@ -451,7 +466,7 @@ const AddToCartDialog = ({
                         <ArrowBackIosNewIcon />
                     </NavigationButton>
                     <ModalImage
-                        src={product.images[activeImageIndex]}
+                        src={product?.images?.[activeImageIndex]}
                         alt={`${product.name} - Hình ${activeImageIndex + 1}`}
                         onError={(e) => {
                             e.target.src = 'https://via.placeholder.com/800x600?text=No+Image';
@@ -471,7 +486,7 @@ const AddToCartDialog = ({
     );
 };
 
-// export default AddToCartDialog;
+export default AddToCartDialog;
 
 
 function ProductPageTest() {
@@ -510,10 +525,11 @@ function ProductPageTest() {
             <AddToCartDialog
                 open={open}
                 onClose={handleClose}
-                product={productData}
+                productId={15}
+                discountedPrice={20000000}
             />
         </div>
     );
 }
 
-export default ProductPageTest;
+// export default ProductPageTest;

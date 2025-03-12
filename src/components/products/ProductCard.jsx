@@ -7,8 +7,9 @@ import StarHalfIcon from "@mui/icons-material/StarHalf";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import DiscountPaper from "../discounts/DiscountPaper";
 import { tokens } from "../../theme";
+import AddToCartDialog from "./AddToCartDialog";
 
-const ProductCard = ({ product, onAddToCart }) => {
+const ProductCard = ({ product }) => {
     // expected properties of product:
     // - name: string
     // - images: array string (ví dụ: ["url_ảnh_1", "url_ảnh_2"])
@@ -20,6 +21,7 @@ const ProductCard = ({ product, onAddToCart }) => {
 
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
+    const [openAddToCart, setOpenAddToCart] = useState(false);
 
     const {
         name,
@@ -64,12 +66,8 @@ const ProductCard = ({ product, onAddToCart }) => {
         return stars;
     };
 
-    const handleAddToCart = () => {
-        if (onAddToCart) {
-            onAddToCart(product);
-        } else {
-            console.log(`Product ${name} added to cart.`);
-        }
+    const handleCloseAddToCart = () => {
+        setOpenAddToCart(false);
     };
 
     return (
@@ -161,12 +159,18 @@ const ProductCard = ({ product, onAddToCart }) => {
                 <Button
                     variant="contained"
                     startIcon={<ShoppingCartIcon />}
-                    onClick={handleAddToCart}
+                    onClick={() => setOpenAddToCart(true)}
                     fullWidth
                 >
                     Thêm vào giỏ hàng
                 </Button>
             </Box>
+            <AddToCartDialog
+                open={openAddToCart}
+                onClose={handleCloseAddToCart}
+                productId={product.productId}
+                discountedPrice={product.discountedPrice}
+            />
         </Box>
     );
 };
