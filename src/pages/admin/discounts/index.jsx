@@ -219,10 +219,15 @@ const ManageDiscount = () => {
                             e.stopPropagation();
                             handleOpenProductDialog(params.row);
                         }}
-                        sx={{ color: colors.blueAccent[400] }}
+                        sx={{
+                            color: colors.blueAccent[400],
+                            textTransform: 'lowercase',
+                            textDecoration: 'underline'
+                        }}
                     >
                         {productCount} sản phẩm
                     </Button>
+
                 );
             },
         },
