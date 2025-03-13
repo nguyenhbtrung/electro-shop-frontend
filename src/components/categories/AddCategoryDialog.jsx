@@ -17,7 +17,6 @@ const AddCategoryDialog = ({ open, onClose, onSubmit }) => {
   const [error, setError] = useState("");
 
   const handleSubmit = () => {
-    // Validate tên Category
     if (name.trim() === "") {
       setError("Vui lòng nhập tên category.");
       return;

@@ -9,35 +9,35 @@ import {
   Grid,
 } from "@mui/material";
 
-import { UpdateCategory } from "../../services/categoryService";
+import { UpdateBrand } from "../../services/brandService";
 
-const UpdateCategoryDialog = ({ open, onClose, onSubmit, category }) => {
+const UpdateBrandDialog = ({ open, onClose, onSubmit, brand }) => {
   // formValues lưu trữ các trường của category cần cập nhật
   const [formValues, setFormValues] = useState({
-    name: "",
-    description: "",
-    parentCategoryId: "",
+    brandName: "",
+    country: "",
+    info: "",
     imageUrl: "",
   });
 
   // Khi có category được chọn (hoặc khi mở dialog), cập nhật giá trị ban đầu
   useEffect(() => {
-    if (category) {
+    if (brand) {
       setFormValues({
-        name: category.name || "",
-        description: category.description || "",
-        parentCategoryId: category.parentCategoryId ?? "",
-        imageUrl: category.imageUrl || "",
+        brandName: brand.brandName || "",
+        country: brand.country || "",
+        info: brand.info || "",
+        imageUrl: brand.imageUrl || "",
       });
     } else {
       setFormValues({
-        name: "",
-        description: "",
-        parentCategoryId: "",
+        brandName: "",
+        country: "",
+        info: "",
         imageUrl: "",
       });
     }
-  }, [category, open]);
+  }, [brand, open]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -48,76 +48,73 @@ const UpdateCategoryDialog = ({ open, onClose, onSubmit, category }) => {
   };
 
   const handleSubmit = async () => {
-    // Validate trường bắt buộc: tên Category
-    if (!formValues.name.trim()) {
-      alert("Vui lòng nhập tên category!");
+    if (!formValues.brandName.trim()) {
+      alert("Vui lòng nhập tên nhãn hàng!");
       return;
     }
 
-    // Chuẩn bị DTO gửi đi (chuyển ParentCategoryId về số nếu có)
-    const updatedCategory = {
-      name: formValues.name.trim(),
-      description: formValues.description.trim(),
-      parentCategoryId:
-        formValues.parentCategoryId === ""
-          ? null
-          : parseInt(formValues.parentCategoryId, 10),
+    // Chuẩn bị DTO gửi đi 
+    const updatedBrand = {
+      brandName: formValues.brandName.trim(),
+      country: formValues.country.trim(),
+      info: formValues.info.trim(),
       imageUrl: formValues.imageUrl.trim(),
     };
 
     try {
-      const res = await UpdateCategory(category.categoryId, updatedCategory);
+      const res = await UpdateBrand(brand.brandId, updatedBrand);
       if (res?.status === 200 && res?.data) {
-      alert("Cập nhật category thành công!");
+      alert("Cập nhật nhãn hàng thành công!");
       onSubmit(res.data);
       onClose();
         } else {
-        console.log(">>>Error updating category:", res);
+        console.log(">>>Error updating brand:", res);
        }
       
     } catch (error) {
-      console.log(">>>Error updating category:", error);
+      console.log(">>>Error updating brand:", error);
     }
   };
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
-      <DialogTitle>Cập nhật Category</DialogTitle>
+      <DialogTitle>Cập nhật Brand</DialogTitle>
       <DialogContent>
         <Grid container spacing={2} sx={{ mt: 1 }}>
-          {/* Tên Category */}
+          {/* Tên Brand */}
           <Grid item xs={12}>
             <TextField
               required
               fullWidth
-              label="Tên Category"
-              name="name"
-              value={formValues.name}
+              label="Tên Brand"
+              name="brandName"
+              value={formValues.brandName}
               onChange={handleChange}
               inputProps={{ maxLength: 255 }}
             />
           </Grid>
-          {/* Mô tả */}
+          {/* Country */}
           <Grid item xs={12}>
             <TextField
               fullWidth
-              label="Mô tả"
-              name="description"
-              value={formValues.description}
+              label="Country"
+              name="country"
+              value={formValues.country}
               onChange={handleChange}
               multiline
               rows={4}
             />
           </Grid>
-          {/* Parent Category ID */}
+          {/* Info */}
           <Grid item xs={12}>
             <TextField
               fullWidth
-              label="Parent Category ID"
-              name="parentCategoryId"
-              type="number"
-              value={formValues.parentCategoryId}
+              label="Info"
+              name="info"
+              value={formValues.info}
+              multiline
               onChange={handleChange}
+              rows={4}
             />
           </Grid>
           {/* Image URL */}
@@ -144,4 +141,4 @@ const UpdateCategoryDialog = ({ open, onClose, onSubmit, category }) => {
   );
 };
 
-export default UpdateCategoryDialog;
+export default UpdateBrandDialog;

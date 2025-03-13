@@ -7,8 +7,8 @@ import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { GetAllBrand, CreateBrand, UpdateBrand, DeleteBrand } from "../../../services/brandService";
-import AddCategoryDialog from "../../../components/categories/AddCategoryDialog";
-import UpdateCategoryDialog from "../../../components/categories/UpdateCategoryDialog";
+import AddBrandDialog from "../../../components/brands/AddBrandDialog";
+import UpdateBrandDialog from "../../../components/brands/UpdateBrandDialog";
 
 const ManageBrand = () => {
   const theme = useTheme();
@@ -47,10 +47,10 @@ const ManageBrand = () => {
         fetchBrands();
         setOpenAddDialog(false);
       } else {
-        console.log(">>>Error creating nhãn hàng:", res);
+        console.log(">>>Error creating brand:", res);
       }
     } catch (error) {
-      console.log(">>>Error creating nhãn hàng:", error);
+      console.log(">>>Error creating brand", error);
     }
   };
 
@@ -64,13 +64,13 @@ const ManageBrand = () => {
       const res = await UpdateBrand(selectedBrand.BrandId, updatedBrand);
       if (res?.status === 200 && res?.data) {
         alert("Cập nhật brand thành công!");
-        fetchBrands();
         setOpenEditDialog(false);
+        fetchBrands();
       } else {
-        console.log(">>>Error updating nhãn hàng:", res);
+        console.log(">>>Error updating brand:", res);
       }
     } catch (error) {
-      console.log(">>>Error updating nhãn hàng:", error);
+      console.log(">>>Error updating brand:", error);
     }
   };
 
@@ -133,7 +133,7 @@ const ManageBrand = () => {
       flex: 1,
       renderCell: (params) => {
         return params.value ? (
-          <img src={params.value} alt={params.row.Name} style={{ height: "40px" }} />
+          <img src={params.value} alt={params.row.brandName} style={{ height: "40px" }} />
         ) : (
           ""
         );
@@ -214,17 +214,17 @@ const ManageBrand = () => {
         />
       </Box>
 
-      <AddCategoryDialog
+      <AddBrandDialog
         open={openAddDialog}
         onClose={() => setOpenAddDialog(false)}
         onSubmit={handleAddDialogSubmit}
       />
 
-      <UpdateCategoryDialog
+      <UpdateBrandDialog
         open={openEditDialog}
         onClose={() => setOpenEditDialog(false)}
         onSubmit={handleEditDialogSubmit}
-        category={selectedBrand}
+        brand={selectedBrand}
       />
     </Box>
   );

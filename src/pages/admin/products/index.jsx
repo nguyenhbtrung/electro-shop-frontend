@@ -218,7 +218,7 @@ const ManageProduct = () => {
           }}
           slots={{ toolbar: GridToolbar }}
           initialState={{
-            pagination: { paginationModel: { pageSize: 10 } },
+            pagination: { paginationModel: { pageSize: 100 } },
           }}
         />
       </Box>
