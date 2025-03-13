@@ -58,11 +58,11 @@ const ManageDiscount = () => {
     };
 
     const handleUpdateProductCount = (count) => {
-        // setDiscounts(prev => prev.map(d => 
-        //     d.discountId === selectedPromotionId 
-        //         ? { ...d, products: Array(count).fill({}) } // Thay bằng real data nếu cần
-        //         : d
-        // ));
+        setDiscounts(prev => prev.map(d =>
+            d.discountId === selectedPromotionId
+                ? { ...d, productCount: count }
+                : d
+        ));
     };
 
     // Xử lý mở dialog thêm giảm giá

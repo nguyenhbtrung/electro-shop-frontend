@@ -25,10 +25,16 @@ const GetDiscountedProducts = (discountId) => {
     return api.get(URL_API);
 };
 
+const ApplyDiscount = (data) => {
+    const URL_API = `/api/Discount/apply`;
+    return api.post(URL_API, data);
+};
+
 export {
     GetDiscounts,
     CreateDiscount,
     DeleteDiscount,
     UpdateDiscount,
-    GetDiscountedProducts
+    GetDiscountedProducts,
+    ApplyDiscount
 };

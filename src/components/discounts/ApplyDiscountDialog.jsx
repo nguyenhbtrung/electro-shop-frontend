@@ -32,7 +32,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import SearchIcon from '@mui/icons-material/Search';
 import InputAdornment from '@mui/material/InputAdornment';
-import { GetDiscountedProducts } from '../../services/discountService';
+import { ApplyDiscount, GetDiscountedProducts } from '../../services/discountService';
 
 const ApplyDiscountDialog = ({ open, onClose, discountInfo, onSave }) => {
     // State cho danh sách sản phẩm
@@ -200,9 +200,26 @@ const ApplyDiscountDialog = ({ open, onClose, discountInfo, onSave }) => {
     };
 
     // Xử lý lưu các sản phẩm đã chọn
-    const handleSave = () => {
-        onSave(selectedProducts);
-        onClose();
+    const handleSave = async () => {
+        const selectedProductIds = selectedProducts.map(sp => sp.id);
+        console.log("selectedProductIds:", selectedProductIds);
+        const data = {
+            discountId: discountInfo?.discountId,
+            productIds: selectedProductIds
+        };
+        const res = await ApplyDiscount(data);
+        if (res?.status === 200 && res?.data) {
+            console.log("product count:", res?.data?.productCount);
+            onSave(res?.data?.productCount);
+            onClose();
+            alert("Áp dụng chương trình giảm giá thành công!");
+        }
+        else if (res?.status === 400) {
+            alert("Không tìm thấy chương trình giảm giá");
+        }
+        else {
+            alert("Có lỗi xảy ra");
+        }
     };
 
     // Format giá tiền
