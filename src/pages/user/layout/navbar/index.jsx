@@ -68,20 +68,28 @@ const Navbar = () => {
                 >
                     <MenuOutlined />
                 </IconButton>
-                <img
-                    style={{ width: "30px", height: "30px", borderRadius: "8px" }}
-                    src={logo}
-                    alt="Argon"
-                />
-                <Typography
-                    variant="h4"
-                    fontWeight="bold"
-                    textTransform="capitalize"
-                    color={colors.greenAccent[500]}
-                    sx={{ display: `${isXsDevices ? "none" : "flex"}` }}
+                <IconButton
+                    onClick={() => navigate("/")}
+                    disableRipple
+                    disableFocusRipple
                 >
-                    Argon
-                </Typography>
+                    <img
+                        style={{ width: "30px", height: "30px", borderRadius: "8px" }}
+                        src={logo}
+                        alt="Argon"
+                    />
+                    <Typography
+                        variant="h4"
+                        fontWeight="bold"
+                        textTransform="capitalize"
+                        color={colors.greenAccent[500]}
+                        sx={{ display: `${isXsDevices ? "none" : "flex"}`, ml: "10px" }}
+                    >
+                        Argon
+                    </Typography>
+                </IconButton>
+
+
                 <Box
                     display="flex"
                     alignItems="center"
