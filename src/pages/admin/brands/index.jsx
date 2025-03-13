@@ -1,12 +1,233 @@
-import { useTheme } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import { Box, Button, IconButton, useTheme } from "@mui/material";
+import { Header } from "../../../components";
+import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../../theme";
+import AddIcon from "@mui/icons-material/Add";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { GetAllBrand, CreateBrand, UpdateBrand, DeleteBrand } from "../../../services/brandService";
+import AddCategoryDialog from "../../../components/categories/AddCategoryDialog";
+import UpdateCategoryDialog from "../../../components/categories/UpdateCategoryDialog";
 
-const ManageBrand= () => {
-    const theme = useTheme();
-    const colors = tokens(theme.palette.mode);
-    return (
-        <div>Trang quản lý nhãn hàng sản phẩm</div>
-    );
+const ManageBrand = () => {
+  const theme = useTheme();
+  const colors = tokens(theme.palette.mode);
+  const [brands, setBrands] = useState([]);
+  const [selectedRows, setSelectedRows] = useState([]);
+  const [openAddDialog, setOpenAddDialog] = useState(false);
+  const [selectedBrand, setSelectedBrand] = useState(null);
+  const [openEditDialog, setOpenEditDialog] = useState(false);
+
+  const fetchBrands = async () => {
+    try {
+      const res = await GetAllBrand();
+      if (res?.data) {
+        console.log(">>>Brand: ", res.data);
+        setBrands(res.data);
+      }
+    } catch (error) {
+      console.log(">>>Error fetching brands", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchBrands();
+  }, []);
+
+  const handleAddBrand = () => {
+    setOpenAddDialog(true);
+  };
+
+  const handleAddDialogSubmit = async (newBrand) => {
+    try {
+      const res = await CreateBrand(newBrand);
+      if (res?.status === 200 && res?.data) {
+        alert("Thêm brand thành công!");
+        fetchBrands();
+        setOpenAddDialog(false);
+      } else {
+        console.log(">>>Error creating nhãn hàng:", res);
+      }
+    } catch (error) {
+      console.log(">>>Error creating nhãn hàng:", error);
+    }
+  };
+
+  const handleEdit = (row) => {
+    setSelectedBrand(row);
+    setOpenEditDialog(true);
+  };
+
+  const handleEditDialogSubmit = async (updatedBrand) => {
+    try {
+      const res = await UpdateBrand(selectedBrand.BrandId, updatedBrand);
+      if (res?.status === 200 && res?.data) {
+        alert("Cập nhật brand thành công!");
+        fetchBrands();
+        setOpenEditDialog(false);
+      } else {
+        console.log(">>>Error updating nhãn hàng:", res);
+      }
+    } catch (error) {
+      console.log(">>>Error updating nhãn hàng:", error);
+    }
+  };
+
+  const handleDelete = async (row) => {
+    if (window.confirm("Bạn có chắc chắn muốn xóa nhãn hàng này không?")) {
+      try {
+        const res = await DeleteBrand(row.BrandId);
+        if (res?.status === 204) {
+          setBrands((prev) =>
+            prev.filter((brand) => brand.BrandId !== row.BrandId)
+          );
+        } else {
+          console.log(">>>Error deleting brand:", res);
+        }
+      } catch (error) {
+        console.log(">>>Error deleting brand:", error);
+      }
+    }
+  };
+
+  const handleDeleteSelected = async () => {
+    if (window.confirm("Bạn có chắc chắn muốn xóa các brands đã chọn không?")) {
+      try {
+        const deletePromises = selectedRows.map((id) => DeleteBrand(id));
+        await Promise.all(deletePromises);
+        setBrands((prev) =>
+          prev.filter((brand) => !selectedRows.includes(brand.BrandId))
+        );
+        setSelectedRows([]);
+      } catch (error) {
+        console.log(">>>Error deleting selected brands:", error);
+      }
+    }
+  };
+
+  const columns = [
+    {
+      field: "brandId",
+      headerName: "ID",
+      flex: 0.5,
+    },
+    {
+      field: "brandName",
+      headerName: "Tên nhãn hàng",
+      flex: 1,
+    },
+    {
+      field: "country",
+      headerName: "Thuộc nước",
+      flex: 1,
+    },
+    {
+      field: "info",
+      headerName: "Thông tin",
+      flex: 1.5,
+    },
+    {
+      field: "imageUrl",
+      headerName: "Ảnh",
+      flex: 1,
+      renderCell: (params) => {
+        return params.value ? (
+          <img src={params.value} alt={params.row.Name} style={{ height: "40px" }} />
+        ) : (
+          ""
+        );
+      },
+    },
+    {
+      field: "actions",
+      headerName: "Hành động",
+      flex: 0.6,
+      minWidth: 100,
+      sortable: false,
+      filterable: false,
+      renderCell: (params) => {
+        return (
+          <>
+            <IconButton color={colors.primary[100]} onClick={() => handleEdit(params.row)}>
+              <EditIcon />
+            </IconButton>
+            <IconButton color={colors.primary[100]} onClick={() => handleDelete(params.row)}>
+              <DeleteIcon />
+            </IconButton>
+          </>
+        );
+      },
+    },
+  ];
+
+  return (
+    <Box m="20px">
+      <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+        <Header title="Quản lý brand" subtitle="Danh sách các brand" />
+        <Box display="flex" alignItems="center" gap={2}>
+          {selectedRows.length > 0 && (
+            <Button variant="contained" color="error" onClick={handleDeleteSelected}>
+              Xoá đã chọn
+            </Button>
+          )}
+          <Button variant="contained" color="secondary" startIcon={<AddIcon />} onClick={handleAddBrand}>
+            Thêm Nhãn Hàng
+          </Button>
+        </Box>
+      </Box>
+
+      <Box
+        mt="10px"
+        height="75vh"
+        maxWidth="100%"
+        sx={{
+          "& .MuiDataGrid-root": { border: "none" },
+          "& .MuiDataGrid-cell": { border: "none" },
+          "& .MuiDataGrid-columnHeaders": {
+            backgroundColor: colors.blueAccent[700],
+            borderBottom: "none",
+          },
+          "& .MuiDataGrid-virtualScroller": {
+            backgroundColor: colors.primary[400],
+          },
+          "& .MuiDataGrid-footerContainer": {
+            borderTop: "none",
+            backgroundColor: colors.blueAccent[700],
+          },
+          "& .MuiCheckbox-root": {
+            color: `${colors.greenAccent[200]} !important`,
+          },
+        }}
+      >
+        <DataGrid
+          rows={brands}
+          columns={columns}
+          getRowId={(row) => row.brandId}
+          checkboxSelection
+          selectionModel={selectedRows}
+          onRowSelectionModelChange={(ids) => setSelectedRows(ids)}
+          slots={{ toolbar: GridToolbar }}
+          initialState={{
+            pagination: { paginationModel: { pageSize: 10 } },
+          }}
+        />
+      </Box>
+
+      <AddCategoryDialog
+        open={openAddDialog}
+        onClose={() => setOpenAddDialog(false)}
+        onSubmit={handleAddDialogSubmit}
+      />
+
+      <UpdateCategoryDialog
+        open={openEditDialog}
+        onClose={() => setOpenEditDialog(false)}
+        onSubmit={handleEditDialogSubmit}
+        category={selectedBrand}
+      />
+    </Box>
+  );
 };
 
 export default ManageBrand;

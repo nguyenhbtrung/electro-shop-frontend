@@ -6,7 +6,7 @@ import { tokens } from "../../../theme";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { GetAllCategory, CreateCategory, UpdateCategory, DeleteCategory } from "../../../services/categoryService";
+import { GetAllCategories, CreateCategory, UpdateCategory, DeleteCategory } from "../../../services/categoryService";
 import AddCategoryDialog from "../../../components/categories/AddCategoryDialog";
 import UpdateCategoryDialog from "../../../components/categories/UpdateCategoryDialog";
 
@@ -21,7 +21,7 @@ const ManageCategory = () => {
 
   const fetchCategories = async () => {
     try {
-      const res = await GetAllCategory();
+      const res = await GetAllCategories();
       if (res?.data) {
         console.log(">>>Categories: ", res.data);
         setCategories(res.data);

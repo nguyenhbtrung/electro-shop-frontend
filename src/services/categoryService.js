@@ -8,7 +8,7 @@ const GetCategory = (id) => {
     const URL_API = `/api/Category/${id}`;
     return api.get(URL_API);
 };
-const GetAllCategory = () => {
+const GetAllCategories = () => {
     const URL_API = `/api/Category`;
     return api.get(URL_API);
 };
@@ -34,6 +34,6 @@ export {
     UpdateCategory,
     CreateCategory,
     DeleteCategory,
-    GetAllCategory,
+    GetAllCategories,
     GetProductByCategoryId
 };
