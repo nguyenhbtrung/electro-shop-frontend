@@ -37,7 +37,7 @@ import Cart from "./pages/user/cartPage";
 import CheckoutPage from "./pages/user/paymentPage";
 import OrdersPage from "./pages/user/ordersPage";
 import ReturnsPage from "./pages/user/ReturnsPage";
-
+import ManageBrand from "./pages/admin/brands";
 const AppRouter = () => {
   return (
     <Router>
@@ -71,6 +71,7 @@ const AppRouter = () => {
           <Route path="contacts" element={<Contacts />} />
           <Route path="invoices" element={<Invoices />} />
           <Route path="form" element={<Form />} />
+          <Route path="brands" element={<ManageBrand />} />
           <Route path="calendar" element={<Calendar />} />
           <Route path="bar" element={<Bar />} />
           <Route path="pie" element={<Pie />} />

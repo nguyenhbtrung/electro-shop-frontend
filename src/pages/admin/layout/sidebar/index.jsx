@@ -192,6 +192,12 @@ const SideBar = () => {
             icon={<ContactsOutlined />}
           />
           <Item
+            title="Nhãn hàng"
+            path="/admin/brands"
+            colors={colors}
+            icon={<ContactsOutlined />}
+          />
+          <Item
             title="Đánh giá"
             path="/admin/ratings"
             colors={colors}
