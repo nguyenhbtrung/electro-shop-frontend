@@ -1,6 +1,6 @@
 import { useTheme, Paper, Typography } from "@mui/material";
 import { tokens } from "../../theme";
-import { formatNumberValue, formatPrice } from "../../utils/formatValue";
+import { formatNumberValue, formatShortPrice } from "../../utils/formatValue";
 
 const DiscountPaper = ({ discountType, discountValue }) => {
     const theme = useTheme();
@@ -21,7 +21,7 @@ const DiscountPaper = ({ discountType, discountValue }) => {
             return `-${formatNumberValue(value)}%`;
         }
         if (type === "Flat Amount") {
-            return `-${formatPrice(value)}`;
+            return `-${formatShortPrice(value)}`;
         }
         return value;
     };

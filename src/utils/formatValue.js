@@ -24,11 +24,18 @@ export const formatNumberValue = (value) => {
     return value;
 };
 
-export const formatPrice = (price) => {
+export const formatShortPrice = (price) => {
     return new Intl.NumberFormat('vi-VN', {
         style: 'currency',
         currency: 'VND',
         notation: 'compact',
         compactDisplay: 'short'
+    }).format(price);
+};
+
+export const formatPrice = (price) => {
+    return new Intl.NumberFormat('vi-VN', {
+        style: 'currency',
+        currency: 'VND'
     }).format(price);
 };

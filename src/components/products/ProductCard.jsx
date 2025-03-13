@@ -14,6 +14,7 @@ import StarBorderIcon from "@mui/icons-material/StarBorder";
 import DiscountPaper from "../discounts/DiscountPaper";
 import { tokens } from "../../theme";
 import AddToCartDialog from "./AddToCartDialog";
+import { formatPrice } from "../../utils/formatValue";
 
 const ProductCard = ({ product }) => {
     const theme = useTheme();
@@ -113,8 +114,10 @@ const ProductCard = ({ product }) => {
                 <Typography
                     variant="h6"
                     sx={{
+                        height: "50px",               // Chiều cao cố định cho phần tên (có thể điều chỉnh theo mong muốn)
+                        lineHeight: "25px",            // Chiều cao dòng (2 dòng nếu mỗi dòng 25px)
                         display: "-webkit-box",
-                        WebkitLineClamp: 2, // giới hạn 2 dòng
+                        WebkitLineClamp: 2,            // Giới hạn 2 dòng
                         WebkitBoxOrient: "vertical",
                         overflow: "hidden",
                         textOverflow: "ellipsis",
@@ -123,6 +126,7 @@ const ProductCard = ({ product }) => {
                 >
                     {name}
                 </Typography>
+
             </Tooltip>
 
             {/* Container chung của 2 hàng giữa */}
@@ -179,7 +183,7 @@ const ProductCard = ({ product }) => {
                                 whiteSpace: "nowrap",
                             }}
                         >
-                            {originalPrice.toLocaleString()}đ
+                            {formatPrice(originalPrice)}
                         </Typography>
                     )}
                     <Typography
@@ -193,7 +197,7 @@ const ProductCard = ({ product }) => {
                             whiteSpace: "nowrap",
                         }}
                     >
-                        {discountedPrice.toLocaleString()}đ
+                        {formatPrice(discountedPrice)}
                     </Typography>
                 </Box>
             </Box>
