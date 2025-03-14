@@ -38,6 +38,7 @@ import CheckoutPage from "./pages/user/paymentPage";
 import OrdersPage from "./pages/user/ordersPage";
 import ReturnsPage from "./pages/user/ReturnsPage";
 import ManageBrand from "./pages/admin/brands";
+import UploadImageTest from "./components/TestUploadFile";
 const AppRouter = () => {
   return (
     <Router>
@@ -79,7 +80,7 @@ const AppRouter = () => {
           <Route path="line" element={<Line />} />
           <Route path="faq" element={<FAQ />} />
           <Route path="geography" element={<Geography />} />
-          <Route path="test" element={<DiscountManagerTest />} />
+          <Route path="test" element={<UploadImageTest />} />
         </Route>
       </Routes>
     </Router>
