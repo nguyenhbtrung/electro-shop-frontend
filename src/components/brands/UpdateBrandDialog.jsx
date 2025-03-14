@@ -63,7 +63,7 @@ const UpdateBrandDialog = ({ open, onClose, onSubmit, brand }) => {
 
     try {
       const res = await UpdateBrand(brand.brandId, updatedBrand);
-      if (res?.status === 200 && res?.data) {
+      if (res?.status === 200) {
       alert("Cập nhật nhãn hàng thành công!");
       onSubmit(res.data);
       onClose();

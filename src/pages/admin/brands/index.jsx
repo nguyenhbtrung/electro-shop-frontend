@@ -77,10 +77,10 @@ const ManageBrand = () => {
   const handleDelete = async (row) => {
     if (window.confirm("Bạn có chắc chắn muốn xóa nhãn hàng này không?")) {
       try {
-        const res = await DeleteBrand(row.BrandId);
+        const res = await DeleteBrand(row.brandId);
         if (res?.status === 204) {
           setBrands((prev) =>
-            prev.filter((brand) => brand.BrandId !== row.BrandId)
+            prev.filter((brand) => brand.brandId !== row.brandId)
           );
         } else {
           console.log(">>>Error deleting brand:", res);
@@ -97,7 +97,7 @@ const ManageBrand = () => {
         const deletePromises = selectedRows.map((id) => DeleteBrand(id));
         await Promise.all(deletePromises);
         setBrands((prev) =>
-          prev.filter((brand) => !selectedRows.includes(brand.BrandId))
+          prev.filter((brand) => !selectedRows.includes(brand.brandId))
         );
         setSelectedRows([]);
       } catch (error) {

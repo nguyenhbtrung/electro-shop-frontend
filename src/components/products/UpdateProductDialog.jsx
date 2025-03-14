@@ -28,7 +28,7 @@ const AddUpdateProductDialog = ({ open, onClose, onSubmit, product, categories }
       setFormValues({
         name: product.name || "",
         info: product.info || "",
-        price: product.price || "",
+        price: product.originalPrice || "",
         stock: product.stock || "",
         categoryIds: product.categories ? product.categories.map((cat) => cat.categoryId) : [],
       });

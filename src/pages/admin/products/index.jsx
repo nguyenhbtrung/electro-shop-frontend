@@ -61,25 +61,17 @@ const ManageProduct = () => {
       console.log("Delete product: ", row?.productId);
       try {
         const res = await DeleteProduct(row?.productId);
-        if (res?.status === 204) {
+        if (res?.status === 200 || res?.status === 204) {
           setProducts((prevProducts) =>
             prevProducts.filter((product) => product.productId !== row.productId)
           );
+          alert("Xóa sản phẩm thành công!");
         } else {
           console.log(">>>Error deleting product:", res);
         }
       } catch (error) {
         console.log(">>>Error deleting product:", error);
       }
-    }
-  };
-
-  const handleDeleteSelected = () => {
-    if (window.confirm("Bạn có chắc chắn muốn xóa các sản phẩm đã chọn không?")) {
-      setProducts((prevProducts) =>
-        prevProducts.filter((product) => !selectedRows.includes(product.productId))
-      );
-      setSelectedRows([]);
     }
   };
 
@@ -101,7 +93,7 @@ const ManageProduct = () => {
       flex: 1,
     },
     {
-      field: "price",
+      field: "originalPrice",
       headerName: "Giá",
       type: "number",
       flex: 0.7,
@@ -167,11 +159,6 @@ const ManageProduct = () => {
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
         <Header title="Quản lý sản phẩm" subtitle="Danh sách các sản phẩm" />
         <Box display="flex" alignItems="center" gap={2}>
-          {selectedRows.length > 0 && (
-            <Button variant="contained" color="error" onClick={handleDeleteSelected}>
-              Xoá đã chọn
-            </Button>
-          )}
           <Button variant="contained" color="secondary" startIcon={<AddIcon />} onClick={handleAddProduct}>
             Thêm sản phẩm
           </Button>
@@ -242,7 +229,6 @@ const ManageProduct = () => {
           setEditProductDialog(false);
         }}
         product={selectedProduct}
-        // Nếu có danh mục sẵn, hãy truyền vào prop categories (ví dụ: categories={listCategories})
         categories={[]}
       />
     </Box>
