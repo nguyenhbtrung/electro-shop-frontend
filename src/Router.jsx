@@ -39,6 +39,8 @@ import OrdersPage from "./pages/user/ordersPage";
 import ReturnsPage from "./pages/user/ReturnsPage";
 import ManageBrand from "./pages/admin/brands";
 import UploadImageTest from "./components/TestUploadFile";
+import ReturnRequestPage from "./pages/user/returnPage/ReturnRequestPage";
+import ReturnConfirmationPage from "./pages/user/returnPage/ReturnConfirmationPage";
 const AppRouter = () => {
   return (
     <Router>
@@ -50,6 +52,8 @@ const AppRouter = () => {
           <Route path="orders" element={<OrdersPage />} />
           <Route path="returns" element={<ReturnsPage />} />
           <Route path="cart" element={<Cart />} />
+          <Route path="send-return-request" element={<ReturnRequestPage />} />
+          <Route path="return-confirmation" element={<ReturnConfirmationPage />} />
         </Route>
 
         <Route path="/login" element={<Login />} />
