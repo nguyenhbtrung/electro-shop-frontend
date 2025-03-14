@@ -42,7 +42,7 @@ const ManageCategory = () => {
   const handleAddDialogSubmit = async (newCategory) => {
     try {
       const res = await CreateCategory(newCategory);
-      if (res?.status === 200 && res?.data) {
+      if (res?.status === 200) {
         alert("Thêm category thành công!");
         fetchCategories();
         setOpenAddDialog(false);
@@ -61,7 +61,7 @@ const ManageCategory = () => {
 
   const handleEditDialogSubmit = async (updatedCategory) => {
     try {
-      const res = await UpdateCategory(selectedCategory.CategoryId, updatedCategory);
+      const res = await UpdateCategory(selectedCategory.categoryId, updatedCategory);
       if (res?.status === 200 && res?.data) {
         alert("Cập nhật category thành công!");
         fetchCategories();

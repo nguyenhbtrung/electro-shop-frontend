@@ -61,8 +61,8 @@ const ManageBrand = () => {
 
   const handleEditDialogSubmit = async (updatedBrand) => {
     try {
-      const res = await UpdateBrand(selectedBrand.BrandId, updatedBrand);
-      if (res?.status === 200 && res?.data) {
+      const res = await UpdateBrand(selectedBrand.brandId, updatedBrand);
+      if (res?.status === 200) {
         alert("Cập nhật brand thành công!");
         setOpenEditDialog(false);
         fetchBrands();
