@@ -9,7 +9,7 @@ import {
   Grid,
 } from "@mui/material";
 import Autocomplete from "@mui/material/Autocomplete";
-import { GetAllCategory } from "../../services/productService";
+import { GetAllCategories } from "../../services/categoryService";
 import { GetAllBrand } from "../../services/brandService";
 
 const AddProductDialog = ({ open, onClose, onSubmit }) => {
@@ -26,7 +26,7 @@ const AddProductDialog = ({ open, onClose, onSubmit }) => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const res = await GetAllCategory();
+        const res = await GetAllCategories();
         if (res?.data) {
           setCategoriesList(res.data);
         }

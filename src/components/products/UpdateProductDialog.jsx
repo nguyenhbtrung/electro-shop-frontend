@@ -10,19 +10,54 @@ import {
 } from "@mui/material";
 import Autocomplete from "@mui/material/Autocomplete";
 import { UpdateProduct } from "../../services/productService";
+import { GetAllBrand } from "../../services/brandService";
+import { GetAllCategories } from "../../services/categoryService";
 
-const AddUpdateProductDialog = ({ open, onClose, onSubmit, product, categories }) => {
-
-
+const AddUpdateProductDialog = ({ open, onClose, onSubmit, product }) => {
   const [formValues, setFormValues] = useState({
     name: "",
     info: "",
     price: "",
     stock: "",
     categoryIds: [],
+    brandId: null,
   });
+  const [selectedBrand, setSelectedBrand] = useState(null);
+  const [brandList, setBrandList] = useState([]);
+  const [categoriesList, setCategoriesList] = useState([]);
+  const [selectedCategories, setSelectedCategories] = useState([]);
 
-  // Khi có sản phẩm được chọn (hoặc khi đóng mở dialog), cập nhật giá trị ban đầu
+  // Fetch danh sách nhãn hàng từ API
+  useEffect(() => {
+    const fetchBrands = async () => {
+      try {
+        const res = await GetAllBrand();
+        if (res?.data) {
+          setBrandList(res.data);
+        }
+      } catch (err) {
+        console.log("Error fetching brands:", err);
+      }
+    };
+    fetchBrands();
+  }, []);
+
+  // Fetch danh sách category từ API
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await GetAllCategories();
+        if (res?.data) {
+          setCategoriesList(res.data);
+        }
+      } catch (err) {
+        console.log("Error fetching categories:", err);
+      }
+    };
+    fetchCategories();
+  }, []);
+
+  // Khi có sản phẩm được chọn hoặc dialog mở, cập nhật giá trị ban đầu
   useEffect(() => {
     if (product) {
       setFormValues({
@@ -31,7 +66,10 @@ const AddUpdateProductDialog = ({ open, onClose, onSubmit, product, categories }
         price: product.originalPrice || "",
         stock: product.stock || "",
         categoryIds: product.categories ? product.categories.map((cat) => cat.categoryId) : [],
+        brandId: product.brand ? product.brand.brandId : null,
       });
+      setSelectedBrand(product.brand || null);
+      setSelectedCategories(product.categories || []);
     } else {
       setFormValues({
         name: "",
@@ -39,7 +77,10 @@ const AddUpdateProductDialog = ({ open, onClose, onSubmit, product, categories }
         price: "",
         stock: "",
         categoryIds: [],
+        brandId: null,
       });
+      setSelectedBrand(null);
+      setSelectedCategories([]);
     }
   }, [product, open]);
 
@@ -52,9 +93,18 @@ const AddUpdateProductDialog = ({ open, onClose, onSubmit, product, categories }
   };
 
   const handleCategoryChange = (event, newValue) => {
+    setSelectedCategories(newValue);
     setFormValues((prev) => ({
       ...prev,
       categoryIds: newValue.map((cat) => cat.categoryId),
+    }));
+  };
+
+  const handleBrandChange = (event, newValue) => {
+    setSelectedBrand(newValue);
+    setFormValues((prev) => ({
+      ...prev,
+      brandId: newValue ? newValue.brandId : null,
     }));
   };
 
@@ -72,21 +122,21 @@ const AddUpdateProductDialog = ({ open, onClose, onSubmit, product, categories }
       price: parseFloat(formValues.price),
       stock: parseInt(formValues.stock, 10),
       categoryIds: formValues.categoryIds,
+      brandId: formValues.brandId,
     };
 
     try {
-      // Nếu có product được chọn thì gọi API cập nhật
       if (product) {
         const res = await UpdateProduct(product.productId, updatedProduct);
         if (res?.status === 200 && res?.data) {
           alert("Cập nhật sản phẩm thành công!");
-          onSubmit(res.data); 
+          onSubmit(res.data);
           onClose();
         } else {
           console.log(">>>Error updating product:", res);
         }
       } else {
-        // Nếu trường hợp thêm sản phẩm mới, bạn có thể bổ sung thêm xử lý ở đây
+        // Xử lý thêm sản phẩm mới nếu cần
       }
     } catch (error) {
       console.log(">>>Error updating product:", error);
@@ -148,22 +198,28 @@ const AddUpdateProductDialog = ({ open, onClose, onSubmit, product, categories }
               type="number"
             />
           </Grid>
-          {/* Danh mục (CategoryIds) */}
+          {/* Danh mục: hiển thị danh sách các category từ API cho phép chọn nhiều, xóa thêm */}
           <Grid item xs={12}>
             <Autocomplete
               multiple
-              options={categories || []}
-              getOptionLabel={(option) => option.name}
-              value={
-                categories
-                  ? categories.filter((cat) =>
-                      formValues.categoryIds.includes(cat.categoryId)
-                    )
-                  : []
-              }
+              options={categoriesList}
+              getOptionLabel={(option) => option.name || ""}
+              value={selectedCategories}
               onChange={handleCategoryChange}
               renderInput={(params) => (
-                <TextField {...params} label="Danh mục" placeholder="Chọn danh mục" />
+                <TextField {...params} label="Chọn danh mục" placeholder="Danh mục" />
+              )}
+            />
+          </Grid>
+          {/* Combobox nhãn hàng */}
+          <Grid item xs={12}>
+            <Autocomplete
+              options={brandList}
+              getOptionLabel={(option) => option.brandName || ""}
+              value={selectedBrand}
+              onChange={handleBrandChange}
+              renderInput={(params) => (
+                <TextField {...params} label="Chọn nhãn hàng" placeholder="Nhãn hàng" />
               )}
             />
           </Grid>
@@ -171,7 +227,7 @@ const AddUpdateProductDialog = ({ open, onClose, onSubmit, product, categories }
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose} color="secondary">
-          Hủy
+          Huỷ
         </Button>
         <Button onClick={handleSubmit} variant="contained" color="primary">
           {product ? "Cập nhật" : "Thêm"}
