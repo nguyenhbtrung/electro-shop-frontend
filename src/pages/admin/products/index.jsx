@@ -127,9 +127,18 @@ const ManageProduct = () => {
       minWidth: 150,
       renderCell: (params) => {
         if (Array.isArray(params.value)) {
-          return params.value.map((cat) => cat.categoryId).join(", ");
+          return params.value.map((cat) => cat.name).join(", ");
         }
         return "";
+      },
+    },
+    {
+      field: "brand",
+      headerName: "Nhãn hàng",
+      flex: 1,
+      minWidth: 150,
+      renderCell: (params) => {
+        return params.value ? params.value.brandName : "";
       },
     },
     {
