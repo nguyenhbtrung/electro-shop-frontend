@@ -78,10 +78,17 @@ const AddProductDialog = ({ open, onClose, onSubmit }) => {
       setError("Số lượng tồn kho phải là số không âm.");
       return;
     }
+    if (!selectedBrand) {
+      setError("Vui lòng chọn nhãn hàng.");
+      return;
+    }
+
+    if (selectedCategories.length === 0) {
+      setError("Vui lòng chọn ít nhất một danh mục.");
+      return;
+    }
 
     const categoryIdsArray = selectedCategories.map((cat) => cat.categoryId);
-
-    // Nếu validate thành công, gọi onSubmit truyền dữ liệu mới cho component cha
     onSubmit({
       name: name.trim(),
       info: info.trim(),

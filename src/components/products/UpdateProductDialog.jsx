@@ -26,6 +26,7 @@ const AddUpdateProductDialog = ({ open, onClose, onSubmit, product }) => {
   const [brandList, setBrandList] = useState([]);
   const [categoriesList, setCategoriesList] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState([]);
+  const [error, setError] = useState("");
 
   // Fetch danh sách nhãn hàng từ API
   useEffect(() => {
@@ -82,6 +83,8 @@ const AddUpdateProductDialog = ({ open, onClose, onSubmit, product }) => {
       setSelectedBrand(null);
       setSelectedCategories([]);
     }
+    // Reset lỗi khi mở lại dialog hoặc thay đổi sản phẩm
+    setError("");
   }, [product, open]);
 
   const handleChange = (e) => {
@@ -109,13 +112,20 @@ const AddUpdateProductDialog = ({ open, onClose, onSubmit, product }) => {
   };
 
   const handleSubmit = async () => {
-    // Kiểm tra các trường bắt buộc
+    // Validate các trường bắt buộc
     if (!formValues.name || !formValues.info || !formValues.price || !formValues.stock) {
-      alert("Vui lòng điền đầy đủ các trường bắt buộc!");
+      setError("Vui lòng điền đầy đủ các trường bắt buộc!");
       return;
     }
-
-    // Chuẩn bị DTO gửi đi (chuyển Price, Stock về số)
+    if (selectedCategories.length === 0) {
+      setError("Vui lòng chọn ít nhất một danh mục.");
+      return;
+    }
+    if (!selectedBrand) {
+      setError("Vui lòng chọn nhãn hàng.");
+      return;
+    }
+    // Chuẩn bị DTO gửi đi (chuyển giá và số lượng về số)
     const updatedProduct = {
       name: formValues.name,
       info: formValues.info,
@@ -134,12 +144,14 @@ const AddUpdateProductDialog = ({ open, onClose, onSubmit, product }) => {
           onClose();
         } else {
           console.log(">>>Error updating product:", res);
+          setError("Có lỗi xảy ra khi cập nhật sản phẩm.");
         }
       } else {
         // Xử lý thêm sản phẩm mới nếu cần
       }
     } catch (error) {
       console.log(">>>Error updating product:", error);
+      setError("Có lỗi xảy ra khi cập nhật sản phẩm.");
     }
   };
 
@@ -198,7 +210,7 @@ const AddUpdateProductDialog = ({ open, onClose, onSubmit, product }) => {
               type="number"
             />
           </Grid>
-          {/* Danh mục: hiển thị danh sách các category từ API cho phép chọn nhiều, xóa thêm */}
+          {/* Danh mục: cho phép chọn nhiều danh mục */}
           <Grid item xs={12}>
             <Autocomplete
               multiple
@@ -223,6 +235,11 @@ const AddUpdateProductDialog = ({ open, onClose, onSubmit, product }) => {
               )}
             />
           </Grid>
+          {error && (
+            <Grid item xs={12}>
+              <div style={{ color: "red", textAlign: "center" }}>{error}</div>
+            </Grid>
+          )}
         </Grid>
       </DialogContent>
       <DialogActions>

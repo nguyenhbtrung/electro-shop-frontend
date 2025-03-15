@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { Box, Button, IconButton, useTheme } from "@mui/material";
+import {
+  Box,
+  Button,
+  IconButton,
+  useTheme,
+} from "@mui/material";
 import { Header } from "../../../components";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../../theme";
@@ -7,9 +12,11 @@ import { CreateProduct, DeleteProduct, GetAllProduct } from "../../../services/p
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import ImageIcon from "@mui/icons-material/Image";
 import { useNavigate } from "react-router-dom";
 import AddProductDialog from "../../../components/products/AddProductDialog";
 import AddUpdateProductDialog from "../../../components/products/UpdateProductDialog";
+import EditProductImagesDialog from "../../../components/products/ProductImageDialog";
 
 const ManageProduct = () => {
   const theme = useTheme();
@@ -19,6 +26,10 @@ const ManageProduct = () => {
   const [openAddDialog, setOpenAddDialog] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [openEditProductDialog, setEditProductDialog] = useState(false);
+
+  // State để mở dialog chỉnh sửa ảnh và lưu sản phẩm được chọn
+  const [openImageDialog, setOpenImageDialog] = useState(false);
+  const [selectedImageProduct, setSelectedImageProduct] = useState(null);
 
   const fetchProducts = async () => {
     try {
@@ -73,6 +84,12 @@ const ManageProduct = () => {
         console.log(">>>Error deleting product:", error);
       }
     }
+  };
+
+  // Xử lý nút chỉnh sửa ảnh
+  const handleEditImage = (row) => {
+    setSelectedImageProduct(row);
+    setOpenImageDialog(true);
   };
 
   const columns = [
@@ -144,8 +161,8 @@ const ManageProduct = () => {
     {
       field: "actions",
       headerName: "Hành động",
-      flex: 0.6,
-      minWidth: 100,
+      flex: 0.8,
+      minWidth: 140,
       sortable: false,
       filterable: false,
       renderCell: (params) => {
@@ -156,6 +173,9 @@ const ManageProduct = () => {
             </IconButton>
             <IconButton color={colors.primary[100]} onClick={() => handleDelete(params.row)}>
               <DeleteIcon />
+            </IconButton>
+            <IconButton color={colors.primary[100]} onClick={() => handleEditImage(params.row)}>
+              <ImageIcon />
             </IconButton>
           </>
         );
@@ -168,7 +188,12 @@ const ManageProduct = () => {
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
         <Header title="Quản lý sản phẩm" subtitle="Danh sách các sản phẩm" />
         <Box display="flex" alignItems="center" gap={2}>
-          <Button variant="contained" color="secondary" startIcon={<AddIcon />} onClick={handleAddProduct}>
+          <Button
+            variant="contained"
+            color="secondary"
+            startIcon={<AddIcon />}
+            onClick={handleAddProduct}
+          >
             Thêm sản phẩm
           </Button>
         </Box>
@@ -239,6 +264,13 @@ const ManageProduct = () => {
         }}
         product={selectedProduct}
         categories={[]}
+      />
+
+      {/* Dialog chỉnh sửa ảnh sản phẩm */}
+      <EditProductImagesDialog
+        open={openImageDialog}
+        onClose={() => setOpenImageDialog(false)}
+        productId={selectedImageProduct ? selectedImageProduct.productId : null}
       />
     </Box>
   );
