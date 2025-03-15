@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Box,
     Button,
@@ -22,17 +22,18 @@ import {
 } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import CloseIcon from '@mui/icons-material/Close';
+import { GetOrderByUser } from '../../../services/orderService';
 
 const ReturnRequestPage = () => {
     // Sample order data
-    const orderData = {
-        orderId: 'ORDER#12345',
-        items: [
-            { id: 1, name: 'Laptop HP', quantity: 1, maxQuantity: 1 },
-            { id: 2, name: 'PC Dell Inspiron', quantity: 2, maxQuantity: 2 },
-            { id: 3, name: 'Chuột Logitech', quantity: 1, maxQuantity: 1 }
-        ]
-    };
+    // const orderData = {
+    //     orderId: 'ORDER#12345',
+    //     orderItems: [
+    //         { orderItemId: 1, productName: 'Laptop HP', quantity: 1 },
+    //         { orderItemId: 2, productName: 'PC Dell Inspiron', quantity: 2 },
+    //         { orderItemId: 3, productName: 'Chuột Logitech', quantity: 1 }
+    //     ]
+    // };
 
     // State for form
     const [selectedItems, setSelectedItems] = useState({});
@@ -48,6 +49,19 @@ const ReturnRequestPage = () => {
     const [files, setFiles] = useState([]);
     const [open, setOpen] = useState(false);
     const [selectedImage, setSelectedImage] = useState(null);
+    const [orderData, setOrderData] = useState({});
+
+    useEffect(() => {
+        const GetOrder = async () => {
+            const orderRes = await GetOrderByUser();
+            if (orderRes?.status === 200 && orderRes?.data) {
+                console.log(">>>check orders:", orderRes?.data);
+                setOrderData(orderRes?.data?.[0]);
+            }
+        };
+
+        GetOrder();
+    }, []);
 
     const handleImageClick = (file) => {
         // Tạo URL cho file ảnh và đặt vào state để hiển thị trong modal.
@@ -70,7 +84,7 @@ const ReturnRequestPage = () => {
 
         // Initialize quantity if item is selected
         if (event.target.checked && !returnQuantities[itemId]) {
-            const item = orderData.items.find(item => item.id === itemId);
+            const item = orderData.orderItems.find(item => item.orderItemId === itemId);
             setReturnQuantities({
                 ...returnQuantities,
                 [itemId]: 1
@@ -80,14 +94,14 @@ const ReturnRequestPage = () => {
 
     // Handle quantity change
     const handleQuantityChange = (event, itemId) => {
-        const item = orderData.items.find(item => item.id === itemId);
+        const item = orderData.orderItems.find(item => item.orderItemId === itemId);
         let value = parseInt(event.target.value, 10);
 
         // Validate quantity
         if (isNaN(value) || value < 1) {
             value = 1;
-        } else if (value > item.maxQuantity) {
-            value = item.maxQuantity;
+        } else if (value > item.quantity) {
+            value = item.quantity;
         }
 
         setReturnQuantities({
@@ -127,7 +141,7 @@ const ReturnRequestPage = () => {
                 .filter(itemId => selectedItems[itemId])
                 .map(itemId => ({
                     id: parseInt(itemId, 10),
-                    name: orderData.items.find(item => item.id === parseInt(itemId, 10)).name,
+                    name: orderData.orderItems.find(item => item.orderItemId === parseInt(itemId, 10)).productName,
                     quantity: returnQuantities[itemId] || 1
                 })),
             reasons: selectedReasons,
@@ -163,17 +177,17 @@ const ReturnRequestPage = () => {
                             Chọn sản phẩm cần hoàn trả:
                         </Typography>
 
-                        {orderData.items.map((item) => (
-                            <Grid container spacing={2} alignItems="center" key={item.id} sx={{ mb: 1 }}>
+                        {orderData.orderItems?.map((item) => (
+                            <Grid container spacing={2} alignItems="center" key={item.orderItemId} sx={{ mb: 1 }}>
                                 <Grid item xs={6}>
                                     <FormControlLabel
                                         control={
                                             <Checkbox
-                                                checked={!!selectedItems[item.id]}
-                                                onChange={(e) => handleItemSelect(e, item.id)}
+                                                checked={!!selectedItems[item.orderItemId]}
+                                                onChange={(e) => handleItemSelect(e, item.orderItemId)}
                                             />
                                         }
-                                        label={item.name}
+                                        label={item.productName}
                                     />
                                 </Grid>
                                 <Grid item xs={6}>
@@ -181,20 +195,20 @@ const ReturnRequestPage = () => {
                                         label="Số lượng"
                                         type="number"
                                         size="small"
-                                        disabled={!selectedItems[item.id]}
-                                        value={returnQuantities[item.id] || ''}
-                                        onChange={(e) => handleQuantityChange(e, item.id)}
+                                        disabled={!selectedItems[item.orderItemId]}
+                                        value={returnQuantities[item.orderItemId] || ''}
+                                        onChange={(e) => handleQuantityChange(e, item.orderItemId)}
                                         InputProps={{
                                             endAdornment: (
                                                 <InputAdornment position="end">
                                                     <Typography variant="caption">
-                                                        (Tối đa: {item.maxQuantity})
+                                                        (Tối đa: {item.quantity})
                                                     </Typography>
                                                 </InputAdornment>
                                             ),
                                             inputProps: {
                                                 min: 1,
-                                                max: item.maxQuantity
+                                                max: item.quantity
                                             }
                                         }}
                                     />
