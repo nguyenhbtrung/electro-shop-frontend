@@ -52,8 +52,8 @@ const AppRouter = () => {
           <Route path="orders" element={<OrdersPage />} />
           <Route path="returns" element={<ReturnsPage />} />
           <Route path="cart" element={<Cart />} />
-          <Route path="send-return-request" element={<ReturnRequestPage />} />
-          <Route path="return-confirmation" element={<ReturnConfirmationPage />} />
+          <Route path="return/request" element={<ReturnRequestPage />} />
+          <Route path="return/confirmation/:returnId" element={<ReturnConfirmationPage />} />
         </Route>
 
         <Route path="/login" element={<Login />} />

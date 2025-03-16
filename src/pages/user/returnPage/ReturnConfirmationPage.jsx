@@ -12,8 +12,11 @@ import {
 } from '@mui/material';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
+import { useParams } from 'react-router-dom';
 
 const ReturnConfirmationPage = () => {
+    const { returnId } = useParams();
+
     // Sample return request data
     const returnData = {
         returnId: 'RETURN#12345',
@@ -46,7 +49,7 @@ const ReturnConfirmationPage = () => {
                         </Typography>
                     </Box>
                     <Typography variant="subtitle1" fontWeight="bold">
-                        Mã yêu cầu: {returnData.returnId}
+                        Mã yêu cầu: {returnId}
                     </Typography>
                 </Box>
 
@@ -80,7 +83,7 @@ const ReturnConfirmationPage = () => {
                         variant="contained"
                         color="primary"
                         size="large"
-                        onClick={() => console.log('Tracking return request:', returnData.returnId)}
+                        onClick={() => console.log('Tracking return request:', returnId)}
                     >
                         Theo dõi trạng thái hoàn trả
                     </Button>

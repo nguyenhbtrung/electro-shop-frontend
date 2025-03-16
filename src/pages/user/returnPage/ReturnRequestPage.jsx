@@ -23,6 +23,8 @@ import {
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import CloseIcon from '@mui/icons-material/Close';
 import { GetOrderByUser } from '../../../services/orderService';
+import { CreateReturnRequest } from '../../../services/returnService';
+import { useNavigate } from 'react-router-dom';
 
 const ReturnRequestPage = () => {
     // Sample order data
@@ -50,6 +52,8 @@ const ReturnRequestPage = () => {
     const [open, setOpen] = useState(false);
     const [selectedImage, setSelectedImage] = useState(null);
     const [orderData, setOrderData] = useState({});
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         const GetOrder = async () => {
@@ -132,24 +136,54 @@ const ReturnRequestPage = () => {
     };
 
     // Handle form submission
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
+        const selectedProductIds = Object.keys(selectedItems)
+            .filter(itemId => selectedItems[itemId]);
+        if (selectedProductIds.length === 0) {
+            alert("Vui lòng chọn sản phẩm cần hoàn trả");
+            return;
+        }
         const selectedReasons = Object.keys(reasons).filter(key => reasons[key]);
-        const formData = {
-            orderId: orderData.orderId,
-            items: Object.keys(selectedItems)
-                .filter(itemId => selectedItems[itemId])
-                .map(itemId => ({
-                    id: parseInt(itemId, 10),
-                    name: orderData.orderItems.find(item => item.orderItemId === parseInt(itemId, 10)).productName,
-                    quantity: returnQuantities[itemId] || 1
-                })),
-            reasons: selectedReasons,
-            description,
-            handlingMethod,
-            evidenceFiles: files
-        };
-        console.log('Form submitted:', formData);
+        if (selectedReasons.length === 0) {
+            alert("Vui lòng chọn lý do hoàn trả");
+            return;
+        }
+        if (files.length === 0) {
+            alert("Vui lòng tải lên ảnh minh chứng");
+            return;
+        }
+        const returnItems = selectedProductIds.map(itemId => ({
+            orderItemId: parseInt(itemId, 10),
+            returnQuantity: returnQuantities[itemId] || 1
+        }));
+        const formData = new FormData();
+        formData.append('OrderId', orderData.orderId);
+        formData.append('Reason', selectedReasons);
+        formData.append('Detail', description);
+        formData.append('ReturnMethod', handlingMethod);
+        files.forEach((file, index) => {
+            formData.append('EvidenceImages', file);
+        });
+        returnItems.forEach((item, index) => {
+            formData.append(`ReturnItems[${index}].OrderItemId`, item.orderItemId);
+            formData.append(`ReturnItems[${index}].ReturnQuantity`, item.returnQuantity);
+        });
+        // for (var pair of formData.entries()) {
+        //     console.log(pair[0] + ', ' + pair[1]);
+        // }
+        const res = await CreateReturnRequest(formData);
+        if (res?.status === 200 && res?.data) {
+            console.log(">>>check returnRes", res?.data);
+            navigate(`/return/confirmation/${res?.data?.returnId}`);
+
+        }
+        else if (res?.status === 400) {
+            alert(res?.data);
+        }
+        else {
+            alert("Có lỗi xảy ra");
+        }
     };
 
     return (
