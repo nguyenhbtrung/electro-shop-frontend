@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -8,13 +8,36 @@ import {
   TextField,
   Grid,
 } from "@mui/material";
+import Autocomplete from "@mui/material/Autocomplete";
+import { GetAllCategories } from "../../services/categoryService";
 
 const AddCategoryDialog = ({ open, onClose, onSubmit }) => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [parentCategoryId, setParentCategoryId] = useState("");
+  const [parentCategoryId, setParentCategoryId] = useState(null);
   const [imageUrl, setImageUrl] = useState("");
   const [error, setError] = useState("");
+  const [parentCategories, setParentCategories] = useState([]);
+
+  useEffect(() => {
+    if (open) {
+      const fetchParentCategories = async () => {
+        try {
+          const res = await GetAllCategories();
+          if (res?.data) {
+            const parents = res.data.filter(
+              (cat) => cat.parentCategoryId === null
+            );
+            setParentCategories(parents);
+          }
+        } catch (err) {
+          console.log("Error fetching parent categories", err);
+        }
+      };
+
+      fetchParentCategories();
+    }
+  }, [open]);
 
   const handleSubmit = () => {
     if (name.trim() === "") {
@@ -26,29 +49,19 @@ const AddCategoryDialog = ({ open, onClose, onSubmit }) => {
       return;
     }
 
-    // Validate Parent Category ID nếu có (nếu không, sẽ trả về null)
-    const parentIdValue =
-      parentCategoryId.trim() === "" ? null : parseInt(parentCategoryId, 10);
-    if (parentCategoryId.trim() !== "" && isNaN(parentIdValue)) {
-      setError("Parent Category ID phải là số hợp lệ.");
-      return;
-    }
-
-    // Chuẩn bị DTO cho category
     const newCategory = {
       name: name.trim(),
       description: description.trim(),
-      parentCategoryId: parentIdValue,
+      parentCategoryId: parentCategoryId, // đã là number hoặc null
       imageUrl: imageUrl.trim(),
     };
 
-    // Nếu validate thành công, gọi onSubmit truyền dữ liệu mới cho component cha
     onSubmit(newCategory);
 
     // Reset form và đóng dialog
     setName("");
     setDescription("");
-    setParentCategoryId("");
+    setParentCategoryId(null);
     setImageUrl("");
     setError("");
     onClose();
@@ -85,13 +98,20 @@ const AddCategoryDialog = ({ open, onClose, onSubmit }) => {
             />
           </Grid>
           <Grid item xs={12}>
-            <TextField
-              label="Parent Category ID"
-              fullWidth
-              type="number"
-              value={parentCategoryId}
-              onChange={(e) => setParentCategoryId(e.target.value)}
-              helperText="ID của category cha (nếu có)"
+            <Autocomplete
+              options={parentCategories}
+              getOptionLabel={(option) => option.name}
+              value={
+                parentCategories.find(
+                  (item) => item.categoryId === parentCategoryId
+                ) || null
+              }
+              onChange={(event, newValue) =>
+                setParentCategoryId(newValue ? newValue.categoryId : null)
+              }
+              renderInput={(params) => (
+                <TextField {...params} label="Danh mục cha" variant="outlined" />
+              )}
             />
           </Grid>
           <Grid item xs={12}>

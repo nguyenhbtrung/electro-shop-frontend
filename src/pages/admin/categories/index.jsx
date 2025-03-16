@@ -14,7 +14,6 @@ const ManageCategory = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [categories, setCategories] = useState([]);
-  const [selectedRows, setSelectedRows] = useState([]);
   const [openAddDialog, setOpenAddDialog] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [openEditDialog, setOpenEditDialog] = useState(false);
@@ -44,7 +43,8 @@ const ManageCategory = () => {
       const res = await CreateCategory(newCategory);
       if (res?.status === 200) {
         alert("Thêm category thành công!");
-        fetchCategories();
+        // Thêm category mới vào đầu danh sách
+        setCategories((prev) => [res.data, ...prev]);
         setOpenAddDialog(false);
       } else {
         console.log(">>>Error creating category:", res);
@@ -77,31 +77,23 @@ const ManageCategory = () => {
   const handleDelete = async (row) => {
     if (window.confirm("Bạn có chắc chắn muốn xóa category này không?")) {
       try {
-        const res = await DeleteCategory(row.CategoryId);
+        const res = await DeleteCategory(row.categoryId);
         if (res?.status === 204) {
-          setCategories((prev) =>
-            prev.filter((category) => category.CategoryId !== row.CategoryId)
-          );
+          alert("Xóa category thành công!");
+          // Sau khi xóa thành công, fetch lại danh sách category
+          fetchCategories();
         } else {
+          alert(res.data);
           console.log(">>>Error deleting category:", res);
         }
       } catch (error) {
+        // Kiểm tra nếu có thông báo lỗi từ backend (error.response.data.message)
+        if (error.response && error.response.data && error.response.data.message) {
+          alert(error.response.data.message);
+        } else {
+          alert("Có lỗi xảy ra khi xóa danh mục.");
+        }
         console.log(">>>Error deleting category:", error);
-      }
-    }
-  };
-
-  const handleDeleteSelected = async () => {
-    if (window.confirm("Bạn có chắc chắn muốn xóa các category đã chọn không?")) {
-      try {
-        const deletePromises = selectedRows.map((id) => DeleteCategory(id));
-        await Promise.all(deletePromises);
-        setCategories((prev) =>
-          prev.filter((category) => !selectedRows.includes(category.CategoryId))
-        );
-        setSelectedRows([]);
-      } catch (error) {
-        console.log(">>>Error deleting selected categories:", error);
       }
     }
   };
@@ -124,20 +116,19 @@ const ManageCategory = () => {
     },
     {
       field: "parentCategoryId",
-      headerName: "Parent Category ID",
+      headerName: "Danh mục cha",
       flex: 0.7,
     },
     {
       field: "imageUrl",
       headerName: "Ảnh",
       flex: 1,
-      renderCell: (params) => {
-        return params.value ? (
-          <img src={params.value} alt={params.row.Name} style={{ height: "40px" }} />
+      renderCell: (params) =>
+        params.value ? (
+          <img src={params.value} alt={params.row.name} style={{ height: "40px" }} />
         ) : (
           ""
-        );
-      },
+        ),
     },
     {
       field: "actions",
@@ -146,18 +137,16 @@ const ManageCategory = () => {
       minWidth: 100,
       sortable: false,
       filterable: false,
-      renderCell: (params) => {
-        return (
-          <>
-            <IconButton color={colors.primary[100]} onClick={() => handleEdit(params.row)}>
-              <EditIcon />
-            </IconButton>
-            <IconButton color={colors.primary[100]} onClick={() => handleDelete(params.row)}>
-              <DeleteIcon />
-            </IconButton>
-          </>
-        );
-      },
+      renderCell: (params) => (
+        <>
+          <IconButton color={colors.primary[100]} onClick={() => handleEdit(params.row)}>
+            <EditIcon />
+          </IconButton>
+          <IconButton color={colors.primary[100]} onClick={() => handleDelete(params.row)}>
+            <DeleteIcon />
+          </IconButton>
+        </>
+      ),
     },
   ];
 
@@ -166,11 +155,6 @@ const ManageCategory = () => {
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
         <Header title="Quản lý category" subtitle="Danh sách các category" />
         <Box display="flex" alignItems="center" gap={2}>
-          {selectedRows.length > 0 && (
-            <Button variant="contained" color="error" onClick={handleDeleteSelected}>
-              Xoá đã chọn
-            </Button>
-          )}
           <Button variant="contained" color="secondary" startIcon={<AddIcon />} onClick={handleAddCategory}>
             Thêm category
           </Button>
@@ -204,9 +188,6 @@ const ManageCategory = () => {
           rows={categories}
           columns={columns}
           getRowId={(row) => row.categoryId}
-          checkboxSelection
-          selectionModel={selectedRows}
-          onRowSelectionModelChange={(ids) => setSelectedRows(ids)}
           slots={{ toolbar: GridToolbar }}
           initialState={{
             pagination: { paginationModel: { pageSize: 10 } },

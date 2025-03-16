@@ -8,75 +8,83 @@ import {
   TextField,
   Grid,
 } from "@mui/material";
+import Autocomplete from "@mui/material/Autocomplete";
 
-import { UpdateCategory } from "../../services/categoryService";
+import { UpdateCategory, GetAllCategories } from "../../services/categoryService";
 
 const UpdateCategoryDialog = ({ open, onClose, onSubmit, category }) => {
-  // formValues lưu trữ các trường của category cần cập nhật
   const [formValues, setFormValues] = useState({
     name: "",
     description: "",
-    parentCategoryId: "",
+    parentCategoryId: null,
     imageUrl: "",
   });
 
-  // Khi có category được chọn (hoặc khi mở dialog), cập nhật giá trị ban đầu
+  // Lưu danh sách các danh mục cha (các category có parentCategoryId === null)
+  const [parentCategories, setParentCategories] = useState([]);
+
+  useEffect(() => {
+    const fetchParentCategories = async () => {
+      try {
+        const res = await GetAllCategories();
+        if (res?.status === 200 && res?.data) {
+          const parents = res.data.filter(
+            (cat) => cat.parentCategoryId === null
+          );
+          setParentCategories(parents);
+        } else {
+          console.error("Error fetching categories:", res);
+        }
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
+
+    fetchParentCategories();
+  }, []);
+
+  // Cập nhật giá trị form khi có category được chọn hoặc dialog mở ra
   useEffect(() => {
     if (category) {
       setFormValues({
         name: category.name || "",
         description: category.description || "",
-        parentCategoryId: category.parentCategoryId ?? "",
+        parentCategoryId: category.parentCategoryId, // null nếu là danh mục cha
         imageUrl: category.imageUrl || "",
       });
     } else {
       setFormValues({
         name: "",
         description: "",
-        parentCategoryId: "",
+        parentCategoryId: null,
         imageUrl: "",
       });
     }
   }, [category, open]);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormValues((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
   const handleSubmit = async () => {
-    // Validate trường bắt buộc: tên Category
     if (!formValues.name.trim()) {
       alert("Vui lòng nhập tên category!");
       return;
     }
-
-    // Chuẩn bị DTO gửi đi (chuyển ParentCategoryId về số nếu có)
     const updatedCategory = {
       name: formValues.name.trim(),
       description: formValues.description.trim(),
-      parentCategoryId:
-        formValues.parentCategoryId === ""
-          ? null
-          : parseInt(formValues.parentCategoryId, 10),
+      parentCategoryId: formValues.parentCategoryId,
       imageUrl: formValues.imageUrl.trim(),
     };
 
     try {
       const res = await UpdateCategory(category.categoryId, updatedCategory);
       if (res?.status === 200 && res?.data) {
-      alert("Cập nhật category thành công!");
-      onSubmit(res.data);
-      onClose();
-        } else {
-        console.log(">>>Error updating category:", res);
-       }
-      
+        alert("Cập nhật category thành công!");
+        onSubmit(res.data);
+        onClose();
+      } else {
+        console.error("Error updating category:", res);
+      }
     } catch (error) {
-      console.log(">>>Error updating category:", error);
+      console.error("Error updating category:", error);
     }
   };
 
@@ -93,7 +101,9 @@ const UpdateCategoryDialog = ({ open, onClose, onSubmit, category }) => {
               label="Tên Category"
               name="name"
               value={formValues.name}
-              onChange={handleChange}
+              onChange={(e) =>
+                setFormValues((prev) => ({ ...prev, name: e.target.value }))
+              }
               inputProps={{ maxLength: 255 }}
             />
           </Grid>
@@ -104,20 +114,35 @@ const UpdateCategoryDialog = ({ open, onClose, onSubmit, category }) => {
               label="Mô tả"
               name="description"
               value={formValues.description}
-              onChange={handleChange}
+              onChange={(e) =>
+                setFormValues((prev) => ({
+                  ...prev,
+                  description: e.target.value,
+                }))
+              }
               multiline
               rows={4}
             />
           </Grid>
-          {/* Parent Category ID */}
+          {/* Combobox hiển thị tên danh mục cha */}
           <Grid item xs={12}>
-            <TextField
-              fullWidth
-              label="Parent Category ID"
-              name="parentCategoryId"
-              type="number"
-              value={formValues.parentCategoryId}
-              onChange={handleChange}
+            <Autocomplete
+              options={parentCategories}
+              getOptionLabel={(option) => option.name}
+              value={
+                parentCategories.find(
+                  (item) => item.categoryId === formValues.parentCategoryId
+                ) || null
+              }
+              onChange={(event, newValue) =>
+                setFormValues((prev) => ({
+                  ...prev,
+                  parentCategoryId: newValue ? newValue.categoryId : null,
+                }))
+              }
+              renderInput={(params) => (
+                <TextField {...params} label="Danh mục cha" variant="outlined" />
+              )}
             />
           </Grid>
           {/* Image URL */}
@@ -127,7 +152,9 @@ const UpdateCategoryDialog = ({ open, onClose, onSubmit, category }) => {
               label="Image URL"
               name="imageUrl"
               value={formValues.imageUrl}
-              onChange={handleChange}
+              onChange={(e) =>
+                setFormValues((prev) => ({ ...prev, imageUrl: e.target.value }))
+              }
             />
           </Grid>
         </Grid>
