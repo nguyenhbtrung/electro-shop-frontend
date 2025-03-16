@@ -14,7 +14,6 @@ const ManageBrand = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [brands, setBrands] = useState([]);
-  const [selectedRows, setSelectedRows] = useState([]);
   const [openAddDialog, setOpenAddDialog] = useState(false);
   const [selectedBrand, setSelectedBrand] = useState(null);
   const [openEditDialog, setOpenEditDialog] = useState(false);
@@ -44,7 +43,8 @@ const ManageBrand = () => {
       const res = await CreateBrand(newBrand);
       if (res?.status === 200 && res?.data) {
         alert("Thêm brand thành công!");
-        fetchBrands();
+        // Thêm brand mới vào đầu danh sách
+        setBrands((prev) => [res.data, ...prev]);
         setOpenAddDialog(false);
       } else {
         console.log(">>>Error creating brand:", res);
@@ -82,26 +82,13 @@ const ManageBrand = () => {
           setBrands((prev) =>
             prev.filter((brand) => brand.brandId !== row.brandId)
           );
+          alert("Xóa nhãn hàng thành công");
         } else {
-          console.log(">>>Error deleting brand:", res);
+          alert(res.data);
+          console.log(">>>Error deleting category:", res);
         }
       } catch (error) {
         console.log(">>>Error deleting brand:", error);
-      }
-    }
-  };
-
-  const handleDeleteSelected = async () => {
-    if (window.confirm("Bạn có chắc chắn muốn xóa các brands đã chọn không?")) {
-      try {
-        const deletePromises = selectedRows.map((id) => DeleteBrand(id));
-        await Promise.all(deletePromises);
-        setBrands((prev) =>
-          prev.filter((brand) => !selectedRows.includes(brand.brandId))
-        );
-        setSelectedRows([]);
-      } catch (error) {
-        console.log(">>>Error deleting selected brands:", error);
       }
     }
   };
@@ -146,18 +133,16 @@ const ManageBrand = () => {
       minWidth: 100,
       sortable: false,
       filterable: false,
-      renderCell: (params) => {
-        return (
-          <>
-            <IconButton color={colors.primary[100]} onClick={() => handleEdit(params.row)}>
-              <EditIcon />
-            </IconButton>
-            <IconButton color={colors.primary[100]} onClick={() => handleDelete(params.row)}>
-              <DeleteIcon />
-            </IconButton>
-          </>
-        );
-      },
+      renderCell: (params) => (
+        <>
+          <IconButton color={colors.primary[100]} onClick={() => handleEdit(params.row)}>
+            <EditIcon />
+          </IconButton>
+          <IconButton color={colors.primary[100]} onClick={() => handleDelete(params.row)}>
+            <DeleteIcon />
+          </IconButton>
+        </>
+      ),
     },
   ];
 
@@ -166,11 +151,6 @@ const ManageBrand = () => {
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
         <Header title="Quản lý brand" subtitle="Danh sách các brand" />
         <Box display="flex" alignItems="center" gap={2}>
-          {selectedRows.length > 0 && (
-            <Button variant="contained" color="error" onClick={handleDeleteSelected}>
-              Xoá đã chọn
-            </Button>
-          )}
           <Button variant="contained" color="secondary" startIcon={<AddIcon />} onClick={handleAddBrand}>
             Thêm Nhãn Hàng
           </Button>
@@ -204,9 +184,6 @@ const ManageBrand = () => {
           rows={brands}
           columns={columns}
           getRowId={(row) => row.brandId}
-          checkboxSelection
-          selectionModel={selectedRows}
-          onRowSelectionModelChange={(ids) => setSelectedRows(ids)}
           slots={{ toolbar: GridToolbar }}
           initialState={{
             pagination: { paginationModel: { pageSize: 10 } },
