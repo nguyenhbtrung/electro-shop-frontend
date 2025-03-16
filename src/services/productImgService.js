@@ -1,5 +1,5 @@
 import api from './axios/axios.customize'
-const UpdateProdcutImage= (id,data) => {
+const UpdateProductImage= (id,data) => {
     const URL_API = `/api/Product/${id}/Image`;
     return api.put(URL_API,data);
 };
@@ -12,7 +12,7 @@ const DeleteProductImage = (imageid) => {
     return api.delete(URL_API);
 };
 export {
-    UpdateProdcutImage ,
+    UpdateProductImage ,
     CreateProductImage ,
     DeleteProductImage
 };
