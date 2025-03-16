@@ -41,6 +41,7 @@ import ManageBrand from "./pages/admin/brands";
 import UploadImageTest from "./components/TestUploadFile";
 import ReturnRequestPage from "./pages/user/returnPage/ReturnRequestPage";
 import ReturnConfirmationPage from "./pages/user/returnPage/ReturnConfirmationPage";
+import ReturnTrackingPage from "./pages/user/returnPage/ReturnTrackingPage";
 const AppRouter = () => {
   return (
     <Router>
@@ -54,6 +55,7 @@ const AppRouter = () => {
           <Route path="cart" element={<Cart />} />
           <Route path="return/request" element={<ReturnRequestPage />} />
           <Route path="return/confirmation/:returnId" element={<ReturnConfirmationPage />} />
+          <Route path="return/tracking" element={<ReturnTrackingPage />} />
         </Route>
 
         <Route path="/login" element={<Login />} />
