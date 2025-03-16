@@ -56,11 +56,12 @@ const ManageProduct = () => {
     const res = await CreateProduct(newProduct);
     if (res?.status === 200 && res?.data) {
       alert("Thêm sản phẩm thành công!");
-      fetchProducts();
+      setProducts((prevProducts) => [res.data, ...prevProducts]);
     } else {
       console.log(">>>Check err:", res);
     }
   };
+  
 
   const handleEdit = (row) => {
     setSelectedProduct(row);
@@ -255,16 +256,14 @@ const ManageProduct = () => {
         open={openEditProductDialog}
         onClose={() => setEditProductDialog(false)}
         onSubmit={(updatedProduct) => {
-          setProducts((prevProducts) =>
-            prevProducts.map((product) =>
-              product.productId === updatedProduct.productId ? updatedProduct : product
-            )
-          );
-          setEditProductDialog(false);
-        }}
-        product={selectedProduct}
-        categories={[]}
+    // Sau khi chỉnh sửa, fetch lại danh sách sản phẩm từ server
+        fetchProducts();
+        setEditProductDialog(false);
+      }}
+      product={selectedProduct}
+      categories={[]}
       />
+
 
       {/* Dialog chỉnh sửa ảnh sản phẩm */}
       <EditProductImagesDialog
