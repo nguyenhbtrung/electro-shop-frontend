@@ -84,22 +84,11 @@ export default function Register(props) {
                 const token = response.data.token;
                 console.log("token: ", token);
                 localStorage.setItem('access_token', token);
-                navigate('/admin');
-            }
-            else if (response.status === 400) {
-                setPasswordError(true);
-                setPasswordErrorMessage('Email không hợp lệ!');
-            }
-            else if (response.status === 500) {
-                const errors = response.data;
-                setPasswordError(true);
-                displayError(errors[0].code);
-                console.log(response.data);
+                navigate('/');
             }
             else {
-                setPasswordError(true);
-                setPasswordErrorMessage('Đã có lỗi không xác định xảy ra!');
-                console.log('AAAAAAAAAAA');
+                console.log('Đăng kí thất bại: ', response.data[0]);
+                displayError(response.data[0].code);
             }
         }
         catch (error) {

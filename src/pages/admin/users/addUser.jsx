@@ -15,6 +15,7 @@ const initialValues = {
 	password: "",
 	email: "",
 	role: "",
+	userStatus: "",
 	fullname: "",
 	phoneNumber: "",
 	address: "",
@@ -24,13 +25,14 @@ const phoneRegExp =
 	/^((\+[1-9]{1,4}[ -]?)|(\([0-9]{2,3}\)[ -]?)|([0-9]{2,4})[ -]?)*?[0-9]{3,4}[ -]?[0-9]{3,4}$/;
 
 const checkoutSchema = yup.object().shape({
-	userName: yup.string().required("Không được để trống."),
-	email: yup.string().email("Email không hợp lệ.").required("Không được để trống."),
-	role: yup.string().required("Không được để trống."),
-	password: yup.string().required("Không được để trống"),
+	userName: yup.string().required('Tên đăng nhập là bắt buộc'),
+	email: yup.string().email('Email không hợp lệ').required('Email là bắt buộc'),
+	role: yup.string().required('Vai trò là bắt buộc'),
+	password: yup.string().required('Mật khẩu là bắt buộc'),
 	contact: yup
 		.string()
 		.matches(phoneRegExp, "Số điện thoại không hợp lệ."),
+	userStatus: yup.string().required('Trạng thái người dùng là bắt buộc'),
 });
 
 const AddUserForm = () => {
@@ -40,26 +42,61 @@ const AddUserForm = () => {
 	const [info, setInfo] = useState('');
 	const [dialogOpen, setDialogOpen] = useState(false);
 	const [dialogQuestion, setDialogQuestion] = useState('');
+	const [isSuccess, setIsSuccess] = useState(false);
 
 	const handleFormSubmit = async (values) => {
-		var response = await AddUser(values);
+		const response = await AddUser(values);
+		console.log("AAA", response);
 		if (response.status === 200) {
 			setInfo(`Thêm người dùng thành công!`);
 			setInfoDialogOpen(true);
+			setIsSuccess(true);
 		} else {
-			setInfo(`Thêm người dùng thất bại!`);
-			setInfoDialogOpen(true);
+			displayError(response.data[0].code);
 		}
 	};
 
 	const closeInfoDialog = () => {
-		navigate("/admin/users");
 		setInfoDialogOpen(false);
+		if (isSuccess) {
+			navigate("/admin/users");
+		}
 	}
 
 	const handleOpenDialog = () => {
 		setDialogQuestion("Bạn có chắc chắn muốn hủy bỏ việc thêm người dùng?");
 		setDialogOpen(true);
+	};
+
+	const displayError = (error) => {
+		if (error === 'DuplicateUserName') {
+			setInfo('Tên tài khoản đã tồn tại!');
+		}
+		else if (error === 'InvalidUserName') {
+			setInfo('Tên tài khoản không hợp lệ!');
+		}
+		else if (error === 'PasswordTooShort') {
+			setInfo('Mật khẩu quá ngắn!');
+		}
+		else if (error === 'PasswordRequiresNonAlphanumeric') {
+			setInfo('Mật khẩu thiếu ký tự đặc biệt!');
+		}
+		else if (error === 'PasswordRequiresLower') {
+			setInfo('Mật khẩu phải gồm chữ thường!');
+		}
+		else if (error === 'PasswordRequiresUpper') {
+			setInfo('Mật khẩu phải gồm chữ viết hoa!');
+		}
+		else if (error === 'PasswordRequiresDigit') {
+			setInfo('Mật khẩu phải gồm số!');
+		}
+		else if (error === 'DuplicateEmail') {
+			setInfo('Email đã tồn tại!');
+		}
+		else {
+			setInfo("Đã có lỗi không xác định xảy ra!");
+		}
+		setInfoDialogOpen(true);
 	};
 
 	const handleCancel = async (userResponse) => {

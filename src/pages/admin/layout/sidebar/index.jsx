@@ -203,6 +203,18 @@ const SideBar = () => {
             colors={colors}
             icon={<ContactsOutlined />}
           />
+          <Item
+            title="Nhập hàng"
+            path="/admin/stockimports"
+            colors={colors}
+            icon={<ContactsOutlined />}
+          />
+          <Item
+            title="Nhà cung cấp"
+            path="/admin/suppliers"
+            colors={colors}
+            icon={<ContactsOutlined />}
+          />
         </Menu>
         <Typography
           variant="h6"

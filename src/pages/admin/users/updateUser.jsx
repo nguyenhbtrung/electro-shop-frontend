@@ -6,13 +6,18 @@ import { Select, MenuItem, FormControl, InputLabel } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import { GetUserProfileData, UpdateUser } from "../../../services/UserService";
 import { useEffect, useState } from "react";
+import InfoDialog from "../../../components/InfoDialog";
+import AlertDialog from "../../../components/AlertDialog";
 
 
 const phoneRegExp =
 	/^((\+[1-9]{1,4}[ -]?)|(\([0-9]{2,3}\)[ -]?)|([0-9]{2,4})[ -]?)*?[0-9]{3,4}[ -]?[0-9]{3,4}$/;
 
 const checkoutSchema = yup.object().shape({
-	email: yup.string().email("Email không hợp lệ."),
+	userName: yup.string().required('Tên đăng nhập là bắt buộc'),
+	email: yup.string().email('Email không hợp lệ').required('Email là bắt buộc'),
+	roles: yup.string().required('Vai trò là bắt buộc'),
+	userStatus: yup.string().required('Trạng thái người dùng là bắt buộc'),
 	contact: yup
 		.string()
 		.matches(phoneRegExp, "Số điện thoại không hợp lệ."),
@@ -21,6 +26,7 @@ const checkoutSchema = yup.object().shape({
 const UpdateUserForm = () => {
 	const isNonMobile = useMediaQuery("(min-width:600px)");
 	const userName = useParams().userName;
+	const [isSuccess, setIsSuccess] = useState(false);
 	const navigate = useNavigate();
 	const [initialValues, setValues] = useState({
 		email: '',
@@ -34,6 +40,42 @@ const UpdateUserForm = () => {
 		phoneNumber: '',
 		userStatus: '',
 	});
+
+	const [infoDialogOpen, setInfoDialogOpen] = useState(false);
+	const [info, setInfo] = useState('');
+	const [dialogOpen, setDialogOpen] = useState(false);
+	const [dialogQuestion, setDialogQuestion] = useState('');
+
+	const displayError = (error) => {
+		if (error === 'DuplicateUserName') {
+			setInfo('Tên tài khoản đã tồn tại!');
+		}
+		else if (error === 'InvalidUserName') {
+			setInfo('Tên tài khoản không hợp lệ!');
+		}
+		else if (error === 'PasswordTooShort') {
+			setInfo('Mật khẩu quá ngắn!');
+		}
+		else if (error === 'PasswordRequiresNonAlphanumeric') {
+			setInfo('Mật khẩu thiếu ký tự đặc biệt!');
+		}
+		else if (error === 'PasswordRequiresLower') {
+			setInfo('Mật khẩu phải gồm chữ thường!');
+		}
+		else if (error === 'PasswordRequiresUpper') {
+			setInfo('Mật khẩu phải gồm chữ viết hoa!');
+		}
+		else if (error === 'PasswordRequiresDigit') {
+			setInfo('Mật khẩu phải gồm số!');
+		}
+		else if (error === 'DuplicateEmail') {
+			setInfo('Email đã tồn tại!');
+		}
+		else {
+			setInfo("Đã có lỗi không xác định xảy ra!");
+		}
+		setInfoDialogOpen(true);
+	};
 
 	useEffect(() => {
 		const getUserData = async () => {
@@ -50,13 +92,14 @@ const UpdateUserForm = () => {
 
 	const handleFormSubmit = async (values) => {
 		try {
-			console.log(values);
+			console.log("CCCCC", values);
 			const response = await UpdateUser(values);
 			if (response.status === 200) {
-				alert('Cập nhật người dùng thành công!');
-				navigate('/admin/users');
+				setInfo(`Chỉnh sửa người dùng thành công!`);
+				setIsSuccess(true);
+				setInfoDialogOpen(true);
 			} else {
-				alert('Lỗi khi cập nhật người dùng!');
+				displayError(response.data[0].code);
 			}
 		} catch (error) {
 			console.error('Error updating user:', error);
@@ -64,14 +107,24 @@ const UpdateUserForm = () => {
 		}
 	};
 
-	const handleCancel = () => {
-		if (
-			window.confirm(
-				"Bạn có chắc chắn muốn hủy cập nhập người dùng?"
-			)
-		) {
+	const closeInfoDialog = () => {
+		setInfoDialogOpen(false);
+		if (isSuccess) {
 			navigate("/admin/users");
 		}
+	}
+
+	const handleOpenDialog = () => {
+		setDialogQuestion("Bạn có chắc chắn muốn hủy bỏ việc cập nhật người dùng?");
+		setDialogOpen(true);
+	};
+
+	const handleCancel = async (userResponse) => {
+		if (!userResponse) {
+			setDialogOpen(false);
+			return;
+		}
+		navigate("/admin/users");
 	};
 
 	return (
@@ -113,6 +166,7 @@ const UpdateUserForm = () => {
 								value={values.userName || ""}
 								autoFocus={true}
 								name="userName"
+								disabled
 								error={touched.userName && errors.userName}
 								helperText={touched.userName && errors.userName}
 								sx={{
@@ -123,7 +177,8 @@ const UpdateUserForm = () => {
 								fullWidth
 								variant="filled"
 								type="text"
-								label="Mật khẩu"
+								label="Mật khẩu "
+								placeholder="( Nếu không đổi thì để trống )"
 								onBlur={handleBlur}
 								onChange={handleChange}
 								value={values.password || ""}
@@ -152,7 +207,7 @@ const UpdateUserForm = () => {
 								<Select
 									label="Vai trò"
 									name="roles"
-									value={values.roles}
+									value={values.roles || ""}
 									onChange={handleChange}
 									onBlur={handleBlur}
 									error={touched.roles && Boolean(errors.roles)}
@@ -173,10 +228,10 @@ const UpdateUserForm = () => {
 								label="Tên người dùng"
 								onBlur={handleBlur}
 								onChange={handleChange}
-								value={values.fullname || ""}
+								value={values.fullName || ""}
 								name="fullname"
-								error={touched.fullname && errors.fullname}
-								helperText={touched.fullname && errors.fullname}
+								error={touched.fullName && errors.fullName}
+								helperText={touched.fullName && errors.fullName}
 								sx={{ gridColumn: "span 4" }}
 							/>
 							<TextField
@@ -244,7 +299,7 @@ const UpdateUserForm = () => {
 							justifyContent="end"
 							mt="20px"
 						>
-							<Button color="error" variant="contained" onClick={handleCancel}>
+							<Button color="error" variant="contained" onClick={handleOpenDialog}>
 								Hủy
 							</Button>
 							<Button type="submit" color="secondary" variant="contained">
@@ -254,6 +309,16 @@ const UpdateUserForm = () => {
 					</form>
 				)}
 			</Formik>
+			<AlertDialog
+				open={dialogOpen}
+				question={dialogQuestion}
+				onClose={handleCancel}
+			/>
+			<InfoDialog
+				open={infoDialogOpen}
+				question={info}
+				onClose={closeInfoDialog}
+			/>
 		</Box>
 	);
 };

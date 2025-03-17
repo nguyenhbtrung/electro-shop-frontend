@@ -112,18 +112,25 @@ export default function Login(props) {
                 console.log("token: ", token);
                 localStorage.setItem('access_token', token);
                 if (response.data.roles === "User") {
-                    navigate('/user');
+                    navigate('/');
                 } else if (response.data.roles === "Admin") {
                     navigate('/admin');
                 }
             }
             else {
-                setPasswordError(true);
-                setPasswordErrorMessage(response.data);
+                if (response.data === "Email not confirmed") {
+                    setPasswordError(true);
+                    setPasswordErrorMessage("Tài khoản chưa được xác nhận, vui lòng kiểm tra email của bạn!");
+                } else {
+                    setPasswordError(true);
+                    setPasswordErrorMessage("Tên tài khoản hoặc mật khẩu không đúng");
+                }
                 console.log('Đăng nhập thất bại: ', response);
             }
         }
         catch (error) {
+            setPasswordError(true);
+            setPasswordErrorMessage("Có lỗi khi đăng nhập, thử lại sau!");
             console.log('Đăng nhập thất bại: ', error);
         }
     };

@@ -18,10 +18,11 @@ import InfoDialog from "../../../components/InfoDialog";
 
 /*
 - ✓ Thay cách hiện thị thông báo bằng cửa sổ component riêng chứ không dùng cửa sổ alert mặc định
-- ✖  Quên mật khẩu cho user đồng thời phải có xác thực email
-- ✖ Thêm hàm đổi mật khẩu cho admin, user
+- ✓ Quên mật khẩu cho user đồng thời phải có xác thực email
+- ✓ Thêm hàm đổi mật khẩu cho user
+- ✓ Thêm hàm đổi mật khẩu cho admin
+- ✖ Quản lí nhập hàng: thêm, sửa, xoá, xem chi tiết, Data gồm có: {Id, Id sản phẩm, Số lượng, Đơn giá, Trạng thái lô, Ngày nhập, Nhà cung cấp, (Ghi chú)}
 - ✖ Cho người dùng có thể có nhiều địa chỉ nhận hàng
-- ✖ Quản lí nhập hàng: thêm, sửa, xoá, xem chi tiết, Data gồm có: {Id, Tên sản phẩm, Số lượng, Đơn giá, Trạng thái lô, Ngày nhập, Nhà cung cấp, (Ghi chú)}
 - ✖ Chỉnh sửa, tút tát lại trang đkí, đăng nhập
 - ✖ Đăng nhập với google, X ,...
 */
@@ -114,10 +115,10 @@ const ManageUser = () => {
       const data = await response.data;
       setUsers(data);
       console.log(data);
+      return response.status;
     } catch (error) {
-      setInfo(`Làm mới danh sách không thành công!`);
-      setInfoDialogOpen(true);
       console.error(error);
+      return error.response ? error.response.status : 500;
     }
   };
 
@@ -125,10 +126,15 @@ const ManageUser = () => {
     GetAllUser();
   }, []);
 
-  const handleRefresh = () => {
-    setInfo(`Làm mới danh sách thành công!`);
-    setInfoDialogOpen(true);
-    GetAllUser();
+  const handleRefresh = async () => {
+    var status = await GetAllUser();
+    if (status === 200) {
+      setInfo(`Làm mới thành công!`);
+      setInfoDialogOpen(true);
+    } else {
+      setInfo(`Có lỗi khi làm mới dữ liệu!`);
+      setInfoDialogOpen(true);
+    }
   };
 
   const handleAddUser = () => {

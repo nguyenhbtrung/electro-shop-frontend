@@ -70,6 +70,8 @@ const AppRouter = () => {
           <Route path="users/edit/:userName" element={<UpdateUserForm />} />
           <Route path="products" element={<ManageProduct />} />
           <Route path="categories" element={<ManageCategory />} />
+          <Route path="suppliers" element={<ManageCategory />} />
+          <Route path="stockimports" element={<ManageCategory />} />
           <Route path="ratings" element={<ManageRating />} />
           <Route path="orders" element={<ManageOrder />} />
           <Route path="returns" element={<ManageReturn />} />
