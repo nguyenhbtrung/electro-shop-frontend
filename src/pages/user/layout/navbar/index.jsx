@@ -58,6 +58,15 @@ const Navbar = () => {
         navigate("/cart");
     };
 
+    const handleProfileClick = () => {
+        if (!isLoggedIn) {
+            navigate("/login");
+        }
+        else {
+            navigate("/profile");
+        }
+    };
+
     return (
         <Box display="flex" alignItems="center" justifyContent="space-between" p={2}>
             {/* Phần bên trái: menu, logo, title và tìm kiếm */}
@@ -85,7 +94,7 @@ const Navbar = () => {
                         color={colors.greenAccent[500]}
                         sx={{ display: `${isXsDevices ? "none" : "flex"}`, ml: "10px" }}
                     >
-                        Argon
+                        TTG SHOP
                     </Typography>
                 </IconButton>
 
@@ -132,7 +141,7 @@ const Navbar = () => {
                 <IconButton>
                     <NotificationsOutlined />
                 </IconButton>
-                <IconButton>
+                <IconButton onClick={handleProfileClick}>
                     <PersonOutlined />
                 </IconButton>
                 {isLoggedIn ? (

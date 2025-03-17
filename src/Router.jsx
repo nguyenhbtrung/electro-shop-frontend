@@ -43,6 +43,8 @@ import UploadImageTest from "./components/TestUploadFile";
 import ReturnRequestPage from "./pages/user/returnPage/ReturnRequestPage";
 import ReturnConfirmationPage from "./pages/user/returnPage/ReturnConfirmationPage";
 import ReturnTrackingPage from "./pages/user/returnPage/ReturnTrackingPage";
+import UserInfoPage from "./pages/user/userPage/userInfo.jsx";
+
 const AppRouter = () => {
   return (
     <Router>
@@ -57,6 +59,8 @@ const AppRouter = () => {
           <Route path="return/request" element={<ReturnRequestPage />} />
           <Route path="return/confirmation/:returnId" element={<ReturnConfirmationPage />} />
           <Route path="return/detail/:returnId" element={<ReturnTrackingPage />} />
+          <Route path="return/tracking" element={<ReturnTrackingPage />} />
+          <Route path="profile" element={<UserInfoPage />} />
         </Route>
 
         <Route path="/login" element={<Login />} />
