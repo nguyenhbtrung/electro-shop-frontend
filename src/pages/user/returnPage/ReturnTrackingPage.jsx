@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
     Box,
     Container,
@@ -16,10 +16,13 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import ReceiptIcon from '@mui/icons-material/Receipt';
 import { tokens } from '../../../theme';
+import { GetReturnDetailById } from '../../../services/returnService';
+import { useParams } from 'react-router-dom';
 
 const ReturnTrackingPage = () => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
+    const { returnId } = useParams();
     // Dữ liệu cho tiến trình hoàn trả
     const steps = [
         { label: "Chờ xử lý", date: "20/10/2023", status: "completed" },
@@ -32,26 +35,40 @@ const ReturnTrackingPage = () => {
     const activeStep = steps.findIndex((step) => step.status === "current");
 
     // Dữ liệu sản phẩm hoàn trả – mỗi sản phẩm ứng với 1 đơn hàng
-    const products = [
+    const returnProducts = [
         {
-            id: 1,
+            productId: 1,
             name: "Laptop HP",
-            quantity: 1,
+            returnQuantity: 1,
             image: "https://via.placeholder.com/100",
         },
         {
-            id: 2,
+            productId: 2,
             name: "PC Dell Inspiron",
-            quantity: 2,
+            returnQuantity: 2,
             image: "https://via.placeholder.com/100",
         },
         {
-            id: 3,
+            productId: 3,
             name: "Chuột Logitech",
-            quantity: 1,
+            returnQuantity: 1,
             image: "https://via.placeholder.com/100",
         },
     ];
+
+    useEffect(() => {
+        const GetReturnDetail = async () => {
+            const res = await GetReturnDetailById(returnId);
+            if (res?.status === 200 && res?.data) {
+                console.log("check r detail", res?.data);
+            }
+            else {
+                console.log("check err", res?.data);
+            }
+        };
+
+        GetReturnDetail();
+    }, []);
 
     // Custom Step Icon dựa theo trạng thái bước
     const CustomStepIcon = (props) => {
@@ -160,8 +177,8 @@ const ReturnTrackingPage = () => {
                     <Typography variant="h6" gutterBottom align="center">
                         SẢN PHẨM HOÀN TRẢ - MỖI SẢN PHẨM LÀ 1 HÀNG
                     </Typography>
-                    {products.map((product) => (
-                        <Paper key={product.id} variant="outlined" sx={{ p: 2, mb: 1 }}>
+                    {returnProducts.map((product) => (
+                        <Paper key={product.productId} variant="outlined" sx={{ p: 2, mb: 1 }}>
                             <Grid container spacing={2} alignItems="center">
                                 <Grid item xs={3}>
                                     <CardMedia
@@ -176,7 +193,7 @@ const ReturnTrackingPage = () => {
                                 </Grid>
                                 <Grid item xs={3}>
                                     <Typography variant="body1">
-                                        Số lượng: {product.quantity}
+                                        Số lượng: {product.returnQuantity}
                                     </Typography>
                                 </Grid>
                             </Grid>

@@ -10,7 +10,13 @@ const CreateReturnRequest = (formData) => {
     return api.post(URL_API, formData, config);
 };
 
+const GetReturnDetailById = (returnId) => {
+    const URL_API = `/api/Return/${returnId}`;
+    return api.get(URL_API);
+};
+
 export {
-    CreateReturnRequest
+    CreateReturnRequest,
+    GetReturnDetailById
 };
 
