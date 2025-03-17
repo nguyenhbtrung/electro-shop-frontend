@@ -24,6 +24,7 @@ import ManageReturn from "./pages/admin/returns";
 import ManageDiscount from "./pages/admin/discounts";
 import ManageVoucher from "./pages/admin/vouchers";
 import ManageBanner from "./pages/admin/banners";
+import ManageReason from "./pages/admin/reasons";
 import AppUser from "./pages/user/AppUser";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
@@ -72,6 +73,7 @@ const AppRouter = () => {
           <Route path="ratings" element={<ManageRating />} />
           <Route path="orders" element={<ManageOrder />} />
           <Route path="returns" element={<ManageReturn />} />
+          <Route path="reasons" element={<ManageReason />} />
           <Route path="discounts" element={<ManageDiscount />} />
           <Route path="vouchers" element={<ManageVoucher />} />
           <Route path="banners" element={<ManageBanner />} />

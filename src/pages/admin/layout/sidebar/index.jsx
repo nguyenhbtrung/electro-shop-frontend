@@ -237,6 +237,33 @@ const SideBar = () => {
         </Menu>
 
         <Typography
+          variant="h"
+          color={colors.gray[300]}
+          sx={{ m: "15px 0 5px 20px" }}
+        >
+          {!collapsed ? "Hoàn trả" : " "}
+        </Typography>
+        <Menu
+          menuItemStyles={{
+            button: {
+              ":hover": {
+                color: "#868dfb",
+                background: "transparent",
+                transition: ".4s ease",
+              },
+            },
+          }}
+        >
+          <Item
+            title="Lý do hoàn trả"
+            path="/admin/reasons"
+            colors={colors}
+            icon={<ContactsOutlined />}
+          />
+        </Menu>
+
+
+        <Typography
           variant="h6"
           color={colors.gray[300]}
           sx={{ m: "15px 0 5px 20px" }}
