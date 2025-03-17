@@ -228,12 +228,6 @@ const SideBar = () => {
             colors={colors}
             icon={<ContactsOutlined />}
           />
-          <Item
-            title="Hoàn trả"
-            path="/admin/returns"
-            colors={colors}
-            icon={<ContactsOutlined />}
-          />
         </Menu>
 
         <Typography
@@ -257,6 +251,12 @@ const SideBar = () => {
           <Item
             title="Lý do hoàn trả"
             path="/admin/reasons"
+            colors={colors}
+            icon={<ContactsOutlined />}
+          />
+          <Item
+            title="Đơn hàng hoàn trả"
+            path="/admin/returns"
             colors={colors}
             icon={<ContactsOutlined />}
           />
