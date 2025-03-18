@@ -21,8 +21,9 @@ import {
 import avatar from "../../../../assets/images/avatar.png";
 import logo from "../../../../assets/images/logo.png";
 import Item from "./Item";
+import LocalShippingIcon from '@mui/icons-material/LocalShipping';
+import MoveToInboxIcon from '@mui/icons-material/MoveToInbox';
 import { ToggledContext } from "../../../../App";
-
 const SideBar = () => {
   const [collapsed, setCollapsed] = useState(false);
   const { toggled, setToggled } = useContext(ToggledContext);
@@ -207,13 +208,13 @@ const SideBar = () => {
             title="Nhập hàng"
             path="/admin/stockimports"
             colors={colors}
-            icon={<ContactsOutlined />}
+            icon={<MoveToInboxIcon />}
           />
           <Item
             title="Nhà cung cấp"
             path="/admin/suppliers"
             colors={colors}
-            icon={<ContactsOutlined />}
+            icon={<LocalShippingIcon />}
           />
         </Menu>
         <Typography
