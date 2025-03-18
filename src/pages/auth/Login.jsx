@@ -111,6 +111,7 @@ export default function Login(props) {
                 const token = response.data.token;
                 console.log("token: ", token);
                 localStorage.setItem('access_token', token);
+                localStorage.setItem('userName', userName);
                 if (response.data.roles === "User") {
                     navigate('/');
                 } else if (response.data.roles === "Admin") {

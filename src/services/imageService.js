@@ -9,6 +9,11 @@ const UploadImage = (formData) => {
     });
 };
 
+const DeleteImage = (url) => {
+    return api.delete('/api/Images/delete-by-url?imageUrl=' + url);
+}
+
 export {
-    UploadImage
+    UploadImage,
+    DeleteImage
 };

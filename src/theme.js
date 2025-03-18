@@ -73,6 +73,10 @@ export const tokens = (mode) => ({
         800: "#660000",
         900: "#330000",
       },
+      hyu: {
+        100: '#ffffff',
+        200: '#1f2942',
+      },
     }
     : {
       gray: {
@@ -141,6 +145,10 @@ export const tokens = (mode) => ({
         800: "#660000",
         900: "#330000",
       },
+      hyu: {
+        100: '#e0e0e0',
+        200: '#dedede',
+      },
     }),
 });
 
@@ -167,6 +175,9 @@ export const themeSettings = (mode) => {
           background: {
             default: colors.primary[500],
           },
+          hyu: {
+            main: colors.hyu[100],
+          },
         }
         : {
           primary: {
@@ -182,6 +193,9 @@ export const themeSettings = (mode) => {
           },
           background: {
             default: colors.primary[500],
+          },
+          huy: {
+            main: colors.hyu[200],
           },
         }),
     },
@@ -222,7 +236,7 @@ export const ColorModeContext = createContext({
 });
 
 export const useMode = () => {
-  const [mode, setMode] = useState("dark");
+  const [mode, setMode] = useState("light");
 
   const colorMode = useMemo(() => ({
     toggleColorMode: () =>
