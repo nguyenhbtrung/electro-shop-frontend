@@ -94,7 +94,7 @@ const Navbar = () => {
                         color={colors.greenAccent[500]}
                         sx={{ display: `${isXsDevices ? "none" : "flex"}`, ml: "10px" }}
                     >
-                        TTG SHOP
+                        GTG SHOP
                     </Typography>
                 </IconButton>
 

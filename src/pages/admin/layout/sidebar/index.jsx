@@ -18,17 +18,37 @@ import {
   TimelineOutlined,
   WavesOutlined,
 } from "@mui/icons-material";
-import avatar from "../../../../assets/images/avatar.png";
 import logo from "../../../../assets/images/logo.png";
 import Item from "./Item";
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import MoveToInboxIcon from '@mui/icons-material/MoveToInbox';
 import { ToggledContext } from "../../../../App";
+import { useEffect } from "react";
+import { GetUserProfileData } from "../../../../services/UserService";
+
+
 const SideBar = () => {
   const [collapsed, setCollapsed] = useState(false);
   const { toggled, setToggled } = useContext(ToggledContext);
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const [avatar, setAvatar] = useState("");
+  const [userName, setUserName] = useState("");
+  const getUserData = async () => {
+    var response = await GetUserProfileData(localStorage.getItem("userName"));
+    if (response.status === 200) {
+      setUserName(response.data.userName);
+      setAvatar(response.data.avatarImg);
+      console.log(response.data);
+    } else {
+      alert("Lỗi khi lấy dữ liệu người dùng!");
+    }
+  };
+
+  useEffect(() => {
+    getUserData();
+  }, []);
+
   return (
     <Sidebar
       backgroundColor={colors.primary[400]}
@@ -65,6 +85,7 @@ const SideBar = () => {
                 alignItems="center"
                 gap="12px"
                 sx={{ transition: ".3s ease" }}
+
               >
                 <img
                   style={{ width: "30px", height: "30px", borderRadius: "8px" }}
@@ -77,7 +98,7 @@ const SideBar = () => {
                   textTransform="capitalize"
                   color={colors.greenAccent[500]}
                 >
-                  Argon
+                  GTG Shop
                 </Typography>
               </Box>
             )}
@@ -99,12 +120,12 @@ const SideBar = () => {
         >
           <Avatar
             alt="avatar"
-            src={"https://avatars.githubusercontent.com/u/133494882?v=4"}
+            src={avatar}
             sx={{ width: "100px", height: "100px" }}
           />
           <Box sx={{ textAlign: "center" }}>
             <Typography variant="h3" fontWeight="bold" color={colors.gray[100]}>
-              Tony Sonrk
+              {userName}
             </Typography>
             <Typography
               variant="h6"

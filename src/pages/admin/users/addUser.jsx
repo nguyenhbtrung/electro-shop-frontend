@@ -255,7 +255,7 @@ const AddUserForm = () => {
 								helperText={touched.address && errors.address}
 								sx={{ gridColumn: "span 4" }}
 							/>
-							<TextField
+							{/* <TextField
 								fullWidth
 								variant="filled"
 								type="text"
@@ -267,7 +267,7 @@ const AddUserForm = () => {
 								error={touched.avatarImg && errors.avatarImg}
 								helperText={touched.avatarImg && errors.avatarImg}
 								sx={{ gridColumn: "span 4" }}
-							/>
+							/> */}
 						</Box>
 						<Box
 							display="flex"
