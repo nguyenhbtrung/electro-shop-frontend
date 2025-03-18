@@ -13,6 +13,7 @@ import {
 import { GetUserReturnHistory } from '../../../services/returnService';
 import { useNavigate } from 'react-router-dom';
 import { convertToLocaleDateString } from '../../../utils/formatDatetime';
+import { MapMethod, MapStatus } from '../../../utils/returnHelper';
 
 const ReturnHistoryPage = () => {
     const [returns, setReturns] = useState([]);
@@ -32,38 +33,6 @@ const ReturnHistoryPage = () => {
 
         GetReturns();
     }, []);
-
-    // Map trạng thái từ tiếng Anh sang tiếng Việt
-    const MapStatus = (status) => {
-        switch (status) {
-            case 'pending':
-                return 'Chờ xử lý';
-            case 'approved':
-                return 'Đã phê duyệt';
-            case 'processing':
-                return 'Đang xử lý hoàn trả';
-            case 'completed':
-                return 'Hoàn tất';
-            case 'rejected':
-                return 'Từ chối';
-            default:
-                return status;
-        }
-    };
-
-    // Map phương thức trả hàng sang tiếng Việt
-    const MapMethod = (method) => {
-        switch (method) {
-            case 'exchange':
-                return 'Đổi hàng';
-            case 'repair':
-                return 'Sửa chữa';
-            case 'refund':
-                return 'Hoàn tiền';
-            default:
-                return method;
-        }
-    };
 
     // Hàm xác định kiểu hiển thị cho trạng thái hoàn trả (nổi bật)
     const getStatusStyle = (status) => {

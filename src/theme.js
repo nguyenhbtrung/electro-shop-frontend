@@ -77,6 +77,12 @@ export const tokens = (mode) => ({
         100: '#ffffff',
         200: '#1f2942',
       },
+      status: {
+        100: "#91ff35",
+        200: "#ffac33",
+        300: "#5393ff",
+        400: "#dd3333",
+      },
     }
     : {
       gray: {
@@ -148,6 +154,12 @@ export const tokens = (mode) => ({
       hyu: {
         100: '#e0e0e0',
         200: '#dedede',
+      },
+      status: {
+        100: "#52b202",
+        200: "#ff8a33",
+        300: "#2979ff",
+        400: "#dd3333",
       },
     }),
 });

@@ -5,6 +5,8 @@ import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../../theme";
 import { useNavigate } from "react-router-dom";
 import { GetAllReturns } from "../../../services/returnService";
+import { convertToLocaleDateString } from "../../../utils/formatDatetime";
+import { MapMethod, MapStatus } from "../../../utils/returnHelper";
 
 // Mock data cho bảng danh sách yêu cầu hoàn trả
 const mockReturnRequests = [
@@ -76,16 +78,41 @@ const ManageReturn = () => {
             field: "timeStamp",
             headerName: "Ngày gửi",
             flex: 1,
+            renderCell: (params) => {
+                return convertToLocaleDateString(params.value);
+            },
         },
         {
             field: "returnMethod",
             headerName: "PT xử lý",
             flex: 1,
+            renderCell: (params) => {
+                return MapMethod(params.value);
+            },
         },
         {
             field: "status",
             headerName: "Trạng thái",
             flex: 1,
+            renderCell: (params) => {
+                // Ánh xạ trạng thái (status) sang màu sắc
+                const statusColorMap = {
+                    pending: colors.status[200],
+                    approved: colors.status[100],
+                    processing: colors.status[300],
+                    completed: colors.status[100],
+                    rejected: colors.status[400],
+                };
+
+                // Lấy màu tương ứng với giá trị status (nếu không có thì dùng mặc định)
+                const color = statusColorMap[params.value] || "inherit";
+
+                return (
+                    <span style={{ color: color, fontWeight: "bold" }}>
+                        {MapStatus(params.value)}
+                    </span>
+                );
+            },
         },
         {
             field: "actions",
@@ -97,8 +124,8 @@ const ManageReturn = () => {
             renderCell: (params) => {
                 return (
                     <Button
-                        variant="outlined"
-                        color="primary"
+                        variant="contained"
+                        color="secondary"
                         onClick={() => handleView(params.row)}
                     >
                         Xem
