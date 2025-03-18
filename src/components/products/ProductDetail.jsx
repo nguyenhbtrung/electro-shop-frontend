@@ -1,182 +1,190 @@
 // ProductDetail.jsx
-import React, { useState, useEffect } from 'react';
-import { Box, Typography, IconButton, Button, Tooltip } from '@mui/material';
+import React, { useState } from 'react';
+import {
+  Box,
+  Typography,
+  IconButton,
+  Button,
+  Grid,
+  Radio,
+  RadioGroup,
+  FormControlLabel,
+  FormLabel,
+} from '@mui/material';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import { GetProduct } from '../../services/productService';
 import { formatPrice } from '../../utils/formatValue';
+import { ProductPricing } from '../../services/attributeService';
 
-const ProductDetail = ({ productId }) => {
-  const [product, setProduct] = useState(null);
+const ProductDetail = ({ product, defaultSelectedAttributes, pricingData: initialPricing, productId }) => {
+  // Không cần fetch lại product vì đã được truyền từ wrapper
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const [selectedAttributes, setSelectedAttributes] = useState(defaultSelectedAttributes);
+  const [pricingData, setPricingData] = useState(initialPricing);
 
-  useEffect(() => {
-    GetProduct(productId)
+  // Gom các attribute detail theo nhóm (ví dụ: "Ram", "SSD")
+  const attributeGroups = product.productAttributeDetail.reduce((acc, detail) => {
+    const groupName = detail.productAttributeName;
+    if (!acc[groupName]) {
+      acc[groupName] = [];
+    }
+    acc[groupName].push(detail);
+    return acc;
+  }, {});
+
+  // Hàm cập nhật khi chọn radio
+  const handleAttributeChange = (groupName, detailId) => {
+    const newSelectedAttributes = { ...selectedAttributes, [groupName]: detailId };
+    setSelectedAttributes(newSelectedAttributes);
+
+    // Lấy mảng các id từ object
+    const selectedIds = Object.values(newSelectedAttributes);
+    ProductPricing(productId, selectedIds)
       .then(response => {
-        setProduct(response.data);
-        setLoading(false);
+        setPricingData(response.data);
       })
       .catch(error => {
-        console.error(error);
-        setLoading(false);
+        console.error("Error calculating price:", error);
       });
-  }, [productId]);
+  };
 
-  if (loading) {
-    return <Typography>Loading...</Typography>;
-  }
-  if (!product) {
-    return <Typography>Product not found.</Typography>;
-  }
-
+  // Điều hướng ảnh (nếu có nhiều ảnh)
   const handleNextImage = () => {
     if (product.productImages && product.productImages.length > 0) {
-      setCurrentImageIndex((prev) => (prev + 1) % product.productImages.length);
+      setCurrentImageIndex(prev => (prev + 1) % product.productImages.length);
     }
   };
 
   const handlePrevImage = () => {
     if (product.productImages && product.productImages.length > 0) {
-      setCurrentImageIndex((prev) =>
+      setCurrentImageIndex(prev =>
         (prev - 1 + product.productImages.length) % product.productImages.length
       );
     }
   };
 
   return (
-    <Box sx={{ p: 3 }}>
-      {/* Tên sản phẩm */}
-      <Typography variant="h4" gutterBottom>
-        {product.name}
-      </Typography>
-
-      {/* Thông tin sản phẩm */}
-      <Typography variant="body1" gutterBottom>
-        {product.info}
-      </Typography>
-
-      {/* Khung ảnh sản phẩm với nút chuyển ảnh nếu có nhiều ảnh */}
-      <Box
-        sx={{
-          position: 'relative',
-          width: '100%',
-          maxWidth: 500,
-          height: 500,
-          mb: 2,
-          border: '1px solid #ccc',
-          borderRadius: 2,
-        }}
-      >
-        {product.productImages && product.productImages.length > 0 && (
-          <>
+    <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
+      <Box sx={{ maxWidth: '1200px', width: '100%' }}>
+        <Grid container spacing={4}>
+          {/* Cột trái: Hộp ảnh sản phẩm */}
+          <Grid item xs={12} md={6}>
             <Box
-              component="img"
-              src={product.productImages[currentImageIndex].imageUrl}
-              alt={product.name}
               sx={{
-                width: '100%',
-                height: '100%',
-                objectFit: 'contain',
-              }}
-            />
-            {product.productImages.length > 1 && (
-              <>
-                <IconButton
-                  onClick={handlePrevImage}
-                  sx={{
-                    position: 'absolute',
-                    top: '50%',
-                    left: 0,
-                    transform: 'translateY(-50%)',
-                    backgroundColor: 'rgba(255,255,255,0.7)',
-                  }}
-                >
-                  <ArrowBackIosIcon />
-                </IconButton>
-                <IconButton
-                  onClick={handleNextImage}
-                  sx={{
-                    position: 'absolute',
-                    top: '50%',
-                    right: 0,
-                    transform: 'translateY(-50%)',
-                    backgroundColor: 'rgba(255,255,255,0.7)',
-                  }}
-                >
-                  <ArrowForwardIosIcon />
-                </IconButton>
-              </>
-            )}
-          </>
-        )}
-      </Box>
-
-      {/* Giá và discount */}
-      <Box sx={{ mb: 2 }}>
-        <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-          {formatPrice(product.discountedPrice)}
-        </Typography>
-        {product.discountValue > 0 && (
-          <Typography
-            variant="body2"
-            sx={{ textDecoration: 'line-through', color: 'gray' }}
-          >
-            {formatPrice(product.originalPrice)}
-          </Typography>
-        )}
-        <Box sx={{ mt: 1 }}>
-          {product.discountValue > 0 ? (
-            <Typography variant="body1" sx={{ color: 'red' }}>
-              {product.discountType}: {product.discountValue}
-            </Typography>
-          ) : (
-            <Typography variant="body1">No discount available</Typography>
-          )}
-        </Box>
-      </Box>
-
-      {/* Attribute (chỉ hiển thị các thông tin cần thiết) */}
-      <Box sx={{ mb: 2 }}>
-        <Typography variant="subtitle1" gutterBottom>
-          Attributes
-        </Typography>
-        {product.productAttributeDetail && product.productAttributeDetail.length > 0 ? (
-          product.productAttributeDetail.map((attr) => (
-            <Box
-              key={attr.attributeDetailId}
-              sx={{
-                border: '1px solid #e0e0e0',
-                borderRadius: 1,
-                p: 1,
-                mb: 1,
+                border: '1px solid #ccc',
+                borderRadius: 2,
+                height: '400px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                overflow: 'hidden',
+                position: 'relative',
               }}
             >
-              <Typography variant="body2">
-                {attr.productAttributeName}: {attr.value}
-              </Typography>
-              <Typography variant="caption" color="text.secondary">
-                Modifier: {attr.priceModifier}
-              </Typography>
+              {product.productImages && product.productImages.length > 0 ? (
+                <>
+                  <Box
+                    component="img"
+                    src={product.productImages[currentImageIndex].imageUrl}
+                    alt={product.name}
+                    sx={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'contain',
+                    }}
+                  />
+                  {product.productImages.length > 1 && (
+                    <>
+                      <IconButton
+                        onClick={handlePrevImage}
+                        sx={{
+                          position: 'absolute',
+                          top: '50%',
+                          left: 0,
+                          transform: 'translateY(-50%)',
+                          backgroundColor: 'rgba(255,255,255,0.7)',
+                        }}
+                      >
+                        <ArrowBackIosIcon />
+                      </IconButton>
+                      <IconButton
+                        onClick={handleNextImage}
+                        sx={{
+                          position: 'absolute',
+                          top: '50%',
+                          right: 0,
+                          transform: 'translateY(-50%)',
+                          backgroundColor: 'rgba(255,255,255,0.7)',
+                        }}
+                      >
+                        <ArrowForwardIosIcon />
+                      </IconButton>
+                    </>
+                  )}
+                </>
+              ) : (
+                <Typography>No image available</Typography>
+              )}
             </Box>
-          ))
-        ) : (
-          <Typography variant="body2">No attributes available.</Typography>
-        )}
+          </Grid>
+
+          {/* Cột phải: Thông tin sản phẩm */}
+          <Grid item xs={12} md={6}>
+            <Typography variant="h3" sx={{ fontWeight: 'bold', mb: 2 }}>
+              {product.name}
+            </Typography>
+
+            <Typography variant="h6" sx={{ mb: 2 }}>
+              Tình trạng: 
+            </Typography>
+
+            {/* Giá sản phẩm từ API pricing */}
+            <Box sx={{ mb: 3 }}>
+              <Typography variant="h4" sx={{ color: 'red', fontWeight: 'bold' }}>
+                {formatPrice(pricingData.discountedPrice)}
+              </Typography>
+              {pricingData.discountValue > 0 && (
+                <Typography variant="body1" sx={{ textDecoration: 'line-through' }}>
+                  {formatPrice(pricingData.originalPrice)}
+                </Typography>
+              )}
+            </Box>
+
+            {/* Các nhóm thuộc tính với radio button */}
+            {Object.entries(attributeGroups).map(([groupName, details]) => (
+              <Box sx={{ mb: 2 }} key={groupName}>
+                <FormLabel component="legend" sx={{ fontWeight: 'bold', mb: 1 }}>
+                  {groupName}
+                </FormLabel>
+                <RadioGroup
+                  row
+                  value={selectedAttributes[groupName] || ''}
+                  onChange={(e) => handleAttributeChange(groupName, parseInt(e.target.value))}
+                >
+                  {details.map(detail => (
+                    <FormControlLabel
+                      key={detail.attributeDetailId}
+                      value={detail.attributeDetailId}
+                      control={<Radio />}
+                      label={`${detail.value}`}
+                    />
+                  ))}
+                </RadioGroup>
+              </Box>
+            ))}
+
+            {/* Nút Thêm vào giỏ hàng và Mua ngay */}
+            <Box sx={{ display: 'flex', gap: 2, mt: 4 }}>
+              <Button variant="contained" color="error">
+                Thêm vào giỏ hàng
+              </Button>
+              <Button variant="contained" color="primary">
+                Mua ngay
+              </Button>
+            </Box>
+          </Grid>
+        </Grid>
       </Box>
-
-      {/* Brand thông tin */}
-      {product.brand && (
-        <Box sx={{ mb: 2 }}>
-          <Typography variant="subtitle1">Brand</Typography>
-          <Typography variant="body2">{product.brand.brandName}</Typography>
-        </Box>
-      )}
-
-      {/* Placeholder cho các phần khác (như đặt hàng, thêm vào giỏ) */}
-      <Button variant="contained" color="primary">
-        Add to Cart
-      </Button>
     </Box>
   );
 };
