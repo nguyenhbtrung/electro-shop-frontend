@@ -21,7 +21,9 @@ import InfoDialog from "../../../components/InfoDialog";
 - ✓ Quên mật khẩu cho user đồng thời phải có xác thực email
 - ✓ Thêm hàm đổi mật khẩu cho user
 - ✓ Thêm hàm đổi mật khẩu cho admin
+- ✖ Thêm nút đổi mật khẩu cho user. Khi click vào nút này, hiện ra cửa sổ dialog để nhập mật khẩu cũ, mật khẩu mới và xác nhận mật khẩu mới.
 - ✖ Quản lí nhập hàng: thêm, sửa, xoá, xem chi tiết, Data gồm có: {Id, Id sản phẩm, Số lượng, Đơn giá, Trạng thái lô, Ngày nhập, Nhà cung cấp, (Ghi chú)}
+- ✖ Làm trang quên mật khẩu, đổi mật khẩu khi quên, đổi mật khẩu bình thường, xác thực email.
 - ✖ Cho người dùng có thể có nhiều địa chỉ nhận hàng
 - ✖ Chỉnh sửa, tút tát lại trang đkí, đăng nhập
 - ✖ Đăng nhập với google, X ,...

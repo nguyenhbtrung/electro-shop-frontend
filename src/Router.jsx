@@ -47,6 +47,9 @@ import ReturnDetailPage from "./pages/user/returnPage/ReturnTrackingPage.jsx";
 import ReturnHistoryPage from "./pages/user/returnPage/ReturnHistoryPage.jsx";
 import ReturnRequestAdmin from "./pages/admin/returns/ReturnRequestAdmin.jsx";
 import ProductDetailWrapper from "./components/products/ProductDetailWapper.jsx";
+import ManageSupplier from "./pages/admin/suppliers/supplier.jsx";
+import ManageStock from "./pages/admin/stocks/stock.jsx";
+
 const AppRouter = () => {
   return (
     <Router>
@@ -76,8 +79,8 @@ const AppRouter = () => {
           <Route path="users/edit/:userName" element={<UpdateUserForm />} />
           <Route path="products" element={<ManageProduct />} />
           <Route path="categories" element={<ManageCategory />} />
-          <Route path="suppliers" element={<ManageCategory />} />
-          <Route path="stockimports" element={<ManageCategory />} />
+          <Route path="suppliers" element={<ManageSupplier />} />
+          <Route path="stockimports" element={<ManageStock />} />
           <Route path="ratings" element={<ManageRating />} />
           <Route path="orders" element={<ManageOrder />} />
           <Route path="returns" element={<ManageReturn />} />

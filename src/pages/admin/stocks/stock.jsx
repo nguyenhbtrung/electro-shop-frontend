@@ -10,17 +10,28 @@ import { convertToCustomMonthDate } from "../../../utils/formatDatetime";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useNavigate } from "react-router-dom";
+import PersonIcon from '@mui/icons-material/Person';
+import SecurityIcon from '@mui/icons-material/Security';
 import ReplayIcon from '@mui/icons-material/Replay';
 import AlertDialog from "../../../components/AlertDialog";
 import InfoDialog from "../../../components/InfoDialog";
-import AddSupplierDialog from "../../../components/suppliers/AddSupplierDialog";
-import { GetAllSupplers } from "../../../services/SupplierService";
 
-const ManageSupplier = () => {
+/*
+- ✓ Thay cách hiện thị thông báo bằng cửa sổ component riêng chứ không dùng cửa sổ alert mặc định
+- ✓ Quên mật khẩu cho user đồng thời phải có xác thực email
+- ✓ Thêm hàm đổi mật khẩu cho user
+- ✓ Thêm hàm đổi mật khẩu cho admin
+- ✖ Quản lí nhập hàng: thêm, sửa, xoá, xem chi tiết, Data gồm có: {Id, Id sản phẩm, Số lượng, Đơn giá, Trạng thái lô, Ngày nhập, Nhà cung cấp, (Ghi chú)}
+- ✖ Cho người dùng có thể có nhiều địa chỉ nhận hàng
+- ✖ Chỉnh sửa, tút tát lại trang đkí, đăng nhập
+- ✖ Đăng nhập với google, X ,...
+*/
+
+const ManageStock = () => {
 	const theme = useTheme();
 	const colors = tokens(theme.palette.mode);
 	const [selectedRows, setSelectedRows] = useState([]);
-	const [suppliers, setSupplier] = useState([]);
+	const [users, setUsers] = useState([]);
 	const navigate = useNavigate();
 	const [response, setResponse] = useState(null);
 	const [dialogOpen, setDialogOpen] = useState(false);
@@ -30,44 +41,79 @@ const ManageSupplier = () => {
 
 	const columns = [
 		{
-			field: "supplierId",
-			headerName: "Id",
-			flex: 0.2,
-			cellClassName: "name-column--cell",
-		},
-		{
-			field: "supplierName",
-			headerName: "Tên nhà cung cấp",
+			field: "userName",
+			headerName: "Tên đăng nhập",
 			flex: 1,
 			cellClassName: "name-column--cell",
 		},
 		{
-			field: "supplierAddress",
+			field: "fullName",
+			headerName: "Họ và tên",
+			flex: 1,
+			cellClassName: "name-column--cell",
+		},
+		{
+			field: "address",
 			headerName: "Địa chỉ",
 			headerAlign: "left",
 			align: "left",
+		},
+		{ field: "phoneNumber", headerName: "Số điện thoại", flex: 1 },
+		{ field: "email", headerName: "Email", flex: 1 },
+		{
+			field: "emailConfirmed",
+			headerName: "Xác nhận email",
+			type: "Number",
 			flex: 1
 		},
 		{
-			field: "supplierContact",
-			headerName: "Số điện thoại",
-			flex: 0.7
+			field: "roles",
+			headerName: "Vai trò",
+			flex: 1,
+			renderCell: ({ row: { roles } }) => {
+				const roleText = roles === "Admin" ? "Quản lý" : "Người dùng";
+				return (
+					<Box
+						width="120px"
+						p={1}
+						display="flex"
+						alignItems="center"
+						justifyContent="center"
+						gap={1}
+						bgcolor={
+							roles === "admin"
+								? colors.greenAccent[600]
+								: colors.greenAccent[700]
+						}
+						borderRadius={1}
+					>
+						{roles === "Admin" && <SecurityIcon />}
+						{roles === "User" && <PersonIcon />}
+						<Typography textTransform="capitalize">{roleText}</Typography>
+					</Box>
+				);
+			},
+		},
+		{
+			field: "userStatus",
+			headerName: "Trạng thái",
+			flex: 1
 		},
 		{
 			field: "createdAt",
 			headerName: "Ngày tạo",
-			flex: 0.5,
+			flex: 1,
 			renderCell: (params) => {
 				return convertToCustomMonthDate(params.value, "vi-VN", "long");
 			}
 		},
 	];
 
-	const GetAllSuppliers = async () => {
+	const GetAllUser = async () => {
 		try {
-			const response = await GetAllSupplers();
+			const response = await GetAllUsers();
 			const data = await response.data;
-			setSupplier(data);
+			setUsers(data);
 			console.log(data);
 			return response.status;
 		} catch (error) {
@@ -77,11 +123,11 @@ const ManageSupplier = () => {
 	};
 
 	useEffect(() => {
-		GetAllSuppliers();
+		GetAllUser();
 	}, []);
 
 	const handleRefresh = async () => {
-		var status = await GetAllSuppliers();
+		var status = await GetAllUser();
 		if (status === 200) {
 			setInfo(`Làm mới thành công!`);
 			setInfoDialogOpen(true);
@@ -92,19 +138,7 @@ const ManageSupplier = () => {
 	};
 
 	const handleAddUser = () => {
-	}
-
-	const [openAddDialog, setOpenAddDialog] = useState(false);
-
-	const handleAddDialogSubmit = async (newSupplier) => {
-		console.log("New Supplier: ", newSupplier);
-		// const res = await CreateProduct(newProduct);
-		// if (res?.status === 200 && res?.data) {
-		// 	alert("Thêm sản phẩm thành công!");
-		// 	setProducts((prevProducts) => [res.data, ...prevProducts]);
-		// } else {
-		// 	console.log(">>>Check err:", res);
-		// }
+		navigate("/admin/users/add");
 	}
 
 	const handleDeleteSelected = async (userResponse) => {
@@ -165,8 +199,8 @@ const ManageSupplier = () => {
 				marginBottom={0}
 			>
 				<Header
-					title="Nhà cung cấp"
-					subtitle="Danh sách các nhà cung cấp"
+					title="Người dùng"
+					subtitle="Danh sách người dùng trong hệ thống"
 				/>
 				<Box display="flex" alignItems="center" gap={2}>
 					<Button
@@ -185,7 +219,7 @@ const ManageSupplier = () => {
 						onClick={handleAddUser}
 						sx={{ color: 'text.primary' }}
 					>
-						Thêm nhà cung cấp
+						Thêm người dùng
 					</Button>
 					<Button
 						variant="contained"
@@ -245,9 +279,9 @@ const ManageSupplier = () => {
 				}}
 			>
 				<DataGrid
-					rows={suppliers}
+					rows={users}
 					columns={columns}
-					getRowId={(row) => row.supplierId}
+					getRowId={(row) => row.userName}
 					onRowSelectionModelChange={(ids) => {
 						console.log("Selected rows: ", ids);
 						setSelectedRows(ids);
@@ -263,11 +297,6 @@ const ManageSupplier = () => {
 					checkboxSelection
 				/>
 			</Box>
-			<AddSupplierDialog
-				open={openAddDialog}
-				onClose={() => setOpenAddDialog(false)}
-				onSubmit={handleAddDialogSubmit}
-			/>
 			<AlertDialog
 				open={dialogOpen}
 				question={dialogQuestion}
@@ -282,4 +311,4 @@ const ManageSupplier = () => {
 	);
 };
 
-export default ManageSupplier;
+export default ManageStock;
