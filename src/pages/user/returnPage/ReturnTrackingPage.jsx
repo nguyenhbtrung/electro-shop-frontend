@@ -32,8 +32,8 @@ const StepperComponent = ({ returnHistories }) => {
     const stepOrder = ["pending", "approved", "processing", "completed"];
     const stepMapping = {
         pending: { label: "Chờ xử lý" },
-        approved: { label: "Đã phê duyệt" },
-        processing: { label: "Đang xử lý" },
+        approved: { label: "Phê duyệt" },
+        processing: { label: "Xử lý hoàn trả" },
         completed: { label: "Hoàn tất" },
         rejected: { label: "Từ chối" },
     };
@@ -213,12 +213,6 @@ const ReturnTrackingPage = () => {
     const { returnId } = useParams();
     const [returnData, setReturnData] = useState({});
     const navigate = useNavigate();
-    const [steps, setSteps] = useState([
-        { label: "Chờ xử lý", date: "20/10/2023", status: "completed" },
-        { label: "Đã phê duyệt", date: "21/10/2023", status: "completed" },
-        { label: "Đang xử lý", date: "22/10/2023", status: "current" },
-        { label: "Hoàn tất", date: "Dự kiến: 25/10/2023", status: "pending" },
-    ]);
     // Dữ liệu cho tiến trình hoàn trả
     // const steps = [
     //     { label: "Chờ xử lý", date: "20/10/2023", status: "completed" },
@@ -357,9 +351,9 @@ const ReturnTrackingPage = () => {
                 {/* Danh sách sản phẩm hoàn trả */}
                 <Paper elevation={2} sx={{ p: 2, mb: 2 }}>
                     <Typography variant="h6" gutterBottom align="center">
-                        SẢN PHẨM HOÀN TRẢ - MỖI SẢN PHẨM LÀ 1 HÀNG
+                        Sản phẩm hoàn trả
                     </Typography>
-                    {returnProducts.map((product) => (
+                    {returnData?.returnProducts?.map((product) => (
                         <Paper key={product.productId} variant="outlined" sx={{ p: 2, mb: 1 }}>
                             <Grid container spacing={2} alignItems="center">
                                 <Grid item xs={3}>
