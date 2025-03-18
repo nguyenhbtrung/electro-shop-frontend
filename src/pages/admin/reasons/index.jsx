@@ -161,7 +161,7 @@ const ManageReason = () => {
                 <Header title="Quản lý lý do hoàn trả" subtitle="Danh sách lý do hoàn trả" />
                 <Box display="flex" alignItems="center" gap={2}>
                     <Button variant="contained" color="secondary" startIcon={<AddIcon />} onClick={handleAddReason}>
-                        Thêm lý do hoàn trả
+                        Thêm mẫu lý do hoàn trả
                     </Button>
                     <Button variant="contained" color="error" onClick={handleDeleteSelectedRows}>
                         Xóa đã chọn

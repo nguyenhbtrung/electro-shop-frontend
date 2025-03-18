@@ -42,7 +42,7 @@ const UpdateReasonDialog = ({ open, onClose, onSubmit, reason }) => {
 
     return (
         <Dialog open={open} onClose={handleCancel} fullWidth maxWidth="sm">
-            <DialogTitle>Cập nhật lý do hoàn trả</DialogTitle>
+            <DialogTitle>Cập nhật mẫu lý do hoàn trả</DialogTitle>
             <DialogContent dividers>
                 <Grid container spacing={2}>
                     <Grid item xs={12}>
