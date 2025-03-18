@@ -59,7 +59,6 @@ const AppRouter = () => {
           <Route path="return/request" element={<ReturnRequestPage />} />
           <Route path="return/confirmation/:returnId" element={<ReturnConfirmationPage />} />
           <Route path="return/detail/:returnId" element={<ReturnTrackingPage />} />
-          <Route path="return/tracking" element={<ReturnTrackingPage />} />
           <Route path="profile" element={<UserInfoPage />} />
         </Route>
 

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Box,
     Container,
@@ -17,22 +17,215 @@ import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import ReceiptIcon from '@mui/icons-material/Receipt';
 import { tokens } from '../../../theme';
 import { GetReturnDetailById } from '../../../services/returnService';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { convertToLocaleDateString } from '../../../utils/formatDatetime';
+
+import { styled } from '@mui/material/styles';
+import StepConnector, { stepConnectorClasses } from '@mui/material/StepConnector';
+import CancelIcon from "@mui/icons-material/Cancel";
+import { Timelapse } from '@mui/icons-material';
+
+
+
+const StepperComponent = ({ returnHistories }) => {
+    // Định nghĩa thứ tự trạng thái và ánh xạ nhãn của mỗi bước
+    const stepOrder = ["pending", "approved", "processing", "completed"];
+    const stepMapping = {
+        pending: { label: "Chờ xử lý" },
+        approved: { label: "Đã phê duyệt" },
+        processing: { label: "Đang xử lý" },
+        completed: { label: "Hoàn tất" },
+        rejected: { label: "Từ chối" },
+    };
+    let hasRejected = false;
+
+    // Hàm chuyển đổi dữ liệu lịch sử thành mảng steps cho Stepper
+    const buildSteps = (histories) => {
+        // Sắp xếp các bản ghi theo thời gian thay đổi (tăng dần)
+        const sortedHistory = [...(histories || [])].sort(
+            (a, b) => new Date(a.changedAt) - new Date(b.changedAt)
+        );
+
+        hasRejected = sortedHistory.some((record) => record.status === "rejected");
+        if (hasRejected) {
+            return buildStepsRejected(sortedHistory);
+        }
+
+        // Khởi tạo mảng steps với label, date rỗng và trạng thái mặc định là "pending"
+        const steps = stepOrder.map((status) => ({
+            label: stepMapping[status].label,
+            date: "",
+            status: "pending", // status: "pending", "current" hay "completed"
+        }));
+
+        // Gán ngày cho bước tương ứng nếu có bản ghi trong history
+        sortedHistory.forEach((rec) => {
+            const idx = stepOrder.indexOf(rec.status);
+            if (idx !== -1) {
+                // Format ngày theo định dạng locale Việt Nam: dd/MM/yyyy
+                steps[idx].date = new Date(rec.changedAt).toLocaleDateString("vi-VN");
+            }
+        });
+
+        // Xác định bước hiện tại dựa trên bản ghi lịch sử mới nhất
+        if (sortedHistory.length > 0) {
+            const latestStatus = sortedHistory[sortedHistory.length - 1].status;
+            const currentStepIndex = stepOrder.indexOf(latestStatus);
+            steps.forEach((step, idx) => {
+                if (idx < currentStepIndex) {
+                    step.status = "completed";
+                } else if (idx === currentStepIndex) {
+                    step.status = "current";
+                } else {
+                    step.status = "pending";
+                }
+            });
+        } else {
+            // Nếu chưa có bản ghi nào, đặt bước đầu tiên là current
+            steps[0].status = "current";
+        }
+
+        return steps;
+    };
+
+    const buildStepsRejected = (sortedHistory) => {
+        // Nếu có rejected, ta muốn dừng process ngay khi rejected xuất hiện.
+        // Lấy vị trí xuất hiện đầu tiên của rejection.
+        const firstRejectIndex = sortedHistory.findIndex((record) => record.status === "rejected");
+        let steps = [];
+
+        // Những bước trước đó (nếu có) sẽ được xác định là đã hoàn thành.
+        // Ví dụ: nếu rejected xảy ra sau bước 1, ta lấy record đầu tiên cho bước "Chờ xử lý".
+        // Sau đó thêm bước "Bị từ chối" với ngày từ bản ghi rejected.
+        // Ở đây ta giả sử quy trình ban đầu được dự kiến là: pending -> approved -> processing -> completed.
+        // Nhưng nếu rejection xảy ra, ta hiển thị theo quy trình:
+        // [pending] => completed, sau đó [rejected] => current.
+
+        // Sử dụng các record cho đến (nhưng không bao gồm) rejected
+        // (Nếu rejection xảy ra ngay từ record đầu tiên thì processOrder.slice(0,0) trả về mảng rỗng).
+        const previousRecords = sortedHistory.slice(0, firstRejectIndex);
+        previousRecords.forEach((record, idx) => {
+            // Tìm trạng thái trong processOrder (nếu record.status không nằm trong processOrder, bỏ qua)
+            if (stepOrder.includes(record.status)) {
+                steps.push({
+                    label: stepMapping[record.status].label,
+                    date: new Date(record.changedAt).toLocaleDateString("vi-VN"),
+                    status: "completed",
+                });
+            }
+        });
+
+        // Thêm bước rejected từ record rejected
+        steps.push({
+            label: stepMapping["rejected"].label,
+            date: new Date(sortedHistory[firstRejectIndex].changedAt).toLocaleDateString("vi-VN"),
+            status: "rejected", // Trạng thái final
+        });
+        return steps;
+    };
+
+    const stepsData = buildSteps(returnHistories);
+
+    // Xác định activeStep cho component Stepper (index của bước hiện tại)
+    const isProcessCompleted =
+        Array.isArray(returnHistories) &&
+        returnHistories.length > 0 &&
+        returnHistories[returnHistories.length - 1].status === "completed";
+
+    const activeStep = isProcessCompleted
+        ? stepsData.length
+        : stepsData.findIndex((step) => step.status === "current" || step.status === "rejected");
+
+    const CustomConnector = styled(StepConnector)(({ theme }) => ({
+        // Mặc định (chưa active/hoàn thành)
+        [`& .${stepConnectorClasses.line}`]: {
+            borderColor: theme.palette.grey[400],
+            borderTopWidth: 2,
+            borderRadius: 1,
+        },
+        // Khi bước đang active
+        [`&.${stepConnectorClasses.active} .${stepConnectorClasses.line}`]: {
+            borderColor: hasRejected ? theme.palette.error.main : theme.palette.success.main,
+        },
+        // Khi bước đã hoàn thành
+        [`&.${stepConnectorClasses.completed} .${stepConnectorClasses.line}`]: {
+            borderColor: theme.palette.success.main,
+        },
+    }));
+
+    // Custom Step Icon dựa theo trạng thái bước
+    const CustomStepIcon = (props) => {
+        const { icon, active, completed } = props;
+
+        const stepIndex = Number(icon) - 1;
+        const stepData = stepsData[stepIndex];
+        // Nếu trạng thái của bước là rejected, hiển thị icon hủy
+        if (stepData.status === "rejected") {
+            return <CancelIcon color="error" />;
+        }
+
+        let iconNode = <RadioButtonUncheckedIcon color="disabled" />;
+        if (completed) {
+            iconNode = <CheckCircleIcon color="success" />;
+        } else if (active) {
+            iconNode = (
+                <Box
+                    sx={{
+                        border: "2px solid",
+                        borderColor: "warning.main",
+                        borderRadius: "50%",
+                        width: 24,
+                        height: 24,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                    }}
+                >
+                    <Timelapse sx={{ color: "warning.main" }} />
+                </Box>
+            );
+        }
+        return iconNode;
+    };
+
+
+    return (
+        <Stepper activeStep={activeStep} alternativeLabel connector={<CustomConnector />}>
+            {stepsData.map((step, index) => (
+                <Step key={index}>
+                    <StepLabel slots={{ stepIcon: CustomStepIcon }}>
+                        <Typography variant="body1" align="center">
+                            {step.label}
+                        </Typography>
+                        <Typography variant="caption" align="center" display="block">
+                            {step.date} {step.status === "current" && "(Hiện tại)"}
+                        </Typography>
+                    </StepLabel>
+                </Step>
+            ))}
+        </Stepper>
+    );
+};
 
 const ReturnTrackingPage = () => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
     const { returnId } = useParams();
-    // Dữ liệu cho tiến trình hoàn trả
-    const steps = [
+    const [returnData, setReturnData] = useState({});
+    const navigate = useNavigate();
+    const [steps, setSteps] = useState([
         { label: "Chờ xử lý", date: "20/10/2023", status: "completed" },
         { label: "Đã phê duyệt", date: "21/10/2023", status: "completed" },
         { label: "Đang xử lý", date: "22/10/2023", status: "current" },
         { label: "Hoàn tất", date: "Dự kiến: 25/10/2023", status: "pending" },
-    ];
-
-    // Xác định activeStep dựa vào bước hiện tại
-    const activeStep = steps.findIndex((step) => step.status === "current");
+    ]);
+    // Dữ liệu cho tiến trình hoàn trả
+    // const steps = [
+    //     { label: "Chờ xử lý", date: "20/10/2023", status: "completed" },
+    //     { label: "Đã phê duyệt", date: "21/10/2023", status: "completed" },
+    //     { label: "Đang xử lý", date: "22/10/2023", status: "current" },
+    //     { label: "Hoàn tất", date: "Dự kiến: 25/10/2023", status: "pending" },
+    // ];
 
     // Dữ liệu sản phẩm hoàn trả – mỗi sản phẩm ứng với 1 đơn hàng
     const returnProducts = [
@@ -61,6 +254,7 @@ const ReturnTrackingPage = () => {
             const res = await GetReturnDetailById(returnId);
             if (res?.status === 200 && res?.data) {
                 console.log("check r detail", res?.data);
+                setReturnData(res?.data);
             }
             else {
                 console.log("check err", res?.data);
@@ -70,35 +264,20 @@ const ReturnTrackingPage = () => {
         GetReturnDetail();
     }, []);
 
-    // Custom Step Icon dựa theo trạng thái bước
-    const CustomStepIcon = (props) => {
-        const { icon } = props;
-        const stepIndex = Number(icon) - 1;
-        const stepData = steps[stepIndex];
-
-        if (stepData.status === "completed") {
-            return <CheckCircleIcon color="success" />;
-        } else if (stepData.status === "current") {
-            return (
-                <Box
-                    sx={{
-                        border: "2px solid",
-                        borderColor: "primary.main",
-                        borderRadius: "50%",
-                        width: 24,
-                        height: 24,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                    }}
-                >
-                    <Typography variant="caption">{'[>]'}</Typography>
-                </Box>
-            );
-        } else {
-            return <RadioButtonUncheckedIcon color="disabled" />;
+    const GetReturnMethod = () => {
+        if (returnData?.returnMethod === 'refund') {
+            return 'Hoàn tiền';
         }
-    };
+        if (returnData?.returnMethod === 'exchange') {
+            return 'Đổi sản phẩm';
+        }
+        if (returnData?.returnMethod === 'repair') {
+            return 'Sửa chữa';
+        }
+        return 'Không xác định'
+    }
+
+
 
     return (
         <Container maxWidth="md">
@@ -116,6 +295,7 @@ const ReturnTrackingPage = () => {
                         disableRipple
                         disableFocusRipple
                         startIcon={<ReceiptIcon />}
+                        onClick={() => navigate(`/order/${returnData?.orderId}`)}
                         sx={{
                             "&:hover": {
                                 backgroundColor: "transparent",
@@ -135,17 +315,17 @@ const ReturnTrackingPage = () => {
                     <Grid container spacing={2}>
                         <Grid item xs={12} md={6}>
                             <Typography variant="body1">
-                                <strong>Mã yêu cầu:</strong> RETURN#12345
+                                <strong>Mã yêu cầu:</strong> RETURNID-{returnId}
                             </Typography>
                         </Grid>
                         <Grid item xs={12} md={6}>
                             <Typography variant="body1">
-                                <strong>Ngày gửi:</strong> 20/10/2023
+                                <strong>Ngày gửi:</strong> {convertToLocaleDateString(returnData?.createdAt)}
                             </Typography>
                         </Grid>
                         <Grid item xs={12}>
                             <Typography variant="body1">
-                                <strong>Phương thức xử lý:</strong> Hoàn tiền
+                                <strong>Phương thức xử lý:</strong> {GetReturnMethod()}
                             </Typography>
                         </Grid>
                     </Grid>
@@ -154,12 +334,12 @@ const ReturnTrackingPage = () => {
                 {/* Tiến trình hoàn trả ngang sử dụng Stepper */}
                 <Paper elevation={2} sx={{ p: 2, mb: 2 }}>
                     <Typography variant="h6" gutterBottom align="center">
-                        TIẾN TRÌNH HOÀN TRẢ
+                        Tiến trình
                     </Typography>
-                    <Stepper activeStep={activeStep} alternativeLabel>
+                    {/* <Stepper activeStep={activeStep} alternativeLabel connector={<CustomConnector />}>
                         {steps.map((step, index) => (
                             <Step key={index}>
-                                <StepLabel StepIconComponent={CustomStepIcon}>
+                                <StepLabel slots={{ stepIcon: CustomStepIcon }}>
                                     <Typography variant="body1" align="center">
                                         {step.label}
                                     </Typography>
@@ -169,7 +349,9 @@ const ReturnTrackingPage = () => {
                                 </StepLabel>
                             </Step>
                         ))}
-                    </Stepper>
+                    </Stepper> */}
+                    <StepperComponent returnHistories={returnData?.returnHistories} />
+
                 </Paper>
 
                 {/* Danh sách sản phẩm hoàn trả */}
