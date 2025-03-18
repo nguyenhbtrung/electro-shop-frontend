@@ -44,6 +44,7 @@ import ReturnRequestPage from "./pages/user/returnPage/ReturnRequestPage";
 import ReturnConfirmationPage from "./pages/user/returnPage/ReturnConfirmationPage";
 import UserInfoPage from "./pages/user/userPage/userInfo.jsx";
 import ReturnDetailPage from "./pages/user/returnPage/ReturnTrackingPage.jsx";
+import ReturnHistoryPage from "./pages/user/returnPage/ReturnHistoryPage.jsx";
 
 const AppRouter = () => {
   return (
@@ -54,11 +55,11 @@ const AppRouter = () => {
           <Route path="categories/:categoryId" element={<CategoryPage />} />
           <Route path="history" element={<ProductViewHistoryPage />} />
           <Route path="orders" element={<OrdersPage />} />
-          <Route path="returns" element={<ReturnsPage />} />
+          <Route path="returns" element={<ReturnHistoryPage />} />
           <Route path="cart" element={<Cart />} />
-          <Route path="return/request" element={<ReturnRequestPage />} />
-          <Route path="return/confirmation/:returnId" element={<ReturnConfirmationPage />} />
-          <Route path="return/detail/:returnId" element={<ReturnDetailPage />} />
+          <Route path="returns/request" element={<ReturnRequestPage />} />
+          <Route path="returns/confirmation/:returnId" element={<ReturnConfirmationPage />} />
+          <Route path="returns/detail/:returnId" element={<ReturnDetailPage />} />
           <Route path="profile" element={<UserInfoPage />} />
         </Route>
 
