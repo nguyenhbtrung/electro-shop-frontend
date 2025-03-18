@@ -45,6 +45,7 @@ import ReturnConfirmationPage from "./pages/user/returnPage/ReturnConfirmationPa
 import UserInfoPage from "./pages/user/userPage/userInfo.jsx";
 import ReturnDetailPage from "./pages/user/returnPage/ReturnTrackingPage.jsx";
 import ReturnHistoryPage from "./pages/user/returnPage/ReturnHistoryPage.jsx";
+import ReturnRequestAdmin from "./pages/admin/returns/ReturnRequestAdmin.jsx";
 
 const AppRouter = () => {
   return (
@@ -79,6 +80,7 @@ const AppRouter = () => {
           <Route path="ratings" element={<ManageRating />} />
           <Route path="orders" element={<ManageOrder />} />
           <Route path="returns" element={<ManageReturn />} />
+          <Route path="returns/detail/:returnId" element={<ReturnRequestAdmin />} />
           <Route path="reasons" element={<ManageReason />} />
           <Route path="discounts" element={<ManageDiscount />} />
           <Route path="vouchers" element={<ManageVoucher />} />
