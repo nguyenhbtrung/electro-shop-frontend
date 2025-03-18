@@ -12,10 +12,11 @@ import {
 } from '@mui/material';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const ReturnConfirmationPage = () => {
     const { returnId } = useParams();
+    const navigate = useNavigate();
 
     // Sample return request data
     const returnData = {
@@ -83,7 +84,7 @@ const ReturnConfirmationPage = () => {
                         variant="contained"
                         color="primary"
                         size="large"
-                        onClick={() => console.log('Tracking return request:', returnId)}
+                        onClick={() => navigate(`/returns/detail/${returnId}`)}
                     >
                         Theo dõi trạng thái hoàn trả
                     </Button>

@@ -24,7 +24,7 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import CloseIcon from '@mui/icons-material/Close';
 import { GetOrderByUser } from '../../../services/orderService';
 import { CreateReturnRequest } from '../../../services/returnService';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const ReturnRequestPage = () => {
     // Sample order data
@@ -38,6 +38,7 @@ const ReturnRequestPage = () => {
     // };
 
     // State for form
+    const { orderId } = useParams();
     const [selectedItems, setSelectedItems] = useState({});
     const [returnQuantities, setReturnQuantities] = useState({});
     const [reasons, setReasons] = useState({
@@ -60,7 +61,7 @@ const ReturnRequestPage = () => {
             const orderRes = await GetOrderByUser();
             if (orderRes?.status === 200 && orderRes?.data) {
                 console.log(">>>check orders:", orderRes?.data);
-                setOrderData(orderRes?.data?.[0]);
+                setOrderData(orderRes?.data?.[2]);
             }
         };
 
@@ -175,7 +176,7 @@ const ReturnRequestPage = () => {
         const res = await CreateReturnRequest(formData);
         if (res?.status === 200 && res?.data) {
             console.log(">>>check returnRes", res?.data);
-            navigate(`/return/confirmation/${res?.data?.returnId}`);
+            navigate(`/returns/confirmation/${res?.data?.returnId}`);
 
         }
         else if (res?.status === 400) {
