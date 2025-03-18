@@ -15,6 +15,7 @@ import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { formatPrice } from '../../utils/formatValue';
 import { ProductPricing } from '../../services/attributeService';
+import GetRatingByProductId from './ProductRatings';
 
 const ProductDetail = ({ product, defaultSelectedAttributes, pricingData: initialPricing, productId }) => {
   // Không cần fetch lại product vì đã được truyền từ wrapper
@@ -135,7 +136,7 @@ const ProductDetail = ({ product, defaultSelectedAttributes, pricingData: initia
             </Typography>
 
             <Typography variant="h6" sx={{ mb: 2 }}>
-              Tình trạng: 
+              Tình trạng:
             </Typography>
 
             {/* Giá sản phẩm từ API pricing */}
@@ -184,6 +185,10 @@ const ProductDetail = ({ product, defaultSelectedAttributes, pricingData: initia
             </Box>
           </Grid>
         </Grid>
+        <Box sx={{ display: 'flex', gap: 2, mt: 4 }}>
+          {/* Hiển thị đánh giá của sản phẩm */}
+          <GetRatingByProductId productId={productId} />
+        </Box>
       </Box>
     </Box>
   );
