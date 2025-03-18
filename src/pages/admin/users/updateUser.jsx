@@ -92,7 +92,6 @@ const UpdateUserForm = () => {
 
 	const handleFormSubmit = async (values) => {
 		try {
-			console.log("CCCCC", values);
 			const response = await UpdateUser(values);
 			if (response.status === 200) {
 				setInfo(`Chỉnh sửa người dùng thành công!`);
@@ -126,6 +125,7 @@ const UpdateUserForm = () => {
 		}
 		navigate("/admin/users");
 	};
+
 
 	return (
 		<Box m="20px">
@@ -229,7 +229,7 @@ const UpdateUserForm = () => {
 								onBlur={handleBlur}
 								onChange={handleChange}
 								value={values.fullName || ""}
-								name="fullname"
+								name="fullName"
 								error={touched.fullName && errors.fullName}
 								helperText={touched.fullName && errors.fullName}
 								sx={{ gridColumn: "span 4" }}

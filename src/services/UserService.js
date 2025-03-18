@@ -31,3 +31,11 @@ export const UpdateUser = (data) => {
     console.log(data);
     return axiosInstance.put(url + '/admin', data);
 }
+
+export const UserUpdate = (userName, data) => {
+    return axiosInstance.put(`${url}` + `/user/${userName}`, data);
+}
+
+export const UpdateAvatar = (data) => {
+    return axiosInstance.put(url + '/user/avatar?url=' + data);
+}
