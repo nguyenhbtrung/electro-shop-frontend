@@ -19,16 +19,21 @@ const ReturnRequestAdmin = () => {
                 <Link underline="hover" color="inherit" href="#">
                     Quản lý hoàn trả
                 </Link>
-                <Typography color="text.primary">Chi Tiết YÊU CẦU HOÀN TRẢ</Typography>
+                <Typography color="text.primary">Chi tiết yêu cầu hoàn trả</Typography>
             </Breadcrumbs>
 
+            {/* Mã yêu cầu hoàn trả */}
+            <Typography variant="subtitle1" sx={{ mb: 2 }}>
+                <strong>Mã yêu cầu :</strong> RR#1234
+            </Typography>
+
             {/* Tiêu đề trang */}
-            <Typography
+            {/* <Typography
                 variant="h4"
                 sx={{ mb: 4, fontWeight: 'bold', textAlign: 'center' }}
             >
                 CHI TIẾT YÊU CẦU HOÀN TRẢ
-            </Typography>
+            </Typography> */}
 
             {/* Thông tin ĐƠN HÀNG */}
             <Card variant="outlined" sx={{ mb: 3 }}>

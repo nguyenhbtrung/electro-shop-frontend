@@ -1,5 +1,10 @@
 import api from './axios/axios.customize';
 
+const GetAllReturns = () => {
+    const URL_API = `/api/Return`;
+    return api.get(URL_API);
+};
+
 const CreateReturnRequest = (formData) => {
     const URL_API = "/api/Return";
     const config = {
@@ -23,6 +28,7 @@ const GetUserReturnHistory = () => {
 export {
     CreateReturnRequest,
     GetReturnDetailById,
-    GetUserReturnHistory
+    GetUserReturnHistory,
+    GetAllReturns
 };
 
