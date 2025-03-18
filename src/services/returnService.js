@@ -15,8 +15,14 @@ const GetReturnDetailById = (returnId) => {
     return api.get(URL_API);
 };
 
+const GetUserReturnHistory = () => {
+    const URL_API = `/api/Return/history`;
+    return api.get(URL_API);
+};
+
 export {
     CreateReturnRequest,
-    GetReturnDetailById
+    GetReturnDetailById,
+    GetUserReturnHistory
 };
 

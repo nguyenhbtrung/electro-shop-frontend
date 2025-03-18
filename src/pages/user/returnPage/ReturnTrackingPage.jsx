@@ -25,35 +25,6 @@ const ReturnDetailPage = () => {
     const { returnId } = useParams();
     const [returnData, setReturnData] = useState({});
     const navigate = useNavigate();
-    // Dữ liệu cho tiến trình hoàn trả
-    // const steps = [
-    //     { label: "Chờ xử lý", date: "20/10/2023", status: "completed" },
-    //     { label: "Đã phê duyệt", date: "21/10/2023", status: "completed" },
-    //     { label: "Đang xử lý", date: "22/10/2023", status: "current" },
-    //     { label: "Hoàn tất", date: "Dự kiến: 25/10/2023", status: "pending" },
-    // ];
-
-    // Dữ liệu sản phẩm hoàn trả – mỗi sản phẩm ứng với 1 đơn hàng
-    const returnProducts = [
-        {
-            productId: 1,
-            name: "Laptop HP",
-            returnQuantity: 1,
-            image: "https://via.placeholder.com/100",
-        },
-        {
-            productId: 2,
-            name: "PC Dell Inspiron",
-            returnQuantity: 2,
-            image: "https://via.placeholder.com/100",
-        },
-        {
-            productId: 3,
-            name: "Chuột Logitech",
-            returnQuantity: 1,
-            image: "https://via.placeholder.com/100",
-        },
-    ];
 
     useEffect(() => {
         const GetReturnDetail = async () => {
@@ -121,7 +92,7 @@ const ReturnDetailPage = () => {
                     <Grid container spacing={2}>
                         <Grid item xs={12} md={6}>
                             <Typography variant="body1">
-                                <strong>Mã yêu cầu:</strong> RETURNID-{returnId}
+                                <strong>Mã yêu cầu:</strong> {returnId}
                             </Typography>
                         </Grid>
                         <Grid item xs={12} md={6}>
@@ -209,8 +180,8 @@ const ReturnDetailPage = () => {
                     </Typography>
                     <Box display="flex" justifyContent="flex-start" mt={2}>
                         <Button
-                            variant="outlined"
-                            color={colors.primary[400]}
+                            variant="contained"
+                            color="secondary"
                         >
                             Liên Hệ Hỗ Trợ
                         </Button>
