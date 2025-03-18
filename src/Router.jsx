@@ -46,7 +46,7 @@ import UserInfoPage from "./pages/user/userPage/userInfo.jsx";
 import ReturnDetailPage from "./pages/user/returnPage/ReturnTrackingPage.jsx";
 import ReturnHistoryPage from "./pages/user/returnPage/ReturnHistoryPage.jsx";
 import ReturnRequestAdmin from "./pages/admin/returns/ReturnRequestAdmin.jsx";
-
+import ProductDetailWrapper from "./components/products/ProductDetailWapper.jsx";
 const AppRouter = () => {
   return (
     <Router>
@@ -54,6 +54,7 @@ const AppRouter = () => {
         <Route path="/" element={<AppUser />}>
           <Route index element={<HomePage />} />
           <Route path="categories/:categoryId" element={<CategoryPage />} />
+          <Route path="/product/:id" element={<ProductDetailWrapper />} />
           <Route path="history" element={<ProductViewHistoryPage />} />
           <Route path="orders" element={<OrdersPage />} />
           <Route path="returns" element={<ReturnHistoryPage />} />

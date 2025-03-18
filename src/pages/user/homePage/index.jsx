@@ -4,79 +4,10 @@ import ProductCard from "../../../components/products/ProductCard";
 import Footer from "../../../components/Footer";
 import { GetDiscountedProduct, GetProductsByUser } from "../../../services/productService";
 
-// Mẫu dữ liệu sản phẩm khuyến mãi (5 sản phẩm)
-const promotionProducts = [
-    {
-        id: 1,
-        name: "Sản phẩm khuyến mãi 1",
-        images: [
-            "https://via.placeholder.com/300x300?text=Promo+Product+1+-+Image+1",
-            "https://via.placeholder.com/300x300?text=Promo+Product+1+-+Image+2",
-        ],
-        originalPrice: 500000,
-        discountedPrice: 400000,
-        discountType: "Percentage",
-        discountValue: 20,
-        rating: 4.5,
-    },
-    {
-        id: 2,
-        name: "Sản phẩm khuyến mãi 2",
-        images: [
-            "https://via.placeholder.com/300x300?text=Promo+Product+2+-+Image+1",
-            "https://via.placeholder.com/300x300?text=Promo+Product+2+-+Image+2",
-        ],
-        originalPrice: 600000,
-        discountedPrice: 480000,
-        discountType: "Flat Amount",
-        discountValue: 120000,
-        rating: 4.0,
-    },
-    {
-        id: 3,
-        name: "Sản phẩm khuyến mãi 3",
-        images: [
-            "https://via.placeholder.com/300x300?text=Promo+Product+3+-+Image+1",
-            "https://via.placeholder.com/300x300?text=Promo+Product+3+-+Image+2",
-        ],
-        originalPrice: 700000,
-        discountedPrice: 595000,
-        discountType: "Percentage",
-        discountValue: 15,
-        rating: 4.2,
-    },
-    {
-        id: 4,
-        name: "Sản phẩm khuyến mãi 4",
-        images: [
-            "https://via.placeholder.com/300x300?text=Promo+Product+4+-+Image+1",
-            "https://via.placeholder.com/300x300?text=Promo+Product+4+-+Image+2",
-        ],
-        originalPrice: 800000,
-        discountedPrice: 680000,
-        discountType: "Flat Amount",
-        discountValue: 120000,
-        rating: 3.8,
-    },
-    {
-        id: 5,
-        name: "Sản phẩm khuyến mãi 5",
-        images: [
-            "https://via.placeholder.com/300x300?text=Promo+Product+5+-+Image+1",
-            "https://via.placeholder.com/300x300?text=Promo+Product+5+-+Image+2",
-        ],
-        originalPrice: 900000,
-        discountedPrice: 765000,
-        discountType: "Percentage",
-        discountValue: 15,
-        rating: 4.7,
-    },
-];
 
 const HomePage = () => {
     const [discountProducts, setDiscountProduct] = useState([]);
     const [bestSellingProducts, setBestSellingProducts] = useState([]);
-
     useEffect(() => {
         const GetDiscountedProductsList = async () => {
             const res = await GetDiscountedProduct();
@@ -84,14 +15,12 @@ const HomePage = () => {
                 setDiscountProduct(res?.data);
             }
         }
-
         const GetBestSellingsList = async () => {
             const res = await GetProductsByUser();
             if (res?.status === 200 && res?.data) {
                 setBestSellingProducts(res?.data);
             }
         }
-
         GetDiscountedProductsList();
         GetBestSellingsList();
     }, []);

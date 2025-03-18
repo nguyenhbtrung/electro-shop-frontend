@@ -15,8 +15,9 @@ import DiscountPaper from "../discounts/DiscountPaper";
 import { tokens } from "../../theme";
 import AddToCartDialog from "./AddToCartDialog";
 import { formatPrice } from "../../utils/formatValue";
-
+import { useNavigate } from 'react-router-dom';
 const ProductCard = ({ product }) => {
+    const navigate = useNavigate();
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
     const [openAddToCart, setOpenAddToCart] = useState(false);
@@ -66,7 +67,7 @@ const ProductCard = ({ product }) => {
     };
 
     return (
-        <Box
+        <Box onClick={() => navigate(`/product/${product.productId}`)}
             sx={{
                 border: "1px solid #e0e0e0",
                 borderRadius: "8px",

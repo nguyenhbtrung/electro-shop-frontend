@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Box, Typography } from "@mui/material";
-import ProductCard from "../../../components/products/ProductCard";// Điều chỉnh đường dẫn cho phù hợp
+import ProductCard from "../../../components/products/ProductCard";
 import { GetProductByCategoryId } from "../../../services/categoryService";
 import { useParams } from "react-router-dom";
 
