@@ -49,7 +49,7 @@ import ReturnRequestAdmin from "./pages/admin/returns/ReturnRequestAdmin.jsx";
 import ProductDetailWrapper from "./components/products/ProductDetailWapper.jsx";
 import ManageSupplier from "./pages/admin/suppliers/supplier.jsx";
 import ManageStock from "./pages/admin/stocks/stock.jsx";
-
+import SearchPage from "./pages/user/searchPage/SearchPage.jsx";
 const AppRouter = () => {
   return (
     <Router>
@@ -66,6 +66,7 @@ const AppRouter = () => {
           <Route path="returns/confirmation/:returnId" element={<ReturnConfirmationPage />} />
           <Route path="returns/detail/:returnId" element={<ReturnDetailPage />} />
           <Route path="profile" element={<UserInfoPage />} />
+          <Route path="/search" element={<SearchPage />} />
         </Route>
 
         <Route path="/login" element={<Login />} />

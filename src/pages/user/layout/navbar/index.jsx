@@ -7,7 +7,6 @@ import {
     useTheme,
     Button,
 } from "@mui/material";
-import { useContext } from "react";
 import {
     DarkModeOutlined,
     LightModeOutlined,
@@ -22,7 +21,8 @@ import { ToggledContext } from "../../AppUser";
 import logo from "../../../../assets/images/logo.png";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../../../contexts/AuthContext";
-
+import { Search } from "../../../../services/filterProductService";
+import React, { useState, useContext } from "react";
 const Navbar = () => {
     const theme = useTheme();
     const colorMode = useContext(ColorModeContext);
@@ -32,7 +32,7 @@ const Navbar = () => {
     const colors = tokens(theme.palette.mode);
     const navigate = useNavigate();
     const { isLoggedIn, logout } = useContext(AuthContext);
-
+    const [searchTerm, setSearchTerm] = useState("");
     const handleLogin = () => {
         navigate("/login");
     };
@@ -66,7 +66,15 @@ const Navbar = () => {
             navigate("/profile");
         }
     };
-
+    const handleSearch = () => {
+        Search(searchTerm)
+          .then((response) => {
+            navigate("/search", { state: { results: response.data } });
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+      };
     return (
         <Box display="flex" alignItems="center" justifyContent="space-between" p={2}>
             {/* Phần bên trái: menu, logo, title và tìm kiếm */}
@@ -98,16 +106,23 @@ const Navbar = () => {
                     </Typography>
                 </IconButton>
 
-
                 <Box
                     display="flex"
                     alignItems="center"
                     bgcolor={colors.primary[400]}
                     borderRadius="3px"
-                    sx={{ display: `${isXsDevices ? "none" : "flex"}` }}
-                >
-                    <InputBase placeholder="Search" sx={{ ml: 2, flex: 1 }} />
-                    <IconButton type="button" sx={{ p: 1 }}>
+                    sx={{
+                        display: `${isXsDevices ? "none" : "flex"}`,
+                        width: "550px", 
+                    }}
+                    >
+                    <InputBase
+                        placeholder="Search"
+                        sx={{ ml: 2, flex: 1 }} 
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                    <IconButton type="button" sx={{ p: 1 }} onClick={handleSearch}>
                         <SearchOutlined />
                     </IconButton>
                 </Box>

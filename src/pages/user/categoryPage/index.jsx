@@ -7,24 +7,6 @@ import { useParams } from "react-router-dom";
 const CategoryProductsPage = () => {
   const { categoryId } = useParams();
   const [products, setProducts] = useState([]);
-  const [categoryName, setCategoryName] = useState("");
-
-  useEffect(() => {
-    const fetchCategoryDetails = async () => {
-      try {
-        const res = await GetCategoryById(categoryId);
-        if (res?.data) {
-          setCategoryName(res.data.name);
-        }
-      } catch (error) {
-        console.error("Error fetching category details:", error);
-      }
-    };
-
-    if (categoryId) {
-      fetchCategoryDetails();
-    }
-  }, [categoryId]);
 
   useEffect(() => {
     const fetchProductsByCategory = async () => {
@@ -44,9 +26,15 @@ const CategoryProductsPage = () => {
   }, [categoryId]);
 
   return (
-    <Box sx={{ p: 2, ml: 4 }}>
+    <Box
+      sx={{
+        maxWidth: 1200,
+        margin: "0 auto",
+        p: 2,
+      }}
+    >
       <Typography variant="h5" sx={{ mb: 2 }}>
-        {categoryName ? `Sản phẩm của ${categoryName}` : "Sản phẩm của danh mục"}
+        Sản phẩm của danh mục
       </Typography>
       <Box
         sx={{
