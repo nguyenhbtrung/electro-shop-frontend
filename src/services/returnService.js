@@ -30,11 +30,17 @@ const GetReturnDetailByAdmin = (returnId) => {
     return api.get(URL_API);
 };
 
+const UpdateReturnStatus = (returnId, data) => {
+    const URL_API = `/api/Return/status/${returnId}`;
+    return api.put(URL_API, data);
+};
+
 export {
     CreateReturnRequest,
     GetReturnDetailById,
     GetUserReturnHistory,
     GetAllReturns,
-    GetReturnDetailByAdmin
+    GetReturnDetailByAdmin,
+    UpdateReturnStatus
 };
 

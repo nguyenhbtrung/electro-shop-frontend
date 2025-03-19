@@ -12,11 +12,14 @@ import {
     useTheme
 } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
-import { GetReturnDetailByAdmin } from '../../../services/returnService';
+import { GetReturnDetailByAdmin, UpdateReturnStatus } from '../../../services/returnService';
 import { convertToLocaleDateString } from '../../../utils/formatDatetime';
 import { tokens } from '../../../theme';
 import { MapMethod, MapStatus } from '../../../utils/returnHelper';
 import { ErrorOutline } from '@mui/icons-material';
+import CustomConfirmDialog from '../../../components/CustomConfirmDialog';
+import InfoDialog from '../../../components/InfoDialog';
+import RejectReturnDialog from '../../../components/returns/RejectReturnDialog';
 
 const ReturnRequestAdmin = () => {
     const theme = useTheme();
@@ -24,6 +27,16 @@ const ReturnRequestAdmin = () => {
     const { returnId } = useParams();
     const [returnData, setReturnData] = useState({});
     const [dayDifference, setDayDifference] = useState(0);
+    const [info, setInfo] = useState({
+        open: false,
+        content: ""
+    });
+    const [openApprove, setOpenApprove] = useState(false);
+    const [openReject, setOpenReject] = useState(false);
+    const [openProcess, setOpenProcess] = useState(false);
+    const [openCancel, setOpenCancel] = useState(false);
+    const [openComplete, setOpenComplete] = useState(false);
+    const [openRefund, setOpenRefund] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -47,9 +60,9 @@ const ReturnRequestAdmin = () => {
     const StyledStatus = (status) => {
         // Ánh xạ trạng thái (status) sang màu sắc
         const statusColorMap = {
-            pending: colors.status[200],
+            pending: colors.status[300],
             approved: colors.status[100],
-            processing: colors.status[300],
+            processing: colors.status[200],
             completed: colors.status[100],
             rejected: colors.status[400],
         };
@@ -62,6 +75,111 @@ const ReturnRequestAdmin = () => {
                 {MapStatus(status)}
             </span>
         );
+    };
+
+    const handleOpenComplete = () => {
+        if (returnData?.returnMethod === "refund") {
+            setOpenRefund(true);
+        } else {
+            setOpenComplete(true);
+        }
+    };
+
+    const handleCloseInfo = () => {
+        setInfo({ ...info, open: false });
+    };
+
+    const handleCloseApprove = (isConfirm) => {
+        setOpenApprove(false);
+        if (isConfirm) {
+            handleApprove();
+        }
+    };
+
+    const handleCloseReject = ({ confirmed, reason }) => {
+        setOpenReject(false);
+        if (confirmed && reason) {
+            const adminComment = `Yêu cầu hoàn trả đã bị từ chối.\nLý do:\n${reason}`;
+            handleReject(adminComment);
+        }
+    };
+
+    const handleCloseProcess = (isConfirm) => {
+        setOpenProcess(false);
+        if (isConfirm) {
+            handleProcess();
+        }
+    };
+
+    const handleCloseCancel = ({ confirmed, reason }) => {
+        setOpenCancel(false);
+        if (confirmed && reason) {
+            const adminComment = `Yêu cầu hoàn trả đã huỷ.\nLý do:\n${reason} \nSản phẩm sẽ được gửi trả lại cho bạn sau 1-2 ngày.`;
+            handleCancel(adminComment);
+        }
+    };
+
+    const handleCloseComplete = (isConfirm) => {
+        setOpenComplete(false);
+        if (isConfirm) {
+            handleComplete();
+        }
+    };
+
+    const handleApprove = () => {
+        const data = {
+            returnStatus: "approved",
+            adminComment: "Yêu cầu hoàn trả đã được phê duyệt. Vui lòng gửi sản phẩm tới địa chỉ trung tâm"
+        }
+        UpdateStatus(data);
+    };
+
+    const handleReject = (adminComment) => {
+        const data = {
+            returnStatus: "rejected",
+            adminComment: adminComment
+        }
+        UpdateStatus(data);
+    };
+
+    const handleProcess = () => {
+        const data = {
+            returnStatus: "processing",
+            adminComment: "Yêu cầu hoàn trả đang được xử lý."
+        }
+        UpdateStatus(data);
+    };
+
+    const handleCancel = (adminComment) => {
+        const data = {
+            returnStatus: "canceled",
+            adminComment: adminComment
+        }
+        UpdateStatus(data);
+    };
+
+    const UpdateStatus = async (data) => {
+        const res = await UpdateReturnStatus(returnId, data);
+        if (res?.status === 200 && res?.data) {
+            setInfo({
+                content: "Cập nhật trạng thái yêu cầu hoàn trả thành công.",
+                open: true
+            });
+            setReturnData({ ...returnData, status: res?.data?.returnStatus });
+        } else {
+            setInfo({
+                content: "Cập nhật trạng thái yêu cầu hoàn trả không thành công.",
+                open: true
+            });
+        }
+    };
+
+    const handleComplete = () => {
+        const data = {
+            returnStatus: "completed",
+            adminComment: "Quy trình hoàn trả đã hoàn tất"
+        }
+        UpdateStatus(data);
     };
 
     return (
@@ -249,18 +367,72 @@ const ReturnRequestAdmin = () => {
                     flexWrap: 'wrap'
                 }}
             >
-                <Box>
-                    <Button variant="contained" color="success" sx={{ mr: 2 }}>
-                        Phê duyệt
-                    </Button>
-                    <Button variant="contained" color="error">
-                        Từ chối
-                    </Button>
-                </Box>
+                {returnData?.status === "pending" && (
+                    <Box>
+                        <Button onClick={() => setOpenApprove(true)} variant="contained" color="success" sx={{ mr: 2 }}>
+                            Phê duyệt
+                        </Button>
+                        <Button onClick={() => setOpenReject(true)} variant="contained" color="error">
+                            Từ chối
+                        </Button>
+                    </Box>
+                )}
+                {returnData?.status === "approved" && (
+                    <Box>
+                        <Button onClick={() => setOpenProcess(true)} variant="contained" color="warning" sx={{ mr: 2 }}>
+                            Xử lý hoàn trả
+                        </Button>
+                        <Button onClick={() => setOpenCancel(true)} variant="contained" color="gray">
+                            Huỷ bỏ
+                        </Button>
+                    </Box>
+                )}
+                {returnData?.status === "processing" && (
+                    <Box>
+                        <Button onClick={handleOpenComplete} variant="contained" color="success" sx={{ mr: 2 }}>
+                            Hoàn tất
+                        </Button>
+                    </Box>
+                )}
                 <Button variant="text" color="primary" onClick={() => navigate("/admin/returns")}>
                     Quay lại quản lý hoàn trả
                 </Button>
             </Box>
+            <CustomConfirmDialog
+                open={openApprove}
+                title="Xác nhận phê duyệt yêu cầu hoàn trả"
+                question="Bạn có chắc chắn muốn phê duyệt yêu cầu hoàn trả này không?"
+                onClose={handleCloseApprove}
+            />
+            <RejectReturnDialog
+                open={openReject}
+                dialogTitle='Từ chối yêu cầu hoàn trả'
+                dialogContent='Vui lòng nhập lý do từ chối yêu cầu:'
+                onClose={handleCloseReject}
+            />
+            <CustomConfirmDialog
+                open={openProcess}
+                title="Xác nhận xử lý hoàn trả"
+                question="Bạn có chắc chắn muốn xử lý hoàn trả cho yêu cầu hoàn trả này không?"
+                onClose={handleCloseProcess}
+            />
+            <RejectReturnDialog
+                open={openCancel}
+                dialogTitle='Huỷ yêu cầu hoàn trả'
+                dialogContent='Vui lòng nhập lý do huỷ yêu cầu:'
+                onClose={handleCloseCancel}
+            />
+            <CustomConfirmDialog
+                open={openComplete}
+                title="Xác nhận hoàn tất quy trình hoàn trả"
+                question="Bạn có chắc chắn muốn hoàn tất quy trình hoàn trả không?"
+                onClose={handleCloseComplete}
+            />
+            <InfoDialog
+                open={info?.open}
+                question={info?.content}
+                onClose={handleCloseInfo}
+            />
         </Box>
     );
 };

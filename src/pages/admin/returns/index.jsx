@@ -95,9 +95,9 @@ const ManageReturn = () => {
             renderCell: (params) => {
                 // Ánh xạ trạng thái (status) sang màu sắc
                 const statusColorMap = {
-                    pending: colors.status[200],
+                    pending: colors.status[300],
                     approved: colors.status[100],
-                    processing: colors.status[300],
+                    processing: colors.status[200],
                     completed: colors.status[100],
                     rejected: colors.status[400],
                 };
