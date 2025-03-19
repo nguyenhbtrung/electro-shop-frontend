@@ -1,5 +1,13 @@
-import React, { useState } from "react";
-import { Box, Button, useTheme } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import {
+    Box,
+    Button,
+    useTheme,
+    FormControl,
+    InputLabel,
+    Select,
+    MenuItem,
+} from "@mui/material";
 import { Header } from "../../../components";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../../theme";
@@ -8,52 +16,32 @@ import { GetAllReturns } from "../../../services/returnService";
 import { convertToLocaleDateString } from "../../../utils/formatDatetime";
 import { MapMethod, MapStatus } from "../../../utils/returnHelper";
 
-// Mock data cho bảng danh sách yêu cầu hoàn trả
-const mockReturnRequests = [
-    {
-        returnId: "RETURN#1234",
-        orderId: "ORDER#5678",
-        timeStamp: "20/10/2023",
-        returnMethod: "Hoàn tiền",
-        status: "Chờ xử lý",
-    },
-    {
-        returnId: "RETURN#1235",
-        orderId: "ORDER#6789",
-        timeStamp: "18/10/2023",
-        returnMethod: "Đổi hàng",
-        status: "Đã phê duyệt",
-    },
-    {
-        returnId: "RETURN#1236",
-        orderId: "ORDER#7890",
-        timeStamp: "15/10/2023",
-        returnMethod: "Sửa chữa",
-        status: "Đang xử lý",
-    },
-];
-
 const ManageReturn = () => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
+    const navigate = useNavigate();
     const [returns, setReturns] = useState([]);
     const [selectedRows, setSelectedRows] = useState([]);
-    const navigate = useNavigate();
 
-    useState(() => {
+    // State cho các bộ lọc 
+    const [filterStatus, setFilterStatus] = useState("all");
+    const [filterMethod, setFilterMethod] = useState("all");
+
+    // Sử dụng useEffect để tải dữ liệu khi component mounted
+    useEffect(() => {
         const GetReturns = async () => {
             const res = await GetAllReturns();
             if (res?.status === 200 && res?.data) {
-                setReturns(res?.data);
+                setReturns(res.data);
             } else {
-                alert('Có lỗi xảy ra');
+                alert("Có lỗi xảy ra");
             }
         };
 
         GetReturns();
     }, []);
 
-    // Hàm xử lý khi người dùng bấm nút "Xem"
+    // Hàm xử lý chuyển trang xem chi tiết
     const handleView = (row) => {
         navigate(`/admin/returns/detail/${row.returnId}`);
     };
@@ -68,32 +56,26 @@ const ManageReturn = () => {
             field: "orderId",
             headerName: "Đơn hàng liên quan",
             flex: 1,
-            renderCell: (params) => {
-                return `Order ID: ${params.value}`
-            },
+            renderCell: (params) => `Order ID: ${params.value}`,
         },
         {
             field: "timeStamp",
             headerName: "Ngày gửi",
             flex: 1,
-            renderCell: (params) => {
-                return convertToLocaleDateString(params.value);
-            },
+            renderCell: (params) => convertToLocaleDateString(params.value),
         },
         {
             field: "returnMethod",
             headerName: "PT xử lý",
             flex: 1,
-            renderCell: (params) => {
-                return MapMethod(params.value);
-            },
+            renderCell: (params) => MapMethod(params.value),
         },
         {
             field: "status",
             headerName: "Trạng thái",
             flex: 1,
             renderCell: (params) => {
-                // Ánh xạ trạng thái (status) sang màu sắc
+                // Ánh xạ trạng thái sang màu sắc
                 const statusColorMap = {
                     pending: colors.status[300],
                     approved: colors.status[100],
@@ -102,7 +84,6 @@ const ManageReturn = () => {
                     rejected: colors.status[400],
                 };
 
-                // Lấy màu tương ứng với giá trị status (nếu không có thì dùng mặc định)
                 const color = statusColorMap[params.value] || "inherit";
 
                 return (
@@ -119,33 +100,73 @@ const ManageReturn = () => {
             minWidth: 100,
             sortable: false,
             filterable: false,
-            renderCell: (params) => {
-                return (
-                    <Button
-                        variant="contained"
-                        color="secondary"
-                        onClick={() => handleView(params.row)}
-                    >
-                        Xem
-                    </Button>
-                );
-            },
+            renderCell: (params) => (
+                <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={() => handleView(params.row)}
+                >
+                    Xem
+                </Button>
+            ),
         },
     ];
 
+    // Lọc dữ liệu theo trạng thái và phương thức xử lý
+    const filteredReturns = returns.filter((item) => {
+        const matchesStatus = filterStatus === "all" || item.status === filterStatus;
+        const matchesMethod = filterMethod === "all" || item.returnMethod === filterMethod;
+        return matchesStatus && matchesMethod;
+    });
+
     return (
         <Box m="20px">
-            <Box
-                display="flex"
-                justifyContent="space-between"
-                alignItems="center"
-                mb={2}
-            >
-                <Header
-                    title="Quản lý hoàn trả"
-                    subtitle="Danh sách các yêu cầu hoàn trả"
-                />
+            {/* Header và bộ lọc nằm trên cùng 1 hàng */}
+            <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+                <Header title="Quản lý hoàn trả" subtitle="Danh sách các yêu cầu hoàn trả" />
+                <Box display="flex" gap={2} alignItems="center">
+                    <FormControl variant="outlined" size="small" sx={{ minWidth: 150 }}>
+                        <InputLabel>Trạng thái</InputLabel>
+                        <Select
+                            label="Trạng thái"
+                            value={filterStatus}
+                            onChange={(e) => setFilterStatus(e.target.value)}
+                        >
+                            <MenuItem value="all">Tất cả</MenuItem>
+                            <MenuItem value="pending">Chờ xử lý</MenuItem>
+                            <MenuItem value="approved">Đã phê duyệt</MenuItem>
+                            <MenuItem value="processing">Đang xử lý hoàn trả</MenuItem>
+                            <MenuItem value="completed">Hoàn tất</MenuItem>
+                            <MenuItem value="rejected">Từ chối</MenuItem>
+                            <MenuItem value="canceled">Đã huỷ bỏ</MenuItem>
+                        </Select>
+                    </FormControl>
+                    <FormControl variant="outlined" size="small" sx={{ minWidth: 150 }}>
+                        <InputLabel>Phương thức</InputLabel>
+                        <Select
+                            label="Phương thức"
+                            value={filterMethod}
+                            onChange={(e) => setFilterMethod(e.target.value)}
+                        >
+                            <MenuItem value="all">Tất cả</MenuItem>
+                            <MenuItem value="refund">Hoàn tiền</MenuItem>
+                            <MenuItem value="exchange">Đổi hàng</MenuItem>
+                            <MenuItem value="repair">Sửa chữa</MenuItem>
+                        </Select>
+                    </FormControl>
+                    <Button
+                        variant="contained"
+                        color="secondary"
+                        onClick={() => {
+                            setFilterStatus("all");
+                            setFilterMethod("all");
+                        }}
+                    >
+                        Xóa bộ lọc
+                    </Button>
+                </Box>
             </Box>
+
             <Box
                 mt="10px"
                 height="75vh"
@@ -153,7 +174,8 @@ const ManageReturn = () => {
                     "& .MuiDataGrid-root": { border: "none" },
                     "& .MuiDataGrid-cell": { border: "none" },
                     "& .MuiDataGrid-columnHeaders": {
-                        backgroundColor: colors.blueAccent[700],
+                        backgroundColor: colors.gray[900],
+                        "--DataGrid-containerBackground": "transparent",
                         borderBottom: "none",
                     },
                     "& .MuiDataGrid-virtualScroller": {
@@ -161,7 +183,7 @@ const ManageReturn = () => {
                     },
                     "& .MuiDataGrid-footerContainer": {
                         borderTop: "none",
-                        backgroundColor: colors.blueAccent[700],
+                        backgroundColor: colors.gray[900],
                     },
                     "& .MuiCheckbox-root": {
                         color: `${colors.greenAccent[200]} !important`,
@@ -172,7 +194,7 @@ const ManageReturn = () => {
                 }}
             >
                 <DataGrid
-                    rows={returns}
+                    rows={filteredReturns}
                     columns={columns}
                     getRowId={(row) => row.returnId}
                     checkboxSelection

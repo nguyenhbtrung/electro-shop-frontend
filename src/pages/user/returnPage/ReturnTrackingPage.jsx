@@ -14,10 +14,9 @@ import { tokens } from '../../../theme';
 import { GetReturnDetailById } from '../../../services/returnService';
 import { useNavigate, useParams } from 'react-router-dom';
 import { convertToLocaleDateString } from '../../../utils/formatDatetime';
-
 import ReturnStepper from '../../../components/returns/ReturnStepper';
 import { ErrorOutline } from '@mui/icons-material';
-
+import CheckCircleOutline from '@mui/icons-material/CheckCircleOutline'; // Icon thành công
 
 const ReturnDetailPage = () => {
     const theme = useTheme();
@@ -32,14 +31,13 @@ const ReturnDetailPage = () => {
             if (res?.status === 200 && res?.data) {
                 console.log("check r detail", res?.data);
                 setReturnData(res?.data);
-            }
-            else {
+            } else {
                 console.log("check err", res?.data);
             }
         };
 
         GetReturnDetail();
-    }, []);
+    }, [returnId]);
 
     const GetReturnMethod = () => {
         if (returnData?.returnMethod === 'refund') {
@@ -51,10 +49,12 @@ const ReturnDetailPage = () => {
         if (returnData?.returnMethod === 'repair') {
             return 'Sửa chữa';
         }
-        return 'Không xác định'
-    }
+        return 'Không xác định';
+    };
 
-
+    // Kiểm tra nếu status không phải "rejected" và không phải "canceled"
+    const isSuccessStatus =
+        returnData?.status !== 'rejected' && returnData?.status !== 'canceled';
 
     return (
         <Container maxWidth="md">
@@ -76,16 +76,18 @@ const ReturnDetailPage = () => {
                         sx={{
                             "&:hover": {
                                 backgroundColor: "transparent",
-                                color: theme.palette.mode === "dark" ? colors.blueAccent[400] : colors.blueAccent[700]
+                                color:
+                                    theme.palette.mode === "dark"
+                                        ? colors.blueAccent[400]
+                                        : colors.blueAccent[700],
                             },
                             textDecoration: "underline",
-                            textTransform: "none"
+                            textTransform: "none",
                         }}
                     >
                         Xem Đơn Hàng
                     </Button>
                 </Box>
-
 
                 {/* Thông tin đơn hàng */}
                 <Paper elevation={2} sx={{ p: 2, mb: 2 }}>
@@ -119,14 +121,18 @@ const ReturnDetailPage = () => {
                         <Box
                             sx={{
                                 borderLeft: "4px solid",
-                                borderColor: "error.main",
+                                borderColor: isSuccessStatus ? "success.main" : "error.main",
                                 pl: 2,
                                 mt: 2,
                             }}
                         >
                             {/* Dòng tiêu đề có icon */}
                             <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
-                                <ErrorOutline sx={{ color: "error.main", mr: 1 }} />
+                                {isSuccessStatus ? (
+                                    <CheckCircleOutline sx={{ color: "success.main", mr: 1 }} />
+                                ) : (
+                                    <ErrorOutline sx={{ color: "error.main", mr: 1 }} />
+                                )}
                                 <Typography variant="body2" whiteSpace="pre-line">
                                     <strong>Ghi chú:</strong>
                                 </Typography>
@@ -179,10 +185,7 @@ const ReturnDetailPage = () => {
                         - Trong trường hợp có thắc mắc, hãy liên hệ với bộ phận hỗ trợ qua Chat hoặc Hotline.
                     </Typography>
                     <Box display="flex" justifyContent="flex-start" mt={2}>
-                        <Button
-                            variant="contained"
-                            color="secondary"
-                        >
+                        <Button variant="contained" color="secondary">
                             Liên Hệ Hỗ Trợ
                         </Button>
                     </Box>
