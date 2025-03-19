@@ -55,9 +55,7 @@ const ManageReturn = () => {
 
     // Hàm xử lý khi người dùng bấm nút "Xem"
     const handleView = (row) => {
-        // Bạn có thể chuyển hướng đến trang chi tiết, ví dụ:
-        // navigate(`/returns/${row.returnId}`);
-        alert("Xem chi tiết yêu cầu: " + row.returnId);
+        navigate(`/admin/returns/detail/${row.returnId}`);
     };
 
     const columns = [

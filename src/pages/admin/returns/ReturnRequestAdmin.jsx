@@ -10,8 +10,11 @@ import {
     Grid,
     Avatar
 } from '@mui/material';
+import { useParams } from 'react-router-dom';
 
 const ReturnRequestAdmin = () => {
+    const { returnId } = useParams();
+
     return (
         <Box sx={{ p: 3 }}>
             {/* Breadcrumb */}
@@ -24,7 +27,7 @@ const ReturnRequestAdmin = () => {
 
             {/* Mã yêu cầu hoàn trả */}
             <Typography variant="subtitle1" sx={{ mb: 2 }}>
-                <strong>Mã yêu cầu :</strong> RR#1234
+                <strong>Mã yêu cầu :</strong> {returnId}
             </Typography>
 
             {/* Tiêu đề trang */}
