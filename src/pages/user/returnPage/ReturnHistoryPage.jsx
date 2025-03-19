@@ -87,6 +87,16 @@ const ReturnHistoryPage = () => {
                     borderRadius: '4px',
                     padding: '4px 8px',
                 };
+            case 'Đã huỷ bỏ':
+                return {
+                    color: 'gray',
+                    backgroundColor: '#f1f1f1',
+                    fontWeight: 'bold',
+                    fontSize: '1.1rem',
+                    border: '1px solid gray',
+                    borderRadius: '4px',
+                    padding: '4px 8px',
+                };
             default:
                 return {
                     color: 'black',

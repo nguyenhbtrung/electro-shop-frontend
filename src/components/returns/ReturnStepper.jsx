@@ -23,6 +23,7 @@ const ReturnStepper = ({ returnHistories }) => {
         processing: { label: "Xử lý hoàn trả" },
         completed: { label: "Hoàn tất" },
         rejected: { label: "Từ chối" },
+        canceled: { label: 'Đã huỷ bỏ' }
     };
     let hasRejected = false;
 
@@ -33,7 +34,7 @@ const ReturnStepper = ({ returnHistories }) => {
             (a, b) => new Date(a.changedAt) - new Date(b.changedAt)
         );
 
-        hasRejected = sortedHistory.some((record) => record.status === "rejected");
+        hasRejected = sortedHistory.some((record) => record.status === "rejected" || record.status === "canceled");
         if (hasRejected) {
             return buildStepsRejected(sortedHistory);
         }
@@ -78,7 +79,8 @@ const ReturnStepper = ({ returnHistories }) => {
     const buildStepsRejected = (sortedHistory) => {
         // Nếu có rejected, ta muốn dừng process ngay khi rejected xuất hiện.
         // Lấy vị trí xuất hiện đầu tiên của rejection.
-        const firstRejectIndex = sortedHistory.findIndex((record) => record.status === "rejected");
+        const firstRejectIndex = sortedHistory.findIndex((record) => record.status === "rejected" || record.status === "canceled");
+        const firstRejectStatus = sortedHistory[firstRejectIndex].status;
         let steps = [];
 
         // Những bước trước đó (nếu có) sẽ được xác định là đã hoàn thành.
@@ -104,7 +106,7 @@ const ReturnStepper = ({ returnHistories }) => {
 
         // Thêm bước rejected từ record rejected
         steps.push({
-            label: stepMapping["rejected"].label,
+            label: stepMapping[firstRejectStatus].label,
             date: new Date(sortedHistory[firstRejectIndex].changedAt).toLocaleDateString("vi-VN"),
             status: "rejected", // Trạng thái final
         });

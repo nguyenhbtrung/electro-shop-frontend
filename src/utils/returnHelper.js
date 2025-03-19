@@ -11,6 +11,8 @@ export const MapStatus = (status) => {
             return 'Hoàn tất';
         case 'rejected':
             return 'Từ chối';
+        case 'canceled':
+            return 'Đã huỷ bỏ';
         default:
             return status;
     }
