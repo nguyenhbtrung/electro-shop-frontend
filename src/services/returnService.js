@@ -25,10 +25,16 @@ const GetUserReturnHistory = () => {
     return api.get(URL_API);
 };
 
+const GetReturnDetailByAdmin = (returnId) => {
+    const URL_API = `/api/Return/admin/${returnId}`;
+    return api.get(URL_API);
+};
+
 export {
     CreateReturnRequest,
     GetReturnDetailById,
     GetUserReturnHistory,
-    GetAllReturns
+    GetAllReturns,
+    GetReturnDetailByAdmin
 };
 
