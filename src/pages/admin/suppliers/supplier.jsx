@@ -3,30 +3,31 @@ import { Header } from "../../../components";
 import { DataGrid } from "@mui/x-data-grid";
 import { tokens } from "../../../theme";
 import { useEffect, useState } from "react";
-import { Edit } from "@mui/icons-material";
+import { Edit, Update } from "@mui/icons-material";
 import { GridToolbar } from "@mui/x-data-grid";
-import { GetAllUsers, DeleteUser } from "../../../services/UserService";
 import { convertToCustomMonthDate } from "../../../utils/formatDatetime";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from '@mui/icons-material/Delete';
-import { useNavigate } from "react-router-dom";
 import ReplayIcon from '@mui/icons-material/Replay';
 import AlertDialog from "../../../components/AlertDialog";
 import InfoDialog from "../../../components/InfoDialog";
 import AddSupplierDialog from "../../../components/suppliers/AddSupplierDialog";
-import { GetAllSupplers } from "../../../services/SupplierService";
+import UpdateSupplierDialog from "../../../components/suppliers/UpdateSupplierDialog";
+import { AddSupplier, GetAllSupplers, DeleteSupplier, UpdateSupplier } from "../../../services/SupplierService";
 
 const ManageSupplier = () => {
 	const theme = useTheme();
 	const colors = tokens(theme.palette.mode);
 	const [selectedRows, setSelectedRows] = useState([]);
 	const [suppliers, setSupplier] = useState([]);
-	const navigate = useNavigate();
 	const [response, setResponse] = useState(null);
 	const [dialogOpen, setDialogOpen] = useState(false);
 	const [dialogQuestion, setDialogQuestion] = useState('');
 	const [infoDialogOpen, setInfoDialogOpen] = useState(false);
 	const [info, setInfo] = useState('');
+	const [openUpdateDialog, setOpenUpdateDialog] = useState(false);
+	const [openAddDialog, setOpenAddDialog] = useState(false);
+	const [selectedSupplier, setSelectedSupplier] = useState(null);
 
 	const columns = [
 		{
@@ -89,22 +90,37 @@ const ManageSupplier = () => {
 			setInfo(`Có lỗi khi làm mới dữ liệu!`);
 			setInfoDialogOpen(true);
 		}
-	};
-
-	const handleAddUser = () => {
 	}
 
-	const [openAddDialog, setOpenAddDialog] = useState(false);
+	const handleAddSupplier = () => {
+		setOpenAddDialog(true);
+	}
+
 
 	const handleAddDialogSubmit = async (newSupplier) => {
 		console.log("New Supplier: ", newSupplier);
-		// const res = await CreateProduct(newProduct);
-		// if (res?.status === 200 && res?.data) {
-		// 	alert("Thêm sản phẩm thành công!");
-		// 	setProducts((prevProducts) => [res.data, ...prevProducts]);
-		// } else {
-		// 	console.log(">>>Check err:", res);
-		// }
+		const res = await AddSupplier(newSupplier);
+		if (res?.status === 200 && res?.data) {
+			setInfo(`Thêm nhà cung cấp thành công!`);
+			setInfoDialogOpen(true);
+			GetAllSuppliers();
+		} else {
+			setInfo(`Có lỗi khi thêm nhà cung cấp!`);
+			setInfoDialogOpen(true);
+		}
+	}
+
+	const handleUpdateDialogSubmit = async (updatedSupplier) => {
+		console.log("Updated Supplier: ", updatedSupplier);
+		const res = await UpdateSupplier(updatedSupplier);
+		if (res?.status === 200 && res?.data) {
+			setInfo(`Cập nhật nhà cung cấp thành công!`);
+			setInfoDialogOpen(true);
+			GetAllSuppliers();
+		} else {
+			setInfo(`Có lỗi khi cập nhật nhà cung cấp!`);
+			setInfoDialogOpen(true);
+		}
 	}
 
 	const handleDeleteSelected = async (userResponse) => {
@@ -113,14 +129,14 @@ const ManageSupplier = () => {
 			return;
 		} else {
 			try {
-				for (const userName of selectedRows) {
-					await DeleteUser(userName);
+				for (const supplierId of selectedRows) {
+					await DeleteSupplier(supplierId);
 				}
-				setInfo(`Đã xoá ${selectedRows.length} người dùng!`);
+				setInfo(`Đã xoá ${selectedRows.length} nhà cung cấp!`);
 				setInfoDialogOpen(true);
-				GetAllUser();
+				GetAllSuppliers();
 			} catch (error) {
-				setInfo(`Có lỗi khi xóa người dùng!`);
+				setInfo(`Có lỗi khi xóa nhà cung cấp!`);
 				setInfoDialogOpen(true);
 				console.error(error);
 			}
@@ -129,25 +145,27 @@ const ManageSupplier = () => {
 
 	const handleDeleteDialog = () => {
 		if (selectedRows.length === 0) {
-			setInfo(`Vui lòng chọn người dùng cần xoá!`);
+			setInfo(`Vui lòng chọn nhà cung cấp cần xoá!`);
 			setInfoDialogOpen(true);
 			return;
 		}
-		setDialogQuestion(`Bạn có muốn xóa ${selectedRows.length} người dùng đã chọn?`);
+		setDialogQuestion(`Bạn có muốn xóa ${selectedRows.length} nhà cung cấp đã chọn?`);
 		setDialogOpen(true);
 	};
 
 	const handleEditSelected = () => {
 		if (selectedRows.length === 0) {
-			setInfo(`Vui lòng chọn người dùng cần chỉnh sửa!`);
+			setInfo(`Vui lòng chọn nhà cung cấp cần chỉnh sửa!`);
 			setInfoDialogOpen(true);
 			return;
 		} else if (selectedRows.length > 1) {
-			setInfo(`Chỉ được chọn 1 người dùng để chỉnh sửa!`);
+			setInfo(`Chỉ được chọn 1 nhà cung cấp để chỉnh sửa!`);
 			setInfoDialogOpen(true);
 			return;
 		} else {
-			navigate(`/admin/users/edit/${selectedRows[0]}`);
+			const supplier = suppliers.find((supplier) => supplier.supplierId === selectedRows[0]);
+			setSelectedSupplier(supplier);
+			setOpenUpdateDialog(true);
 		}
 	}
 
@@ -182,7 +200,7 @@ const ManageSupplier = () => {
 						variant="contained"
 						color="secondary"
 						startIcon={<AddIcon />}
-						onClick={handleAddUser}
+						onClick={handleAddSupplier}
 						sx={{ color: 'text.primary' }}
 					>
 						Thêm nhà cung cấp
@@ -267,6 +285,12 @@ const ManageSupplier = () => {
 				open={openAddDialog}
 				onClose={() => setOpenAddDialog(false)}
 				onSubmit={handleAddDialogSubmit}
+			/>
+			<UpdateSupplierDialog
+				open={openUpdateDialog}
+				onClose={() => setOpenUpdateDialog(false)}
+				onSubmit={handleUpdateDialogSubmit}
+				supplier={selectedSupplier}
 			/>
 			<AlertDialog
 				open={dialogOpen}

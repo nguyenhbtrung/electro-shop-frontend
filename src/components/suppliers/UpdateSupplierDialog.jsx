@@ -11,11 +11,7 @@ import {
 import { Formik } from "formik";
 import * as yup from "yup";
 
-const initialValues = {
-	supplierName: "",
-	supplierAddress: "",
-	supplierContact: "",
-};
+
 
 const phoneRegExp =
 	/^((\+[1-9]{1,4}[ -]?)|(\([0-9]{2,3}\)[ -]?)|([0-9]{2,4})[ -]?)*?[0-9]{3,4}[ -]?[0-9]{3,4}$/;
@@ -28,10 +24,20 @@ const checkoutSchema = yup.object().shape({
 		.matches(phoneRegExp, "Số điện thoại không hợp lệ."),
 });
 
-const AddSupplierDialog = ({ open, onClose, onSubmit }) => {
+const UpdateSupplierDialog = ({ open, onClose, onSubmit, supplier }) => {
+	const [initialValues, setValues] = useState({
+		supplierId: "",
+		supplierName: "",
+		supplierAddress: "",
+		supplierContact: "",
+	});
+
+	useEffect(() => {
+		console.log("Supplier", supplier);
+		setValues(supplier);
+	}, [supplier]);
 
 	const handleFormSubmit = (values) => {
-		console.log("AAA", values);
 		onSubmit(values);
 		onClose();
 	};
@@ -110,11 +116,11 @@ const AddSupplierDialog = ({ open, onClose, onSubmit }) => {
 								/>
 							</Box>
 							<DialogActions>
-								<Button onClick={handleCancel} color="secondary">
+								<Button variant="contained" onClick={handleCancel} color="error">
 									Huỷ
 								</Button>
 								<Button type="submit" variant="contained" color="primary">
-									Thêm
+									Sửa
 								</Button>
 							</DialogActions>
 						</form>
@@ -126,4 +132,4 @@ const AddSupplierDialog = ({ open, onClose, onSubmit }) => {
 	);
 };
 
-export default AddSupplierDialog;
+export default UpdateSupplierDialog;

@@ -6,29 +6,18 @@ export const GetAllSupplers = () => {
 	return axiosInstance.get(url);
 };
 
-// export const AddUser = (data) => {
-// 	return axiosInstance.post(url + '/addUser', data);
-// };
+export const AddSupplier = (data) => {
+	return axiosInstance.post(url, data);
+};
 
-// export const DeleteUser = (userName) => {
-// 	return axiosInstance.delete(url + '/admin', {
-// 		params: { userName }
-// 	});
-// };
+export const DeleteSupplier = (supplierId) => {
+	return axiosInstance.delete(url + '?id=' + supplierId);
+};
 
-// export const GetUserProfileData = (userName) => {
-// 	return axiosInstance.get(`${url}` + `/admin/${userName}`);
-// };
+export const GetSupplier = (supplierId) => {
+	return axiosInstance.get(url + `/${supplierId}`);
+};
 
-// export const UpdateUser = (data) => {
-// 	console.log(data);
-// 	return axiosInstance.put(url + '/admin', data);
-// }
-
-// export const UserUpdate = (userName, data) => {
-// 	return axiosInstance.put(`${url}` + `/user/${userName}`, data);
-// }
-
-// export const UpdateAvatar = (data) => {
-// 	return axiosInstance.put(url + '/user/avatar?url=' + data);
-// }
+export const UpdateSupplier = (data) => {
+	return axiosInstance.put(url + `?id=${data.supplierId}`, data);
+};
