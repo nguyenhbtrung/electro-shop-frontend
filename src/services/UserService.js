@@ -24,6 +24,10 @@ export const DeleteUser = (userName) => {
 };
 
 export const GetUserProfileData = (userName) => {
+    return axiosInstance.get(`${url}` + `/user/${userName}`);
+};
+
+export const GetUserProfileDataAdmin = (userName) => {
     return axiosInstance.get(`${url}` + `/admin/${userName}`);
 };
 

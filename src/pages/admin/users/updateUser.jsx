@@ -4,7 +4,7 @@ import { Formik } from "formik";
 import * as yup from "yup";
 import { Select, MenuItem, FormControl, InputLabel } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
-import { GetUserProfileData, UpdateUser } from "../../../services/UserService";
+import { GetUserProfileDataAdmin, UpdateUser } from "../../../services/UserService";
 import { useEffect, useState } from "react";
 import InfoDialog from "../../../components/InfoDialog";
 import AlertDialog from "../../../components/AlertDialog";
@@ -79,7 +79,7 @@ const UpdateUserForm = () => {
 
 	useEffect(() => {
 		const getUserData = async () => {
-			var response = await GetUserProfileData(userName);
+			var response = await GetUserProfileDataAdmin(userName);
 			if (response.status === 200) {
 				setValues(response.data);
 				console.log(response.data);
