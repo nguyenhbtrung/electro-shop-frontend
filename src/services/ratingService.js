@@ -16,9 +16,12 @@ const CreateRating = (data) => {
     const URL_API = "/api/Rating";
     return api.post(URL_API, data);
 };
-const UpdateRating = (ProductId, data) => {
+const UpdateRating = (ProductId, ratingScore, ratingContent) => {
     const URL_API = `/api/Rating/${ProductId}`;
-    return api.put(URL_API, data);
+    return api.put(URL_API, {
+        ratingScore: ratingScore,
+        ratingContent: ratingContent
+    });
 };
 const DeleteRating = (ProductId) => {
     const URL_API = `/api/Rating/${ProductId}`;

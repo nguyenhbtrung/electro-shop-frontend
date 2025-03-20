@@ -8,34 +8,47 @@ import {
     TextField,
     Grid,
 } from "@mui/material";
+import { UpdateRating } from "../../services/ratingService"; // Adjust the path as necessary
 
-const UpdateRatingDialog = ({ open, onClose, onSubmit, reason }) => {
-    const [ratingScore, setRatingScore] = useState("");
+const UpdateRatingDialog = ({ open, onClose, onSubmit, rating, productId }) => {
+    const [ratingScore, setRatingScore] = useState(0);
     const [ratingContent, setRatingContent] = useState("");
     const [error, setError] = useState("");
 
     useEffect(() => {
-        if (reason) {
-            setRatingScore(reason.ratingScore);
-            setRatingContent(reason.ratingContent);
+        if (rating) {
+            setRatingScore(rating.ratingScore);
+            setRatingContent(rating.ratingContent);
         }
-    }, [reason]);
+    }, [rating]);
 
-    const handleSubmit = () => {
-        if (ratingScore.trim() === "") {
-            setError("Vui lòng nhập nội dung lý do hoàn trả.");
+    const handleSubmit = async () => {
+        if (ratingScore < 1 || ratingScore > 5) {
+            setError("Điểm đánh giá phải từ 1 đến 5.");
             return;
         }
+
+        const trimmedContent = ratingContent.trim();
+        if (!trimmedContent) {
+            setError("Nội dung đánh giá không được để trống.");
+            return;
+        }
+
         // Chuẩn bị DTO cho rating
         const updatedRating = {
-            score: ratingScore.trim(),
-            content: ratingContent.trim(),
+            score: ratingScore,
+            content: trimmedContent,
         };
 
-        onSubmit(updatedRating);
-        setRatingScore("");
-        setRatingContent("");
-        setError("");
+        try {
+            await UpdateRating(productId, updatedRating);
+            onSubmit(updatedRating);
+            setRatingScore(0);
+            setRatingContent("");
+            setError("");
+        } catch (error) {
+            setError("Có lỗi xảy ra khi cập nhật đánh giá.");
+        }
     };
 
     const handleCancel = () => {
@@ -52,10 +65,10 @@ const UpdateRatingDialog = ({ open, onClose, onSubmit, reason }) => {
                         <TextField
                             label="Điểm đánh giá"
                             fullWidth
+                            type="number"
                             value={ratingScore}
-                            onChange={(e) => setRatingScore(e.target.value)}
+                            onChange={(e) => setRatingScore(Math.max(1, Math.min(5, Number(e.target.value))))}
                             error={!!error}
-                            helperText={error || "Số sao từ 1 đến 5"}
                         />
                     </Grid>
                     <Grid item xs={12}>
@@ -64,9 +77,8 @@ const UpdateRatingDialog = ({ open, onClose, onSubmit, reason }) => {
                             fullWidth
                             value={ratingContent}
                             onChange={(e) => setRatingContent(e.target.value)}
-                            error={!!error}
-                            helperText={error || "Tối đa 255 ký tự"}
                         />
+                        {error && <p style={{ color: "red" }}>{error}</p>}
                     </Grid>
                 </Grid>
             </DialogContent>
