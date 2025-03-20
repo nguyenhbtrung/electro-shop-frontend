@@ -50,6 +50,7 @@ import ProductDetailWrapper from "./components/products/ProductDetailWapper.jsx"
 import ManageSupplier from "./pages/admin/suppliers/supplier.jsx";
 import ManageStock from "./pages/admin/stocks/stock.jsx";
 import SearchPage from "./pages/user/searchPage/SearchPage.jsx";
+import AddStockForm from "./pages/admin/stocks/addStock.jsx";
 const AppRouter = () => {
   return (
     <Router>
@@ -82,6 +83,7 @@ const AppRouter = () => {
           <Route path="categories" element={<ManageCategory />} />
           <Route path="suppliers" element={<ManageSupplier />} />
           <Route path="stockimports" element={<ManageStock />} />
+          <Route path="stockimports/add" element={<AddStockForm />} />
           <Route path="ratings" element={<ManageRating />} />
           <Route path="orders" element={<ManageOrder />} />
           <Route path="returns" element={<ManageReturn />} />

@@ -39,7 +39,6 @@ const SideBar = () => {
     if (response.status === 200) {
       setUserName(response.data.userName);
       setAvatar(response.data.avatarImg);
-      console.log(response.data);
     } else {
       alert("Lỗi khi lấy dữ liệu người dùng!");
     }
