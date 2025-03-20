@@ -112,7 +112,7 @@ export default function Login(props) {
                 console.log("token: ", token);
                 localStorage.setItem('access_token', token);
                 localStorage.setItem('userName', userName);
-                localStorage.SetItem('userId', response.data.userId);
+                localStorage.setItem('userId', response.data.userId);
                 if (response.data.roles === "User") {
                     navigate('/');
                 } else if (response.data.roles === "Admin") {
