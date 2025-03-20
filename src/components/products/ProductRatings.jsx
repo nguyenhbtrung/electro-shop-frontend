@@ -9,9 +9,14 @@ const ProductRatings = ({ productId, isAdmin }) => {
     const [ratings, setRatings] = useState([]);
     const [selectedRating, setSelectedRating] = useState(null);
     const [openEditDialog, setOpenEditDialog] = useState(false);
-
-    const currentUserId = localStorage.getItem('userId');
+    const [currentUserName, setCurrentUserName] = useState(null);
     const theme = useTheme();
+
+    useEffect(() => {
+        // Chỉ chạy ở client, khi component đã được mount
+        const storedUserName = localStorage.getItem('userName');
+        setCurrentUserName(storedUserName);
+    }, []);
 
     const fetchRatings = async () => {
         try {
@@ -29,7 +34,7 @@ const ProductRatings = ({ productId, isAdmin }) => {
     }, [productId]);
 
     const handleEdit = (rating) => {
-        if (rating.userId !== currentUserId && !isAdmin) {
+        if (rating.userName !== currentUserName) {
             alert("Bạn chỉ có thể chỉnh sửa đánh giá của chính mình!");
             return;
         }
@@ -38,7 +43,7 @@ const ProductRatings = ({ productId, isAdmin }) => {
     };
 
     const handleDelete = async (rating) => {
-        if (rating.userId !== currentUserId && !isAdmin) {
+        if (rating.userName !== currentUserName && !isAdmin) {
             alert("Bạn chỉ có thể xóa đánh giá của chính mình!");
             return;
         }
@@ -59,7 +64,7 @@ const ProductRatings = ({ productId, isAdmin }) => {
 
     const handleEditDialogSubmit = async (updatedRating) => {
         try {
-            const res = await UpdateRating(selectedRating.ratingId, updatedRating);
+            const res = await UpdateRating(productId, selectedRating.ratingId, updatedRating);
             if (res?.status === 200) {
                 alert("Cập nhật đánh giá thành công!");
                 fetchRatings(); // Refetch ratings after successful update
@@ -72,26 +77,27 @@ const ProductRatings = ({ productId, isAdmin }) => {
         }
     };
 
+    //Lấy điểm đánh giá trung bình
     const averageRatingScore = ratings.length > 0
         ? ratings.reduce((acc, rating) => acc + rating.ratingScore, 0) / ratings.length
         : 0;
 
     return (
         <Box sx={{ width: '100%' }}>
-            <Typography variant="h2" sx={{ fontWeight: 'bold', mt: 4, mb: 2, display: 'flex', alignItems: 'center'}}>
+            <Typography variant="h2" sx={{ fontWeight: 'bold', mt: 4, mb: 2, display: 'flex', alignItems: 'center' }}>
                 Đánh giá sản phẩm:
-                <Rating value={averageRatingScore} readOnly precision={0.5} sx={{ ml: 2}} />
+                <Rating value={averageRatingScore} readOnly precision={0.5} sx={{ ml: 2 }} />
                 <Box component="span" sx={{ mx: 1 }}></Box>
                 ({ratings.length} đánh giá)
             </Typography>
             {ratings.length > 0 ? (
-                ratings.map((rating) => (
-                    <Box key={rating.ratingId} sx={{ backgroundColor: '#fff', mb: 2, border: '1px solid #ccc', borderRadius: 2, p: 2 }}>
+                ratings.map((rating, index) => (
+                    <Box key={`${rating.ratingId}-${index}`} sx={{ backgroundColor: '#fff', mb: 2, border: '1px solid #ccc', borderRadius: 2, p: 2 }}>
                         <Box display="flex" justifyContent="space-between">
                             <Typography variant="h5" sx={{ fontWeight: 'bold', color: theme.palette.primary.main }}>
-                                {rating.userId}
+                                {rating.userName}
                                 <Box component="span" sx={{ mx: 1 }}></Box>
-                                <Rating value={rating.ratingScore} readOnly precision={0.5}/>
+                                <Rating value={rating.ratingScore} readOnly precision={0.5} />
                             </Typography>
                             <Box>
                                 <IconButton onClick={() => handleEdit(rating)} sx={{ color: theme.palette.primary.main }}>
@@ -111,13 +117,14 @@ const ProductRatings = ({ productId, isAdmin }) => {
                     </Box>
                 ))
             ) : (
-                <Typography variant="h5" sx={{ fontWeight: 'bold'}}>Chưa có đánh giá nào.</Typography>
+                <Typography variant="h5" sx={{ fontWeight: 'bold' }}>Chưa có đánh giá nào.</Typography>
             )}
             <UpdateRatingDialog
                 open={openEditDialog}
                 onClose={() => setOpenEditDialog(false)}
                 onSubmit={handleEditDialogSubmit}
                 rating={selectedRating}
+                productId={productId}
             />
         </Box>
     );
