@@ -15,6 +15,7 @@ function App() {
     const [toggled, setToggled] = useState(false);
     const values = { toggled, setToggled };
     const [categoryTree, setCategoryTree] = useState([]);
+    const [openChat, setOpenChat] = useState(false);
 
     useEffect(() => {
         const GetTree = async () => {
@@ -49,9 +50,9 @@ function App() {
                         </Box>
                     </Box>
                     {/* Nút chat luôn hiển thị */}
-                    <ChatButton onClick={() => setToggled(true)} />
+                    <ChatButton onClick={() => setOpenChat(!openChat)} />
                     {/* Hiển thị chat khi toggled = true */}
-                    {toggled && <ChatWindow onClose={() => setToggled(false)} />}
+                    {openChat && <ChatWindow onClose={() => setOpenChat(false)} />}
                 </ToggledContext.Provider>
             </ThemeProvider>
         </ColorModeContext.Provider>
