@@ -8,5 +8,16 @@ const Search = (productName) => {
     },
   });
 };
+const FilterInCategory = (categoryId, priceFilter, brandId, ratingFilter) => {
+  const URL_API = `/api/Filter/category`;
+  return api.get(URL_API, {
+    params: {
+      categoryId: categoryId,
+      priceFilter: priceFilter,
+      brandId: brandId,
+      ratingFilter: ratingFilter,
+    },
+  });
+};
+export { Search, FilterInCategory };
 
-export { Search };

@@ -1,13 +1,48 @@
 import React, { useState, useEffect } from "react";
-import { Box, Typography } from "@mui/material";
+import { 
+  Box, 
+  Typography, 
+  FormControl, 
+  InputLabel, 
+  Select, 
+  MenuItem, 
+  Button 
+} from "@mui/material";
 import ProductCard from "../../../components/products/ProductCard";
 import { GetProductByCategoryId } from "../../../services/categoryService";
+import { FilterInCategory } from "../../../services/filterProductService";
+import { GetAllBrand } from "../../../services/brandService"; 
 import { useParams } from "react-router-dom";
 
 const CategoryProductsPage = () => {
   const { categoryId } = useParams();
   const [products, setProducts] = useState([]);
 
+  // Các state để lưu bộ lọc
+  const [priceFilter, setPriceFilter] = useState("");
+  const [brandId, setBrandId] = useState("");
+  const [ratingFilter, setRatingFilter] = useState("");
+  
+  // State lưu danh sách thương hiệu
+  const [brands, setBrands] = useState([]);
+
+  // Lấy danh sách thương hiệu khi component mount
+  useEffect(() => {
+    const fetchBrands = async () => {
+      try {
+        const res = await GetAllBrand();
+        if (res?.data) {
+          setBrands(res.data);
+        }
+      } catch (error) {
+        console.error("Error fetching brands:", error);
+      }
+    };
+
+    fetchBrands();
+  }, []);
+
+  // Lấy sản phẩm theo category ban đầu
   useEffect(() => {
     const fetchProductsByCategory = async () => {
       try {
@@ -25,6 +60,23 @@ const CategoryProductsPage = () => {
     }
   }, [categoryId]);
 
+  // Hàm lọc sản phẩm theo các tiêu chí
+  const fetchFilteredProducts = async () => {
+    try {
+      const res = await FilterInCategory(
+        categoryId,
+        priceFilter !== "" ? parseInt(priceFilter) : null,
+        brandId !== "" ? parseInt(brandId) : null,
+        ratingFilter !== "" ? parseInt(ratingFilter) : null
+      );
+      if (res?.data) {
+        setProducts(res.data);
+      }
+    } catch (error) {
+      console.error("Error filtering products:", error);
+    }
+  };
+
   return (
     <Box
       sx={{
@@ -36,16 +88,86 @@ const CategoryProductsPage = () => {
       <Typography variant="h5" sx={{ mb: 2 }}>
         Sản phẩm của danh mục
       </Typography>
-      <Box
-        sx={{
-          display: "grid",
-          gridTemplateColumns: "repeat(5, 1fr)",
-          gap: 2,
-        }}
-      >
-        {products.map((product) => (
-          <ProductCard key={product.productId} product={product} />
-        ))}
+      <Box sx={{ display: "flex", gap: 2 }}>
+        {/* Filter Panel bên trái */}
+        <Box
+          sx={{
+            width: 250,
+            border: "1px solid #ccc",
+            borderRadius: 2,
+            p: 2,
+          }}
+        >
+          <Typography variant="h6" sx={{ mb: 2 }}>
+            Bộ lọc
+          </Typography>
+          <FormControl fullWidth sx={{ mb: 2 }}>
+            <InputLabel>Giá</InputLabel>
+            <Select
+              value={priceFilter}
+              label="Giá"
+              onChange={(e) => setPriceFilter(e.target.value)}
+            >
+              <MenuItem value="">Tất cả</MenuItem>
+              <MenuItem value={0}>Dưới 5 triệu</MenuItem>
+              <MenuItem value={1}>Từ 5 - 10 triệu</MenuItem>
+              <MenuItem value={2}>Từ 10 - 15 triệu</MenuItem>
+              <MenuItem value={3}>Từ 15 - 20 triệu</MenuItem>
+              <MenuItem value={4}>Trên 20 triệu</MenuItem>
+            </Select>
+          </FormControl>
+          <FormControl fullWidth sx={{ mb: 2 }}>
+            <InputLabel>Thương hiệu</InputLabel>
+            <Select
+              value={brandId}
+              label="Thương hiệu"
+              onChange={(e) => setBrandId(e.target.value)}
+            >
+              <MenuItem value="">Tất cả</MenuItem>
+              {brands.map((brand) => (
+                <MenuItem key={brand.brandId} value={brand.brandId}>
+                  {brand.brandName}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <FormControl fullWidth sx={{ mb: 2 }}>
+            <InputLabel>Đánh giá</InputLabel>
+            <Select
+              value={ratingFilter}
+              label="Đánh giá"
+              onChange={(e) => setRatingFilter(e.target.value)}
+            >
+              <MenuItem value="">Tất cả</MenuItem>
+              <MenuItem value={0}>0-1 sao</MenuItem>
+              <MenuItem value={1}>1-2 sao</MenuItem>
+              <MenuItem value={2}>2-3 sao</MenuItem>
+              <MenuItem value={3}>3-4 sao</MenuItem>
+              <MenuItem value={4}>4-5 sao</MenuItem>
+            </Select>
+          </FormControl>
+          <Button variant="contained" fullWidth onClick={fetchFilteredProducts}>
+            Áp dụng lọc
+          </Button>
+        </Box>
+
+        {/* Product List Panel bên phải */}
+        <Box
+          sx={{
+            flexGrow: 1,
+            display: "grid",
+            gridTemplateColumns: "repeat(5, 1fr)",
+            gap: 2,
+          }}
+        >
+          {products.length > 0 ? (
+            products.map((product) => (
+              <ProductCard key={product.productId} product={product} />
+            ))
+          ) : (
+            <Typography>Không tìm thấy sản phẩm nào</Typography>
+          )}
+        </Box>
       </Box>
     </Box>
   );
