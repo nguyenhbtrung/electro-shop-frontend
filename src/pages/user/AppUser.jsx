@@ -1,11 +1,12 @@
-import React, { createContext, useEffect, useState } from "react";
+import React, { useState, useEffect, createContext } from "react";
 import { Box, CssBaseline, ThemeProvider } from "@mui/material";
-
 import { Outlet } from "react-router-dom";
 import { ColorModeContext, useMode } from "../../theme";
 import Navbar from "./layout/navbar";
 import SideBar from "./layout/sidebar";
 import { GetCategoryTree } from "../../services/categoryService";
+import ChatButton from "../../components/chats/ChatButton";
+import ChatWindow from "../../components/chats/ChatWindow";
 
 export const ToggledContext = createContext(null);
 
@@ -47,6 +48,10 @@ function App() {
                             </Box>
                         </Box>
                     </Box>
+                    {/* Nút chat luôn hiển thị */}
+                    <ChatButton onClick={() => setToggled(true)} />
+                    {/* Hiển thị chat khi toggled = true */}
+                    {toggled && <ChatWindow onClose={() => setToggled(false)} />}
                 </ToggledContext.Provider>
             </ThemeProvider>
         </ColorModeContext.Provider>
