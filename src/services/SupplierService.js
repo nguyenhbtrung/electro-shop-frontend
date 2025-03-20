@@ -2,7 +2,7 @@ import axiosInstance from './axios/axios.customize'
 const url = '/api/Supplier';
 
 
-export const GetAllSupplers = () => {
+export const GetAllSuppliers = () => {
 	return axiosInstance.get(url);
 };
 

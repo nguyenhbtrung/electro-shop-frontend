@@ -3,7 +3,7 @@ import { Header } from "../../../components";
 import { DataGrid } from "@mui/x-data-grid";
 import { tokens } from "../../../theme";
 import { useEffect, useState } from "react";
-import { Edit, Update } from "@mui/icons-material";
+import { Edit } from "@mui/icons-material";
 import { GridToolbar } from "@mui/x-data-grid";
 import { convertToCustomMonthDate } from "../../../utils/formatDatetime";
 import AddIcon from "@mui/icons-material/Add";
@@ -13,7 +13,7 @@ import AlertDialog from "../../../components/AlertDialog";
 import InfoDialog from "../../../components/InfoDialog";
 import AddSupplierDialog from "../../../components/suppliers/AddSupplierDialog";
 import UpdateSupplierDialog from "../../../components/suppliers/UpdateSupplierDialog";
-import { AddSupplier, GetAllSupplers, DeleteSupplier, UpdateSupplier } from "../../../services/SupplierService";
+import { AddSupplier, GetAllSuppliers, DeleteSupplier, UpdateSupplier } from "../../../services/SupplierService";
 
 const ManageSupplier = () => {
 	const theme = useTheme();
@@ -64,9 +64,9 @@ const ManageSupplier = () => {
 		},
 	];
 
-	const GetAllSuppliers = async () => {
+	const fetchSuppliers = async () => {
 		try {
-			const response = await GetAllSupplers();
+			const response = await GetAllSuppliers();
 			const data = await response.data;
 			setSupplier(data);
 			console.log(data);
@@ -78,11 +78,11 @@ const ManageSupplier = () => {
 	};
 
 	useEffect(() => {
-		GetAllSuppliers();
+		fetchSuppliers();
 	}, []);
 
 	const handleRefresh = async () => {
-		var status = await GetAllSuppliers();
+		var status = await fetchSuppliers();
 		if (status === 200) {
 			setInfo(`Làm mới thành công!`);
 			setInfoDialogOpen(true);

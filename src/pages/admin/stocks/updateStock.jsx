@@ -3,14 +3,14 @@ import { Box, Button, TextField, useMediaQuery, FormControl, InputLabel, Select,
 import { Header } from "../../../components";
 import { Formik, FieldArray } from "formik";
 import * as yup from "yup";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import InfoDialog from "../../../components/InfoDialog";
 import AlertDialog from "../../../components/AlertDialog";
 import { GetAllSuppliers } from "../../../services/SupplierService";
 import { GetAllProduct } from "../../../services/productService";
+import { GetStock, UpdateStock } from "../../../services/StockService";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
-import { AddStock } from "../../../services/StockService";
 
 const initialValues = {
 	stockImportName: "",
@@ -33,9 +33,10 @@ const checkoutSchema = yup.object().shape({
 	),
 });
 
-const AddStockForm = () => {
+const UpdateStockForm = () => {
 	const isNonMobile = useMediaQuery("(min-width:600px)");
 	const navigate = useNavigate();
+	const { stockImportId } = useParams(); // Get the stock ID from the URL
 	const [infoDialogOpen, setInfoDialogOpen] = useState(false);
 	const [info, setInfo] = useState('');
 	const [dialogOpen, setDialogOpen] = useState(false);
@@ -47,10 +48,10 @@ const AddStockForm = () => {
 
 	const handleFormSubmit = async (values) => {
 		console.log("Form values:", values);
-		const response = await AddStock(values);
+		const response = await UpdateStock(id, values); // Update the stock
 		console.log("AAA", response);
 		if (response.status === 200) {
-			setInfo(`Thêm lô hàng thành công!`);
+			setInfo(`Cập nhật lô hàng thành công!`);
 			setInfoDialogOpen(true);
 			setIsSuccess(true);
 		} else {
@@ -78,6 +79,23 @@ const AddStockForm = () => {
 			console.log("Products:", data);
 			setProducts(data);
 			return response.status;
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
+	const fetchStock = async (setFieldValue) => {
+		try {
+			const response = await GetStock(stockImportId);
+			const data = await response.data;
+			console.log("Stock:", data);
+			// Populate form fields with fetched data
+			setFieldValue('stockImportName', data.stockImportName);
+			setFieldValue('stockImportStatus', data.stockImportStatus);
+			setFieldValue('supplierId', data.supplierId);
+			setFieldValue('stockImportItems', data.stockImportItems);
+			setFieldValue('totalPrice', data.totalPrice);
+			setSelectedSupplier(suppliers.find(supplier => supplier.supplierId === data.supplierId));
 		} catch (error) {
 			console.error(error);
 		}
@@ -115,11 +133,13 @@ const AddStockForm = () => {
 
 	return (
 		<Box m="20px">
-			<Header title="Thêm lô hàng mới" subtitle="Thêm lô hàng mới cho cửa hàng." />
+			<Header title="Cập nhật lô hàng" subtitle="Cập nhật lô hàng cho cửa hàng." />
+
 			<Formik
 				onSubmit={handleFormSubmit}
 				initialValues={initialValues}
 				validationSchema={checkoutSchema}
+				enableReinitialize
 			>
 				{({
 					values,
@@ -130,6 +150,10 @@ const AddStockForm = () => {
 					handleSubmit,
 					setFieldValue,
 				}) => {
+					useEffect(() => {
+						fetchStock(setFieldValue);
+					}, [setFieldValue]);
+
 					useEffect(() => {
 						// Calculate total price whenever stockImportItems change
 						const totalPrice = values.stockImportItems.reduce((total, item) => {
@@ -214,11 +238,11 @@ const AddStockForm = () => {
 										onBlur={handleBlur}
 										error={touched.stockImportStatus && Boolean(errors.stockImportStatus)}
 									>
-										<MenuItem value="pending">Chờ duyệt</MenuItem>
-										<MenuItem value="approved">Đã duyệt</MenuItem>
-										<MenuItem value="completed">Thành công</MenuItem>
-										<MenuItem value="canceled">Đã hủy</MenuItem>
-										<MenuItem value="returned">Hoàn trả</MenuItem>
+										<MenuItem value="Pending">Chờ duyệt</MenuItem>
+										<MenuItem value="Approved">Đã duyệt</MenuItem>
+										<MenuItem value="Completed">Thành công</MenuItem>
+										<MenuItem value="Canceled">Đã hủy</MenuItem>
+										<MenuItem value="Returned">Hoàn trả</MenuItem>
 									</Select>
 									{touched.stockImportStatus && errors.stockImportStatus && (
 										<Box color="error.main" mt={1}>
@@ -320,7 +344,7 @@ const AddStockForm = () => {
 									Hủy
 								</Button>
 								<Button type="submit" color="secondary" variant="contained">
-									Thêm người dùng mới
+									Cập nhật lô hàng
 								</Button>
 							</Box>
 						</form>
@@ -341,4 +365,4 @@ const AddStockForm = () => {
 	);
 };
 
-export default AddStockForm;
+export default UpdateStockForm;

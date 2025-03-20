@@ -15,6 +15,7 @@ import InfoDialog from "../../../components/InfoDialog";
 import { GetAllStocks, DeleteStock } from "../../../services/StockService";
 import IconButton from "@mui/material/IconButton";
 import VisibilityIcon from '@mui/icons-material/Visibility';
+import { GetAllSuppliers } from "../../../services/SupplierService";
 
 /*
 - ✓ Thay cách hiện thị thông báo bằng cửa sổ component riêng chứ không dùng cửa sổ alert mặc định
@@ -38,6 +39,7 @@ const ManageStock = () => {
 	const [dialogQuestion, setDialogQuestion] = useState('');
 	const [infoDialogOpen, setInfoDialogOpen] = useState(false);
 	const [info, setInfo] = useState('');
+	const [suppliers, setSuppliers] = useState([]);
 
 	// {
 	// 	"stockImportId": 3,
