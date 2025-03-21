@@ -43,10 +43,22 @@ const ManageChatCustomer = () => {
       );
     });
 
+    adminSignalRService.connection.on("ReceiveAdminMessage", (message, userId, adminName) => {
+      console.log("ReceiveAdminMessage");
+      setUserMessages((prevMessages) =>
+        prevMessages.some((m) => m.userId === userId)
+          ? prevMessages.map((m) =>
+            m.userId === userId ? { ...m, message, adminName, isFromAdmin: true } : m
+          )
+          : [...prevMessages, { userId, message }]
+      );
+    });
+
 
     // Dọn dẹp listener khi component unmount
     return () => {
       adminSignalRService.connection.off("ReceiveUserMessage");
+      adminSignalRService.connection.off("ReceiveAdminMessage");
     };
   }, []);
 

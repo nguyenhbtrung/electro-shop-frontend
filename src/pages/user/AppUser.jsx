@@ -1,3 +1,4 @@
+// App.js
 import React, { useState, useEffect, createContext } from "react";
 import { Box, CssBaseline, ThemeProvider } from "@mui/material";
 import { Outlet } from "react-router-dom";
@@ -17,6 +18,7 @@ function App() {
     const values = { toggled, setToggled };
     const [categoryTree, setCategoryTree] = useState([]);
     const [openChat, setOpenChat] = useState(false);
+    const [hasNewMessage, setHasNewMessage] = useState(false); // state theo dõi tin nhắn chưa đọc
 
     useEffect(() => {
         const GetTree = async () => {
@@ -32,16 +34,20 @@ function App() {
         // Mở kết nối khi component được mount
         signalRService.startConnection();
 
-        // Lắng nghe sự kiện "ReceiveMessage"
-        // signalRService.connection.on("ReceiveMessage", (sender, msg) => {
-        //     setMessages((prevMessages) => [...prevMessages, { sender, msg }]);
-        // });
+        // Lắng nghe sự kiện "ReceiveAdminMessage"
+        signalRService.connection.on("ReceiveAdminMessage", (message) => {
+            // Nếu chat đóng, hiển thị thông báo
+            if (!openChat) {
+                setHasNewMessage(true);
+            }
+            // Nếu cần, bạn có thể xử lý thêm nội dung message
+        });
 
         // Dọn dẹp listener khi component unmount
         return () => {
-            // signalRService.connection.off("ReceiveMessage");
+            signalRService.connection.off("ReceiveAdminMessage");
         };
-    }, []);
+    }, [openChat]); // thêm openChat vào dependency để luôn nhận đúng trạng thái
 
     return (
         <ColorModeContext.Provider value={colorMode}>
@@ -66,9 +72,26 @@ function App() {
                         </Box>
                     </Box>
                     {/* Nút chat luôn hiển thị */}
-                    <ChatButton onClick={() => setOpenChat(!openChat)} />
-                    {/* Hiển thị chat khi toggled = true */}
-                    {openChat && <ChatWindow onClose={() => setOpenChat(false)} signalRService={signalRService} />}
+                    <ChatButton
+                        // Truyền props hasNotification dựa trên sự kết hợp của tin nhắn mới và trạng thái openChat 
+                        hasNotification={hasNewMessage && !openChat}
+                        onClick={() => {
+                            // Nếu người dùng mở chat, hãy xóa cảnh báo
+                            if (!openChat) {
+                                setHasNewMessage(false);
+                            }
+                            setOpenChat(!openChat);
+                        }}
+                    />
+                    {/* Hiển thị chat khi openChat = true */}
+                    {openChat && (
+                        <ChatWindow
+                            onClose={() => {
+                                setOpenChat(false);
+                            }}
+                            signalRService={signalRService}
+                        />
+                    )}
                 </ToggledContext.Provider>
             </ThemeProvider>
         </ColorModeContext.Provider>

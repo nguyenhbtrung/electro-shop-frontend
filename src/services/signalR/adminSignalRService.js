@@ -45,6 +45,9 @@ class AdminSignalRService {
         this.connection.on("Error", (error) => {
             console.error("Lỗi:", error);
         });
+        this.connection.on("ClaimStatus", (status) => {
+            console.error("ClaimStatus:", status);
+        });
     }
 
     claimConversation(userId) {

@@ -14,7 +14,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import CloseIcon from "@mui/icons-material/Close";
 import SendIcon from "@mui/icons-material/Send";
 import { formatTimestamp } from "../../../utils/formatDatetime";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { CreateMessage, GetMessagesByUserId } from "../../../services/SupportMessageService";
 import adminSignalRService from "../../../services/signalR/adminSignalRService";
 
@@ -67,7 +67,7 @@ const AdminChatPage = () => {
                 isFromAdmin: false,
                 message: message,
                 sentAt: new Date()
-            }])
+            }]);
         });
         adminSignalRService.claimConversation(userId);
 
