@@ -6,10 +6,16 @@ import { tokens } from "../../../theme";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { GetAllCategories, CreateCategory, UpdateCategory, DeleteCategory } from "../../../services/categoryService";
+import ImageIcon from "@mui/icons-material/Image";
+import {
+  GetAllCategories,
+  CreateCategory,
+  UpdateCategory,
+  DeleteCategory,
+} from "../../../services/categoryService";
 import AddCategoryDialog from "../../../components/categories/AddCategoryDialog";
 import UpdateCategoryDialog from "../../../components/categories/UpdateCategoryDialog";
-
+import ViewCategoryImageDialog from "../../../components/categories/ViewCategoryImageDialog";
 const ManageCategory = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
@@ -18,15 +24,18 @@ const ManageCategory = () => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [openEditDialog, setOpenEditDialog] = useState(false);
 
+  // State cho dialog xem ảnh chi tiết danh mục
+  const [openImageDialog, setOpenImageDialog] = useState(false);
+  const [selectedImageCategory, setSelectedImageCategory] = useState(null);
+
   const fetchCategories = async () => {
     try {
       const res = await GetAllCategories();
       if (res?.data) {
-        console.log(">>>Categories: ", res.data);
         setCategories(res.data);
       }
     } catch (error) {
-      console.log(">>>Error fetching categories", error);
+      console.log("Error fetching categories", error);
     }
   };
 
@@ -43,14 +52,13 @@ const ManageCategory = () => {
       const res = await CreateCategory(newCategory);
       if (res?.status === 200) {
         alert("Thêm category thành công!");
-        // Thêm category mới vào đầu danh sách
         setCategories((prev) => [res.data, ...prev]);
         setOpenAddDialog(false);
       } else {
-        console.log(">>>Error creating category:", res);
+        console.log("Error creating category:", res);
       }
     } catch (error) {
-      console.log(">>>Error creating category:", error);
+      console.log("Error creating category:", error);
     }
   };
 
@@ -63,14 +71,14 @@ const ManageCategory = () => {
     try {
       const res = await UpdateCategory(selectedCategory.categoryId, updatedCategory);
       if (res?.status === 200 && res?.data) {
-        alert("Cập nhật category thành công!");
         fetchCategories();
         setOpenEditDialog(false);
+        alert("Cập nhật category thành công!");
       } else {
-        console.log(">>>Error updating category:", res);
+        console.log("Error updating category:", res);
       }
     } catch (error) {
-      console.log(">>>Error updating category:", error);
+      console.log("Error updating category:", error);
     }
   };
 
@@ -80,22 +88,26 @@ const ManageCategory = () => {
         const res = await DeleteCategory(row.categoryId);
         if (res?.status === 204) {
           alert("Xóa category thành công!");
-          // Sau khi xóa thành công, fetch lại danh sách category
           fetchCategories();
         } else {
           alert(res.data);
-          console.log(">>>Error deleting category:", res);
+          console.log("Error deleting category:", res);
         }
       } catch (error) {
-        // Kiểm tra nếu có thông báo lỗi từ backend (error.response.data.message)
         if (error.response && error.response.data && error.response.data.message) {
           alert(error.response.data.message);
         } else {
           alert("Có lỗi xảy ra khi xóa danh mục.");
         }
-        console.log(">>>Error deleting category:", error);
+        console.log("Error deleting category:", error);
       }
     }
+  };
+
+  // Mở dialog xem ảnh chi tiết của danh mục
+  const handleViewImage = (row) => {
+    setSelectedImageCategory(row);
+    setOpenImageDialog(true);
   };
 
   const columns = [
@@ -118,23 +130,17 @@ const ManageCategory = () => {
       field: "parentCategoryId",
       headerName: "Danh mục cha",
       flex: 0.7,
-    },
-    {
-      field: "imageUrl",
-      headerName: "Ảnh",
-      flex: 1,
-      renderCell: (params) =>
-        params.value ? (
-          <img src={params.value} alt={params.row.name} style={{ height: "40px" }} />
-        ) : (
-          ""
-        ),
+      renderCell: (params) => {
+        const parentId = params.value;
+        const parentCategory = categories.find((cat) => cat.categoryId === parentId);
+        return parentCategory ? parentCategory.name : "";
+      },
     },
     {
       field: "actions",
       headerName: "Hành động",
-      flex: 0.6,
-      minWidth: 100,
+      flex: 0.8,
+      minWidth: 140,
       sortable: false,
       filterable: false,
       renderCell: (params) => (
@@ -144,6 +150,9 @@ const ManageCategory = () => {
           </IconButton>
           <IconButton color={colors.primary[100]} onClick={() => handleDelete(params.row)}>
             <DeleteIcon />
+          </IconButton>
+          <IconButton color={colors.primary[100]} onClick={() => handleViewImage(params.row)}>
+            <ImageIcon />
           </IconButton>
         </>
       ),
@@ -206,6 +215,12 @@ const ManageCategory = () => {
         onClose={() => setOpenEditDialog(false)}
         onSubmit={handleEditDialogSubmit}
         category={selectedCategory}
+      />
+
+      <ViewCategoryImageDialog
+        open={openImageDialog}
+        onClose={() => setOpenImageDialog(false)}
+        category={selectedImageCategory}
       />
     </Box>
   );

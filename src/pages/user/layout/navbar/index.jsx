@@ -68,13 +68,13 @@ const Navbar = () => {
     };
     const handleSearch = () => {
         Search(searchTerm)
-          .then((response) => {
-            navigate("/search", { state: { results: response.data } });
-          })
-          .catch((error) => {
-            console.error(error);
-          });
-      };
+            .then((response) => {
+                navigate("/search", { state: { results: response.data } });
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+    };
     return (
         <Box display="flex" alignItems="center" justifyContent="space-between" p={2}>
             {/* Phần bên trái: menu, logo, title và tìm kiếm */}
@@ -92,7 +92,7 @@ const Navbar = () => {
                 >
                     <img
                         style={{ width: "30px", height: "30px", borderRadius: "8px" }}
-                        src={logo}
+                        src="https://yt3.googleusercontent.com/ytc/AIdro_kt-sUf4kFDrZ4iaFcyK4EHwVz-jlvQBwjZSA6hQ9ogPEg=s900-c-k-c0x00ffffff-no-rj"
                         alt="Argon"
                     />
                     <Typography
@@ -113,12 +113,12 @@ const Navbar = () => {
                     borderRadius="3px"
                     sx={{
                         display: `${isXsDevices ? "none" : "flex"}`,
-                        width: "550px", 
+                        width: "550px",
                     }}
-                    >
+                >
                     <InputBase
                         placeholder="Search"
-                        sx={{ ml: 2, flex: 1 }} 
+                        sx={{ ml: 2, flex: 1 }}
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />

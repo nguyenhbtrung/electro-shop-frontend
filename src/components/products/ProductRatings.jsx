@@ -18,20 +18,28 @@ const ProductRatings = ({ productId, isAdmin }) => {
         setCurrentUserName(storedUserName);
     }, []);
 
+    useEffect(() => {
+        if (currentUserName) {
+            fetchRatings();
+        }
+    }, [currentUserName, productId]);
+
     const fetchRatings = async () => {
         try {
             const res = await GetRatingByProductId(productId);
             if (res?.data) {
-                setRatings(res.data);
+                const sortedRatings = res.data.sort((a, b) => {
+                    if (a.userName === currentUserName) return -1;
+                    if (b.userName === currentUserName) return 1;
+                    return 0;
+                });
+                console.log("Sorted Ratings: ", sortedRatings);
+                setRatings(sortedRatings);
             }
         } catch (error) {
             console.error("Error fetching product ratings:", error);
         }
     };
-
-    useEffect(() => {
-        fetchRatings();
-    }, [productId]);
 
     const handleEdit = (rating) => {
         if (rating.userName !== currentUserName) {
@@ -64,7 +72,8 @@ const ProductRatings = ({ productId, isAdmin }) => {
 
     const handleEditDialogSubmit = async (updatedRating) => {
         try {
-            const res = await UpdateRating(productId, selectedRating.ratingId, updatedRating);
+            console.log("Updated Rating: ", updatedRating);
+            const res = await UpdateRating(productId, updatedRating);
             if (res?.status === 200) {
                 alert("Cập nhật đánh giá thành công!");
                 fetchRatings(); // Refetch ratings after successful update
@@ -109,7 +118,7 @@ const ProductRatings = ({ productId, isAdmin }) => {
                             </Box>
                         </Box>
                         <Typography variant="h6" color='gray'>
-                            {new Date(rating.dateTime).toLocaleDateString('vi-VN')}
+                            {new Date(rating.timeStamp).toLocaleDateString('vi-VN')}
                         </Typography>
                         <Typography variant="h6" sx={{ color: theme.palette.primary.main }}>
                             {rating.ratingContent}

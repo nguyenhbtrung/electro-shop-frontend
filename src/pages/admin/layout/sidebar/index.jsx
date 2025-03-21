@@ -88,7 +88,7 @@ const SideBar = () => {
               >
                 <img
                   style={{ width: "30px", height: "30px", borderRadius: "8px" }}
-                  src={logo}
+                  src="https://yt3.googleusercontent.com/ytc/AIdro_kt-sUf4kFDrZ4iaFcyK4EHwVz-jlvQBwjZSA6hQ9ogPEg=s900-c-k-c0x00ffffff-no-rj"
                   alt="Argon"
                 />
                 <Typography

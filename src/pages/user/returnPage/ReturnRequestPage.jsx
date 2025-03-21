@@ -61,7 +61,7 @@ const ReturnRequestPage = () => {
             const orderRes = await GetOrderByUser();
             if (orderRes?.status === 200 && orderRes?.data) {
                 console.log(">>>check orders:", orderRes?.data);
-                setOrderData(orderRes?.data?.[2]);
+                setOrderData(orderRes?.data?.[5]);
             }
         };
 

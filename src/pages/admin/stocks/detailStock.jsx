@@ -1,16 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Box, Button, TextField, useMediaQuery, FormControl, InputLabel, Select, MenuItem, IconButton, Autocomplete } from "@mui/material";
+import { Box, Button, TextField, useMediaQuery, IconButton, Autocomplete } from "@mui/material";
 import { Header } from "../../../components";
 import { Formik, FieldArray } from "formik";
-import * as yup from "yup";
-import { useNavigate } from "react-router-dom";
-import InfoDialog from "../../../components/InfoDialog";
-import AlertDialog from "../../../components/AlertDialog";
+import { useNavigate, useParams } from "react-router-dom";
 import { GetAllSuppliers } from "../../../services/SupplierService";
 import { GetAllProduct } from "../../../services/productService";
-import DeleteIcon from "@mui/icons-material/Delete";
-import AddIcon from "@mui/icons-material/Add";
-import { AddStock } from "../../../services/StockService";
+import { GetStock } from "../../../services/StockService";
 
 const initialValues = {
 	stockImportName: "",
@@ -20,42 +15,16 @@ const initialValues = {
 	stockImportItems: [{ productId: null, quantity: '', unitPrice: '' }],
 };
 
-const checkoutSchema = yup.object().shape({
-	stockImportName: yup.string().required('Tên đăng nhập là bắt buộc'),
-	stockImportStatus: yup.string().required('Trạng thái lô hàng là bắt buộc'),
-	supplierId: yup.number().required("Nhà cung cấp là bắt buộc"),
-	stockImportItems: yup.array().of(
-		yup.object().shape({
-			productId: yup.number().required('Sản phẩm là bắt buộc'),
-			quantity: yup.number().min(0, 'Số lượng không thể âm').required('Số lượng là bắt buộc'),
-			unitPrice: yup.number().min(0, 'Đơn giá không thể âm').required('Đơn giá là bắt buộc'),
-		})
-	),
-});
-
-const AddStockForm = () => {
+const DetailStock = () => {
 	const isNonMobile = useMediaQuery("(min-width:600px)");
 	const navigate = useNavigate();
-	const [infoDialogOpen, setInfoDialogOpen] = useState(false);
-	const [info, setInfo] = useState('');
-	const [dialogOpen, setDialogOpen] = useState(false);
-	const [dialogQuestion, setDialogQuestion] = useState('');
-	const [isSuccess, setIsSuccess] = useState(false);
+	const { stockImportId } = useParams(); // Get the stock ID from the URL
 	const [suppliers, setSuppliers] = useState([]);
 	const [selectedSupplier, setSelectedSupplier] = useState(null);
 	const [products, setProducts] = useState([]);
 
 	const handleFormSubmit = async (values) => {
-		console.log("Form values:", values);
-		const response = await AddStock(values);
-		console.log("AAA", response);
-		if (response.status === 200) {
-			setInfo(`Thêm lô hàng thành công!`);
-			setInfoDialogOpen(true);
-			setIsSuccess(true);
-		} else {
-			displayError(response.data[0].code);
-		}
+		navigate("/admin/stockimports");
 	};
 
 	const fetchSuppliers = async () => {
@@ -63,7 +32,6 @@ const AddStockForm = () => {
 			const response = await GetAllSuppliers();
 			const data = await response.data;
 			setSuppliers(data);
-			console.log(data);
 			return response.status;
 		} catch (error) {
 			console.error(error);
@@ -83,43 +51,32 @@ const AddStockForm = () => {
 		}
 	};
 
-	useEffect(() => {
-		fetchSuppliers();
-		fetchProducts();
-	}, []);
 
-	const closeInfoDialog = () => {
-		setInfoDialogOpen(false);
-		if (isSuccess) {
-			navigate("/admin/stockimports");
+
+	const fetchStock = async (setFieldValue) => {
+		try {
+			const response = await GetStock(stockImportId);
+			const data = await response.data;
+			console.log("Stock:", data);
+			setFieldValue('stockImportName', data.stockImportName);
+			setFieldValue('stockImportStatus', data.stockImportStatus);
+			setFieldValue('supplierId', data.supplierId);
+			setFieldValue('stockImportItems', data.stockImportItems);
+			setFieldValue('totalPrice', data.totalPrice);
+			setSelectedSupplier(suppliers.find(supplier => supplier.supplierId === data.supplierId));
+		} catch (error) {
+			console.error(error);
 		}
-	}
-
-	const handleOpenDialog = () => {
-		setDialogQuestion("Bạn có chắc chắn muốn hủy bỏ việc thêm lô hàng mới?");
-		setDialogOpen(true);
-	};
-
-	const displayError = (error) => {
-		setInfo("Đã có lỗi không xác định xảy ra!");
-		setInfoDialogOpen(true);
-	};
-
-	const handleCancel = async (userResponse) => {
-		if (!userResponse) {
-			setDialogOpen(false);
-			return;
-		}
-		navigate("/admin/stockimports");
 	};
 
 	return (
 		<Box m="20px">
-			<Header title="Thêm lô hàng mới" subtitle="Thêm lô hàng mới cho cửa hàng." />
+			<Header title="Chi tiết lô hàng" subtitle="Chi tiết lô hàng" />
+
 			<Formik
 				onSubmit={handleFormSubmit}
 				initialValues={initialValues}
-				validationSchema={checkoutSchema}
+				enableReinitialize
 			>
 				{({
 					values,
@@ -130,6 +87,26 @@ const AddStockForm = () => {
 					handleSubmit,
 					setFieldValue,
 				}) => {
+
+					useEffect(() => {
+						const fetchData = async () => {
+							try {
+								await fetchSuppliers();
+								await fetchProducts();
+							} catch (error) {
+								console.error(error);
+							}
+						};
+
+						fetchData();
+					}, []);
+
+					useEffect(() => {
+						if (suppliers.length > 0 && products.length > 0) {
+							fetchStock(setFieldValue);
+						}
+					}, [suppliers, products]);
+
 					useEffect(() => {
 						// Calculate total price whenever stockImportItems change
 						const totalPrice = values.stockImportItems.reduce((total, item) => {
@@ -161,6 +138,7 @@ const AddStockForm = () => {
 									onChange={handleChange}
 									value={values.stockImportName}
 									name="stockImportName"
+									disabled
 									error={touched.stockImportName && errors.stockImportName}
 									helperText={touched.stockImportName && errors.stockImportName}
 									sx={{
@@ -172,6 +150,7 @@ const AddStockForm = () => {
 										gridColumn: "span 10",
 									}}
 									options={suppliers}
+									disabled
 									getOptionLabel={(option) => option.supplierName || "No Name"}
 									onChange={(event, newValue) => {
 										setSelectedSupplier(newValue);
@@ -214,11 +193,11 @@ const AddStockForm = () => {
 										onBlur={handleBlur}
 										error={touched.stockImportStatus && Boolean(errors.stockImportStatus)}
 									>
-										<MenuItem value="pending">Chờ duyệt</MenuItem>
-										<MenuItem value="approved">Đã duyệt</MenuItem>
-										<MenuItem value="completed">Thành công</MenuItem>
-										<MenuItem value="canceled">Đã hủy</MenuItem>
-										<MenuItem value="returned">Hoàn trả</MenuItem>
+										<MenuItem value="Pending">Chờ duyệt</MenuItem>
+										<MenuItem value="Approved">Đã duyệt</MenuItem>
+										<MenuItem value="Completed">Thành công</MenuItem>
+										<MenuItem value="Canceled">Đã hủy</MenuItem>
+										<MenuItem value="Returned">Hoàn trả</MenuItem>
 									</Select>
 									{touched.stockImportStatus && errors.stockImportStatus && (
 										<Box color="error.main" mt={1}>
@@ -233,6 +212,7 @@ const AddStockForm = () => {
 												<React.Fragment key={index}>
 													<Autocomplete
 														options={products}
+														disabled
 														getOptionLabel={(option) => option.name || "No Name"}
 														onChange={(event, newValue) => {
 															setFieldValue(`stockImportItems[${index}].productId`, newValue ? newValue.productId : null);
@@ -256,6 +236,7 @@ const AddStockForm = () => {
 														fullWidth
 														variant="filled"
 														type="number"
+														disabled
 														label="Số lượng"
 														onBlur={handleBlur}
 														onChange={handleChange}
@@ -271,6 +252,7 @@ const AddStockForm = () => {
 														fullWidth
 														variant="filled"
 														type="number"
+														disabled
 														label="Đơn giá"
 														onBlur={handleBlur}
 														onChange={handleChange}
@@ -282,30 +264,8 @@ const AddStockForm = () => {
 															gridColumn: "span 2",
 														}}
 													/>
-													<IconButton
-														onClick={() => remove(index)}
-														sx={{
-															gridColumn: "span 1",
-															width: '40px', // Set the width
-															height: '40px', // Set the height to be equal to the width
-															borderRadius: '4px', // Optional: Set a small border radius to make it square
-															margin: 'auto', // Center the icon
-														}}
-													>
-														<DeleteIcon />
-													</IconButton>
 												</React.Fragment>
 											))}
-											<Button
-												type="button"
-												onClick={() => push({ productId: null, quantity: '', unitPrice: '' })}
-												sx={{
-													gridColumn: "span 10",
-												}}
-												startIcon={<AddIcon />}
-											>
-												Thêm sản phẩm
-											</Button>
 										</>
 									)}
 								</FieldArray>
@@ -316,29 +276,16 @@ const AddStockForm = () => {
 								justifyContent="end"
 								mt="20px"
 							>
-								<Button color="error" variant="contained" onClick={handleOpenDialog}>
-									Hủy
-								</Button>
 								<Button type="submit" color="secondary" variant="contained">
-									Thêm người dùng mới
+									Quay lại
 								</Button>
 							</Box>
 						</form>
 					);
 				}}
 			</Formik>
-			<AlertDialog
-				open={dialogOpen}
-				question={dialogQuestion}
-				onClose={handleCancel}
-			/>
-			<InfoDialog
-				open={infoDialogOpen}
-				question={info}
-				onClose={closeInfoDialog}
-			/>
 		</Box>
 	);
 };
 
-export default AddStockForm;
+export default DetailStock;
