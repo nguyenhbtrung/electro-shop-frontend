@@ -20,11 +20,8 @@ import { CreateProductImage, DeleteProductImage } from '../../services/productIm
 
 const EditProductImagesDialog = ({ open, onClose, productId }) => {
   const [loading, setLoading] = useState(false);
-  // Ảnh hiện có trên backend
   const [existingImages, setExistingImages] = useState([]);
-  // Các file mới được chọn (chưa upload)
-  const [newFiles, setNewFiles] = useState([]); // [{ file, previewUrl }]
-  // Lưu ID của ảnh đã bị xóa (để gọi API DELETE khi lưu thay đổi)
+  const [newFiles, setNewFiles] = useState([]);
   const [removedImageIds, setRemovedImageIds] = useState([]);
   const fileInputRef = useRef(null);
 
@@ -45,19 +42,14 @@ const EditProductImagesDialog = ({ open, onClose, productId }) => {
         .finally(() => {
           setLoading(false);
         });
-      // Reset các file mới và mảng xóa khi mở dialog
       setNewFiles([]);
       setRemovedImageIds([]);
     }
   }, [open, productId]);
-
-  // Khi nhấn nút "X" trên ảnh đã có, loại bỏ khỏi state và lưu ID vào removedImageIds
   const handleRemoveExistingImage = (imageId) => {
     setExistingImages((prev) => prev.filter((img) => img.productImageId !== imageId));
     setRemovedImageIds((prev) => [...prev, imageId]);
   };
-
-  // Xóa file mới khỏi state (chỉ ảnh mới chưa upload)
   const handleRemoveNewFile = (previewUrl) => {
     setNewFiles((prev) => prev.filter((f) => f.previewUrl !== previewUrl));
   };
@@ -68,7 +60,6 @@ const EditProductImagesDialog = ({ open, onClose, productId }) => {
     }
   };
 
-  // Khi chọn file, lưu file và tạo preview URL
   const handleFileChange = (event) => {
     const files = event.target.files;
     if (!files) return;
@@ -80,26 +71,20 @@ const EditProductImagesDialog = ({ open, onClose, productId }) => {
     setNewFiles((prev) => [...prev, ...newFileObjects]);
   };
 
-  // Khi nhấn "Lưu thay đổi", thực hiện gọi API POST cho các ảnh mới và DELETE cho các ảnh bị xóa
   const handleSaveChanges = async () => {
-    // Tạo mảng Promise cho việc upload ảnh mới (POST)
     const postPromises = [];
     if (newFiles.length > 0) {
       const formData = new FormData();
       newFiles.forEach((fileObj) => {
         formData.append('Images', fileObj.file);
       });
-      // Gọi API POST để upload các ảnh mới
       postPromises.push(CreateProductImage(productId, formData));
     }
 
-    // Tạo mảng Promise cho việc xóa ảnh (DELETE)
     const deletePromises = removedImageIds.map((imageId) => DeleteProductImage(imageId));
 
     try {
-      // Chạy song song tất cả Promise
       const results = await Promise.all([...postPromises, ...deletePromises]);
-      // Nếu đạt đến đây, nghĩa là tất cả API đã trả về thành công
       alert('Bạn đã thay đổi ảnh của sản phẩm thành công');
       onClose();
     } catch (err) {

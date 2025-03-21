@@ -16,14 +16,8 @@ const ChatWindow = ({ onClose, signalRService }) => {
     const [messages, setMessages] = useState([
         {
             id: -1,
-            isFromAdmin: false,
-            message: "Chào admin, tôi cần giúp đỡ về đơn hàng!",
-            sentAt: new Date(new Date().setHours(new Date().getHours() - 1)), // 1 giờ trước
-        },
-        {
-            id: -2,
             isFromAdmin: true,
-            message: "Chào bạn, admin đây. Tôi đã thấy yêu cầu của bạn.",
+            message: "Chào bạn! Tôi có thể giúp gì cho bạn.",
             sentAt: new Date(), // thời điểm hiện tại
         },
     ]);
@@ -31,6 +25,8 @@ const ChatWindow = ({ onClose, signalRService }) => {
 
     // Tạo một ref để nhắm đến phần cuối danh sách tin nhắn
     const messagesEndRef = useRef(null);
+
+    let id = -2;
 
     useEffect(() => {
         const FetchData = async () => {
@@ -46,15 +42,20 @@ const ChatWindow = ({ onClose, signalRService }) => {
     }, []);
 
     useEffect(() => {
-        signalRService.startConnection();
+        // signalRService.startConnection();
 
         signalRService.connection.on("ReceiveAdminMessage", (message) => {
-
+            setMessages((prev) => [...prev, {
+                id: id--,
+                isFromAdmin: true,
+                message: message,
+                sentAt: new Date()
+            }]);
         });
 
         // Dọn dẹp listener khi component unmount
         return () => {
-            // signalRService.connection.off("ReceiveMessage");
+            signalRService.connection.off("ReceiveAdminMessage");
         };
     }, []);
 
