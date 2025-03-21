@@ -202,9 +202,9 @@ const AddStockForm = () => {
 									name="totalPrice"
 									error={touched.totalPrice && errors.totalPrice}
 									helperText={touched.totalPrice && errors.totalPrice}
-									sx={{ gridColumn: "span 5" }}
+									sx={{ gridColumn: "span 10" }}
 								/>
-								<FormControl fullWidth variant="filled" sx={{ gridColumn: "span 5" }}>
+								{/* <FormControl fullWidth variant="filled" sx={{ gridColumn: "span 5" }}>
 									<InputLabel>Trạng thái</InputLabel>
 									<Select
 										label="Trạng thái"
@@ -225,7 +225,7 @@ const AddStockForm = () => {
 											{errors.stockImportStatus}
 										</Box>
 									)}
-								</FormControl>
+								</FormControl> */}
 								<FieldArray name="stockImportItems">
 									{({ push, remove }) => (
 										<>

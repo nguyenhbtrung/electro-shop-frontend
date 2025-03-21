@@ -12,11 +12,10 @@ import { useNavigate } from "react-router-dom";
 import ReplayIcon from '@mui/icons-material/Replay';
 import AlertDialog from "../../../components/AlertDialog";
 import InfoDialog from "../../../components/InfoDialog";
-import { GetAllStocks, DeleteStock } from "../../../services/StockService";
+import { GetAllStocks, DeleteStock, UpdateStockStatus } from "../../../services/StockService";
 import IconButton from "@mui/material/IconButton";
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import { GetAllSuppliers } from "../../../services/SupplierService";
-
+import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 /*
 - ✓ Thay cách hiện thị thông báo bằng cửa sổ component riêng chứ không dùng cửa sổ alert mặc định
 - ✓ Quên mật khẩu cho user đồng thời phải có xác thực email
@@ -39,7 +38,6 @@ const ManageStock = () => {
 	const [dialogQuestion, setDialogQuestion] = useState('');
 	const [infoDialogOpen, setInfoDialogOpen] = useState(false);
 	const [info, setInfo] = useState('');
-	const [suppliers, setSuppliers] = useState([]);
 
 	// {
 	// 	"stockImportId": 3,
@@ -50,6 +48,23 @@ const ManageStock = () => {
 	// 	"importDate": "2025-03-15T16:15:12.254",
 	// 	"createdAt": "2025-03-15T16:18:46.7961955"
 	//  },
+
+	const handleStatusChange = async (event, row) => {
+		const newStatus = event.target.value;
+		try {
+			const response = await UpdateStockStatus(row.stockImportId, newStatus);
+			if (response.status === 200) {
+				const updatedStocks = stocks.map(stock =>
+					stock.stockImportId === row.stockImportId ? { ...stock, stockImportStatus: newStatus } : stock
+				);
+				setStocks(updatedStocks);
+			} else {
+				console.error('Failed to update status');
+			}
+		} catch (error) {
+			console.error('Error updating status:', error);
+		}
+	};
 
 	const columns = [
 		{
@@ -78,9 +93,25 @@ const ManageStock = () => {
 			flex: 0.7
 		},
 		{
-			field: "stockImportStatus",
-			headerName: "Trạng thái",
-			flex: 0.7
+			field: 'stockImportStatus',
+			headerName: 'Trạng thái',
+			width: 200,
+			flex: 0.7,
+			renderCell: (params) => (
+				<FormControl fullWidth variant="filled">
+					<Select
+						value={params.row.stockImportStatus}
+						onChange={(event) => handleStatusChange(event, params.row)}
+						sx={{ minWidth: 100 }}
+					>
+						<MenuItem value="Pending">Chờ duyệt</MenuItem>
+						<MenuItem value="Approved">Đã duyệt</MenuItem>
+						<MenuItem value="Completed">Thành công</MenuItem>
+						<MenuItem value="Canceled">Đã hủy</MenuItem>
+						<MenuItem value="Returned">Hoàn trả</MenuItem>
+					</Select>
+				</FormControl>
+			),
 		},
 		{
 			field: "importDate",
@@ -192,7 +223,7 @@ const ManageStock = () => {
 			setInfoDialogOpen(true);
 			return;
 		} else {
-			// navigate(`/admin/users/edit/${selectedRows[0]}`);
+			navigate(`/admin/stockimports/edit/${selectedRows[0]}`);
 		}
 	}
 

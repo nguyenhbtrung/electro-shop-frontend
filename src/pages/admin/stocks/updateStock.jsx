@@ -48,8 +48,8 @@ const UpdateStockForm = () => {
 
 	const handleFormSubmit = async (values) => {
 		console.log("Form values:", values);
-		const response = await UpdateStock(id, values); // Update the stock
-		console.log("AAA", response);
+		const response = await UpdateStock(stockImportId, values);
+		console.log("Res: ", response);
 		if (response.status === 200) {
 			setInfo(`Cập nhật lô hàng thành công!`);
 			setInfoDialogOpen(true);
@@ -64,7 +64,6 @@ const UpdateStockForm = () => {
 			const response = await GetAllSuppliers();
 			const data = await response.data;
 			setSuppliers(data);
-			console.log(data);
 			return response.status;
 		} catch (error) {
 			console.error(error);
@@ -84,12 +83,13 @@ const UpdateStockForm = () => {
 		}
 	};
 
+
+
 	const fetchStock = async (setFieldValue) => {
 		try {
 			const response = await GetStock(stockImportId);
 			const data = await response.data;
 			console.log("Stock:", data);
-			// Populate form fields with fetched data
 			setFieldValue('stockImportName', data.stockImportName);
 			setFieldValue('stockImportStatus', data.stockImportStatus);
 			setFieldValue('supplierId', data.supplierId);
@@ -101,10 +101,6 @@ const UpdateStockForm = () => {
 		}
 	};
 
-	useEffect(() => {
-		fetchSuppliers();
-		fetchProducts();
-	}, []);
 
 	const closeInfoDialog = () => {
 		setInfoDialogOpen(false);
@@ -114,7 +110,7 @@ const UpdateStockForm = () => {
 	}
 
 	const handleOpenDialog = () => {
-		setDialogQuestion("Bạn có chắc chắn muốn hủy bỏ việc thêm lô hàng mới?");
+		setDialogQuestion("Bạn có chắc chắn muốn hủy bỏ việc cập nhập lô hàng?");
 		setDialogOpen(true);
 	};
 
@@ -150,9 +146,25 @@ const UpdateStockForm = () => {
 					handleSubmit,
 					setFieldValue,
 				}) => {
+
 					useEffect(() => {
-						fetchStock(setFieldValue);
-					}, [setFieldValue]);
+						const fetchData = async () => {
+							try {
+								await fetchSuppliers();
+								await fetchProducts();
+							} catch (error) {
+								console.error(error);
+							}
+						};
+
+						fetchData();
+					}, []);
+
+					useEffect(() => {
+						if (suppliers.length > 0 && products.length > 0) {
+							fetchStock(setFieldValue);
+						}
+					}, [suppliers, products]);
 
 					useEffect(() => {
 						// Calculate total price whenever stockImportItems change
@@ -226,9 +238,9 @@ const UpdateStockForm = () => {
 									name="totalPrice"
 									error={touched.totalPrice && errors.totalPrice}
 									helperText={touched.totalPrice && errors.totalPrice}
-									sx={{ gridColumn: "span 5" }}
+									sx={{ gridColumn: "span 10" }}
 								/>
-								<FormControl fullWidth variant="filled" sx={{ gridColumn: "span 5" }}>
+								{/* <FormControl fullWidth variant="filled" sx={{ gridColumn: "span 5" }}>
 									<InputLabel>Trạng thái</InputLabel>
 									<Select
 										label="Trạng thái"
@@ -249,7 +261,7 @@ const UpdateStockForm = () => {
 											{errors.stockImportStatus}
 										</Box>
 									)}
-								</FormControl>
+								</FormControl> */}
 								<FieldArray name="stockImportItems">
 									{({ push, remove }) => (
 										<>
