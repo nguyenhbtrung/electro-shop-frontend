@@ -16,6 +16,7 @@ import {
   Stream,
   ManageUser,
 } from "./pages/admin";
+import ManageAttribute from "./pages/admin/attribute/attributeManager.jsx";
 import ManageProduct from "./pages/admin/products";
 import ManageCategory from "./pages/admin/categories";
 import ManageRating from "./pages/admin/ratings";
@@ -85,6 +86,7 @@ const AppRouter = () => {
           <Route path="users/add" element={<AddUserForm />} />
           <Route path="users/edit/:userName" element={<UpdateUserForm />} />
           <Route path="products" element={<ManageProduct />} />
+          <Route path="attributes" element={<ManageAttribute />} />
           <Route path="categories" element={<ManageCategory />} />
           <Route path="suppliers" element={<ManageSupplier />} />
           <Route path="stockimports" element={<ManageStock />} />

@@ -8,5 +8,8 @@ const ProductPricing = (productId, selectedAttributeDetailIds) => {
     { headers: { 'Content-Type': 'application/json' } }
   );
 };
-
-export { ProductPricing };
+const GetAllAttribute =()=>{
+  const URL_API = "/api/ProductAttributes";
+  return api.get(URL_API);
+}
+export { ProductPricing,GetAllAttribute };
