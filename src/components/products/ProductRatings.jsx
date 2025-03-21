@@ -72,7 +72,8 @@ const ProductRatings = ({ productId, isAdmin }) => {
 
     const handleEditDialogSubmit = async (updatedRating) => {
         try {
-            const res = await UpdateRating(productId, selectedRating.ratingId, updatedRating);
+            console.log("Updated Rating: ", updatedRating);
+            const res = await UpdateRating(productId, updatedRating);
             if (res?.status === 200) {
                 alert("Cập nhật đánh giá thành công!");
                 fetchRatings(); // Refetch ratings after successful update
