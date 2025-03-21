@@ -5,21 +5,20 @@ import { tokens } from "../../../theme";
 import { useEffect, useState } from "react";
 import { Edit } from "@mui/icons-material";
 import { GridToolbar } from "@mui/x-data-grid";
-import { convertToCustomMonthDate } from "../../../utils/formatDatetime";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from '@mui/icons-material/Delete';
 import ReplayIcon from '@mui/icons-material/Replay';
 import AlertDialog from "../../../components/AlertDialog";
 import InfoDialog from "../../../components/InfoDialog";
-import AddSupplierDialog from "../../../components/suppliers/AddSupplierDialog";
-import UpdateSupplierDialog from "../../../components/suppliers/UpdateSupplierDialog";
-import { AddSupplier, GetAllSuppliers, DeleteSupplier, UpdateSupplier } from "../../../services/SupplierService";
+import AddBannerDialog from "../../../components/banners/AddBannerDialog";
+import UpdateBannerDialog from "../../../components/banners/UpdateBannerDialog";
+import { AddBanner, DeleteBanner, GetAllBanners, UpdateBanner } from "../../../services/BannerService";
 
 const ManageBanner = () => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
     const [selectedRows, setSelectedRows] = useState([]);
-    const [suppliers, setSupplier] = useState([]);
+    const [banners, setBanners] = useState([]);
     const [response, setResponse] = useState(null);
     const [dialogOpen, setDialogOpen] = useState(false);
     const [dialogQuestion, setDialogQuestion] = useState('');
@@ -27,48 +26,52 @@ const ManageBanner = () => {
     const [info, setInfo] = useState('');
     const [openUpdateDialog, setOpenUpdateDialog] = useState(false);
     const [openAddDialog, setOpenAddDialog] = useState(false);
-    const [selectedSupplier, setSelectedSupplier] = useState(null);
+    const [selectedBanner, setSelectedBanner] = useState(null);
 
     const columns = [
         {
-            field: "supplierId",
+            field: "bannerId",
             headerName: "Id",
             flex: 0.2,
             cellClassName: "name-column--cell",
         },
         {
-            field: "supplierName",
-            headerName: "Tên nhà cung cấp",
+            field: "title",
+            headerName: "Tên biểu ngữ",
             flex: 1,
             cellClassName: "name-column--cell",
         },
         {
-            field: "supplierAddress",
-            headerName: "Địa chỉ",
+            field: "imageUrl",
+            headerName: "Hình ảnh",
             headerAlign: "left",
             align: "left",
-            flex: 1
+            flex: 1,
+            renderCell: (params) => (
+                <img
+                    src={params.value || '/NoImageAvailable.jpg'}
+                    alt="public\NoImageAvailable.jpg"
+                    style={{ width: '100%', height: '100%', maxHeight: '100px', objectFit: 'contain' }}
+                />
+            ),
         },
         {
-            field: "supplierContact",
-            headerName: "Số điện thoại",
+            field: "link",
+            headerName: "Liên kết",
             flex: 0.7
         },
         {
-            field: "createdAt",
-            headerName: "Ngày tạo",
+            field: "position",
+            headerName: "Vị trí",
             flex: 0.5,
-            renderCell: (params) => {
-                return convertToCustomMonthDate(params.value, "vi-VN", "long");
-            }
         },
     ];
 
-    const fetchSuppliers = async () => {
+    const fetchBanners = async () => {
         try {
-            const response = await GetAllSuppliers();
+            const response = await GetAllBanners();
             const data = await response.data;
-            setSupplier(data);
+            setBanners(data);
             console.log(data);
             return response.status;
         } catch (error) {
@@ -78,11 +81,11 @@ const ManageBanner = () => {
     };
 
     useEffect(() => {
-        fetchSuppliers();
+        fetchBanners();
     }, []);
 
     const handleRefresh = async () => {
-        var status = await fetchSuppliers();
+        var status = await fetchBanners();
         if (status === 200) {
             setInfo(`Làm mới thành công!`);
             setInfoDialogOpen(true);
@@ -97,28 +100,28 @@ const ManageBanner = () => {
     }
 
 
-    const handleAddDialogSubmit = async (newSupplier) => {
-        console.log("New Supplier: ", newSupplier);
-        const res = await AddSupplier(newSupplier);
+    const handleAddDialogSubmit = async (newBanner) => {
+        console.log("New Banner: ", newBanner);
+        const res = await AddBanner(newBanner);
         if (res?.status === 200 && res?.data) {
-            setInfo(`Thêm nhà cung cấp thành công!`);
+            setInfo(`Thêm biểu ngữ thành công!`);
             setInfoDialogOpen(true);
-            GetAllSuppliers();
+            fetchBanners();
         } else {
-            setInfo(`Có lỗi khi thêm nhà cung cấp!`);
+            setInfo(`Có lỗi khi thêm biểu ngữ!`);
             setInfoDialogOpen(true);
         }
     }
 
-    const handleUpdateDialogSubmit = async (updatedSupplier) => {
-        console.log("Updated Supplier: ", updatedSupplier);
-        const res = await UpdateSupplier(updatedSupplier);
+    const handleUpdateDialogSubmit = async (updatedBanner) => {
+        console.log("Updated Banner: ", updatedBanner);
+        const res = await UpdateBanner(updatedBanner);
         if (res?.status === 200 && res?.data) {
-            setInfo(`Cập nhật nhà cung cấp thành công!`);
+            setInfo(`Cập nhật biểu ngữ thành công!`);
             setInfoDialogOpen(true);
-            GetAllSuppliers();
+            fetchBanners();
         } else {
-            setInfo(`Có lỗi khi cập nhật nhà cung cấp!`);
+            setInfo(`Có lỗi khi cập nhật biểu ngữ!`);
             setInfoDialogOpen(true);
         }
     }
@@ -129,14 +132,14 @@ const ManageBanner = () => {
             return;
         } else {
             try {
-                for (const supplierId of selectedRows) {
-                    await DeleteSupplier(supplierId);
+                for (const bannerId of selectedRows) {
+                    await DeleteBanner(bannerId);
                 }
-                setInfo(`Đã xoá ${selectedRows.length} nhà cung cấp!`);
+                setInfo(`Đã xoá ${selectedRows.length} biểu ngữ!`);
                 setInfoDialogOpen(true);
-                GetAllSuppliers();
+                fetchBanners();
             } catch (error) {
-                setInfo(`Có lỗi khi xóa nhà cung cấp!`);
+                setInfo(`Có lỗi khi xóa biểu ngữ!`);
                 setInfoDialogOpen(true);
                 console.error(error);
             }
@@ -145,26 +148,26 @@ const ManageBanner = () => {
 
     const handleDeleteDialog = () => {
         if (selectedRows.length === 0) {
-            setInfo(`Vui lòng chọn nhà cung cấp cần xoá!`);
+            setInfo(`Vui lòng chọn biểu ngữ cần xoá!`);
             setInfoDialogOpen(true);
             return;
         }
-        setDialogQuestion(`Bạn có muốn xóa ${selectedRows.length} nhà cung cấp đã chọn?`);
+        setDialogQuestion(`Bạn có muốn xóa ${selectedRows.length} biểu ngữ đã chọn?`);
         setDialogOpen(true);
     };
 
     const handleEditSelected = () => {
         if (selectedRows.length === 0) {
-            setInfo(`Vui lòng chọn nhà cung cấp cần chỉnh sửa!`);
+            setInfo(`Vui lòng chọn biểu ngữ cần chỉnh sửa!`);
             setInfoDialogOpen(true);
             return;
         } else if (selectedRows.length > 1) {
-            setInfo(`Chỉ được chọn 1 nhà cung cấp để chỉnh sửa!`);
+            setInfo(`Chỉ được chọn 1 biểu ngữ để chỉnh sửa!`);
             setInfoDialogOpen(true);
             return;
         } else {
-            const supplier = suppliers.find((supplier) => supplier.supplierId === selectedRows[0]);
-            setSelectedSupplier(supplier);
+            const banner = banners.find((banner) => banner.bannerId === selectedRows[0]);
+            setSelectedBanner(banner);
             setOpenUpdateDialog(true);
         }
     }
@@ -183,8 +186,8 @@ const ManageBanner = () => {
                 marginBottom={0}
             >
                 <Header
-                    title="Nhà cung cấp"
-                    subtitle="Danh sách các nhà cung cấp"
+                    title="Banners"
+                    subtitle="Danh sách các biểu ngữ"
                 />
                 <Box display="flex" alignItems="center" gap={2}>
                     <Button
@@ -203,7 +206,7 @@ const ManageBanner = () => {
                         onClick={handleAddSupplier}
                         sx={{ color: 'text.primary' }}
                     >
-                        Thêm nhà cung cấp
+                        Thêm biểu ngữ
                     </Button>
                     <Button
                         variant="contained"
@@ -263,9 +266,9 @@ const ManageBanner = () => {
                 }}
             >
                 <DataGrid
-                    rows={suppliers}
+                    rows={banners}
                     columns={columns}
-                    getRowId={(row) => row.supplierId}
+                    getRowId={(row) => row.bannerId}
                     onRowSelectionModelChange={(ids) => {
                         console.log("Selected rows: ", ids);
                         setSelectedRows(ids);
@@ -281,16 +284,16 @@ const ManageBanner = () => {
                     checkboxSelection
                 />
             </Box>
-            <AddSupplierDialog
+            <AddBannerDialog
                 open={openAddDialog}
                 onClose={() => setOpenAddDialog(false)}
                 onSubmit={handleAddDialogSubmit}
             />
-            <UpdateSupplierDialog
+            <UpdateBannerDialog
                 open={openUpdateDialog}
                 onClose={() => setOpenUpdateDialog(false)}
                 onSubmit={handleUpdateDialogSubmit}
-                supplier={selectedSupplier}
+                banner={selectedBanner}
             />
             <AlertDialog
                 open={dialogOpen}

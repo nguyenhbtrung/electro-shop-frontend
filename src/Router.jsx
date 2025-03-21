@@ -23,7 +23,6 @@ import ManageOrder from "./pages/admin/orders";
 import ManageReturn from "./pages/admin/returns";
 import ManageDiscount from "./pages/admin/discounts";
 import ManageVoucher from "./pages/admin/vouchers";
-import ManageBanner from "./pages/admin/banners";
 import ManageReason from "./pages/admin/reasons";
 import AppUser from "./pages/user/AppUser";
 import Login from "./pages/auth/Login";
@@ -55,6 +54,7 @@ import AdminChatPage from "./pages/admin/supportCustomer/AdminChatPage.jsx";
 import UpdateStockForm from "./pages/admin/stocks/updateStock.jsx";
 import ManageChatCustomer from "./pages/admin/supportCustomer/ManageChatCustomer.jsx";
 import DetailStock from "./pages/admin/stocks/detailStock.jsx";
+import ManageBanner from "./pages/admin/banners/banners.jsx";
 
 const AppRouter = () => {
   return (
