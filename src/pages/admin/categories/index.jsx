@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Box, Button, IconButton, useTheme } from "@mui/material";
+import { Box, Button, IconButton, useTheme, Dialog, DialogTitle, DialogContent } from "@mui/material";
 import { Header } from "../../../components";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../../theme";
@@ -7,15 +7,18 @@ import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ImageIcon from "@mui/icons-material/Image";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 import {
   GetAllCategories,
   CreateCategory,
   UpdateCategory,
   DeleteCategory,
+  GetProductByCategoryId, 
 } from "../../../services/categoryService";
 import AddCategoryDialog from "../../../components/categories/AddCategoryDialog";
 import UpdateCategoryDialog from "../../../components/categories/UpdateCategoryDialog";
 import ViewCategoryImageDialog from "../../../components/categories/ViewCategoryImageDialog";
+
 const ManageCategory = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
@@ -27,6 +30,11 @@ const ManageCategory = () => {
   // State cho dialog xem ảnh chi tiết danh mục
   const [openImageDialog, setOpenImageDialog] = useState(false);
   const [selectedImageCategory, setSelectedImageCategory] = useState(null);
+
+  // State cho dialog xem danh sách sản phẩm của category
+  const [openProductsDialog, setOpenProductsDialog] = useState(false);
+  const [products, setProducts] = useState([]);
+  const [selectedProductsCategory, setSelectedProductsCategory] = useState(null);
 
   const fetchCategories = async () => {
     try {
@@ -110,6 +118,20 @@ const ManageCategory = () => {
     setOpenImageDialog(true);
   };
 
+  // Mở dialog xem danh sách sản phẩm của category
+  const handleViewProducts = async (row) => {
+    try {
+      const res = await GetProductByCategoryId(row.categoryId);
+      if (res?.data) {
+        setProducts(res.data);
+        setSelectedProductsCategory(row);
+        setOpenProductsDialog(true);
+      }
+    } catch (error) {
+      console.log("Error fetching products for category", error);
+    }
+  };
+
   const columns = [
     {
       field: "categoryId",
@@ -139,8 +161,8 @@ const ManageCategory = () => {
     {
       field: "actions",
       headerName: "Hành động",
-      flex: 0.8,
-      minWidth: 140,
+      flex: 1,
+      minWidth: 180,
       sortable: false,
       filterable: false,
       renderCell: (params) => (
@@ -153,6 +175,9 @@ const ManageCategory = () => {
           </IconButton>
           <IconButton color={colors.primary[100]} onClick={() => handleViewImage(params.row)}>
             <ImageIcon />
+          </IconButton>
+          <IconButton color={colors.primary[100]} onClick={() => handleViewProducts(params.row)}>
+            <VisibilityIcon />
           </IconButton>
         </>
       ),
@@ -204,25 +229,72 @@ const ManageCategory = () => {
         />
       </Box>
 
-      <AddCategoryDialog
-        open={openAddDialog}
-        onClose={() => setOpenAddDialog(false)}
-        onSubmit={handleAddDialogSubmit}
-      />
-
+      <AddCategoryDialog open={openAddDialog} onClose={() => setOpenAddDialog(false)} onSubmit={handleAddDialogSubmit} />
       <UpdateCategoryDialog
         open={openEditDialog}
         onClose={() => setOpenEditDialog(false)}
         onSubmit={handleEditDialogSubmit}
         category={selectedCategory}
       />
+      <ViewCategoryImageDialog open={openImageDialog} onClose={() => setOpenImageDialog(false)} category={selectedImageCategory} />
 
-      <ViewCategoryImageDialog
-        open={openImageDialog}
-        onClose={() => setOpenImageDialog(false)}
-        category={selectedImageCategory}
+      {/* Dialog hiển thị danh sách sản phẩm của danh mục */}
+      <ViewCategoryProductsDialog
+        open={openProductsDialog}
+        onClose={() => setOpenProductsDialog(false)}
+        products={products}
+        category={selectedProductsCategory}
       />
     </Box>
+  );
+};
+
+// Component Dialog hiển thị danh sách sản phẩm của danh mục
+const ViewCategoryProductsDialog = ({ open, onClose, products, category }) => {
+  const theme = useTheme();
+  const colors = tokens(theme.palette.mode);
+
+  // Định nghĩa các cột hiển thị: chỉ bao gồm ID, Tên, ảnh (ảnh đầu tiên), giá gốc và điểm đánh giá trung bình
+  const columns = [
+    { field: "productId", headerName: "ID", flex: 0.3 },
+    { field: "name", headerName: "Tên sản phẩm", flex: 1 },
+    {
+      field: "image",
+      headerName: "Ảnh",
+      flex: 0.5,
+      renderCell: (params) => {
+        const images = params.row.images;
+        return images && images.length > 0 ? (
+          <img
+            src={images[0]}
+            alt={params.row.name}
+            style={{ width: 50, height: 50, objectFit: "cover", borderRadius: 4 }}
+          />
+        ) : null;
+      },
+    },
+    { field: "originalPrice", headerName: "Giá gốc", flex: 0.5 },
+    { field: "averageRating", headerName: "Đánh giá", flex: 0.3 },
+  ];
+
+  return (
+    <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
+      <DialogTitle>
+        Sản phẩm của danh mục: {category ? category.name : ""}
+      </DialogTitle>
+      <DialogContent>
+        <Box mt="10px" height="400px">
+          <DataGrid
+            rows={products}
+            columns={columns}
+            getRowId={(row) => row.productId}
+            initialState={{
+              pagination: { paginationModel: { pageSize: 5 } },
+            }}
+          />
+        </Box>
+      </DialogContent>
+    </Dialog>
   );
 };
 
