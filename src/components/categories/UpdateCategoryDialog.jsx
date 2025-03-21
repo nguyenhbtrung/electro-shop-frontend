@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -7,10 +7,16 @@ import {
   Button,
   TextField,
   Grid,
+  Box,
+  IconButton,
+  Typography,
+  CircularProgress,
 } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import Autocomplete from "@mui/material/Autocomplete";
-
 import { UpdateCategory, GetAllCategories } from "../../services/categoryService";
+import { UploadImage } from "../../services/imageService";
 
 const UpdateCategoryDialog = ({ open, onClose, onSubmit, category }) => {
   const [formValues, setFormValues] = useState({
@@ -19,18 +25,16 @@ const UpdateCategoryDialog = ({ open, onClose, onSubmit, category }) => {
     parentCategoryId: null,
     imageUrl: "",
   });
-
-  // Lưu danh sách các danh mục cha (các category có parentCategoryId === null)
   const [parentCategories, setParentCategories] = useState([]);
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
     const fetchParentCategories = async () => {
       try {
         const res = await GetAllCategories();
         if (res?.status === 200 && res?.data) {
-          const parents = res.data.filter(
-            (cat) => cat.parentCategoryId === null
-          );
+          const parents = res.data.filter((cat) => cat.parentCategoryId === null);
           setParentCategories(parents);
         } else {
           console.error("Error fetching categories:", res);
@@ -43,13 +47,12 @@ const UpdateCategoryDialog = ({ open, onClose, onSubmit, category }) => {
     fetchParentCategories();
   }, []);
 
-  // Cập nhật giá trị form khi có category được chọn hoặc dialog mở ra
   useEffect(() => {
     if (category) {
       setFormValues({
         name: category.name || "",
         description: category.description || "",
-        parentCategoryId: category.parentCategoryId, // null nếu là danh mục cha
+        parentCategoryId: category.parentCategoryId,
         imageUrl: category.imageUrl || "",
       });
     } else {
@@ -88,6 +91,36 @@ const UpdateCategoryDialog = ({ open, onClose, onSubmit, category }) => {
     }
   };
 
+  const handleRemoveImage = () => {
+    setFormValues((prev) => ({ ...prev, imageUrl: "" }));
+  };
+
+  const handleAddImageClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  const handleFileChange = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+    const formData = new FormData();
+    formData.append("File", file);
+    try {
+      setUploading(true);
+      const res = await UploadImage(formData);
+      if (res?.status === 200 && res?.data?.imageUrl) {
+        setFormValues((prev) => ({ ...prev, imageUrl: res.data.imageUrl }));
+      } else {
+        console.error("Có lỗi xảy ra khi upload ảnh.");
+      }
+    } catch (err) {
+      console.error("Upload error:", err);
+    } finally {
+      setUploading(false);
+    }
+  };
+
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
       <DialogTitle>Cập nhật Category</DialogTitle>
@@ -115,16 +148,13 @@ const UpdateCategoryDialog = ({ open, onClose, onSubmit, category }) => {
               name="description"
               value={formValues.description}
               onChange={(e) =>
-                setFormValues((prev) => ({
-                  ...prev,
-                  description: e.target.value,
-                }))
+                setFormValues((prev) => ({ ...prev, description: e.target.value }))
               }
               multiline
               rows={4}
             />
           </Grid>
-          {/* Combobox hiển thị tên danh mục cha */}
+          {/* Combobox hiển thị danh mục cha */}
           <Grid item xs={12}>
             <Autocomplete
               options={parentCategories}
@@ -145,7 +175,61 @@ const UpdateCategoryDialog = ({ open, onClose, onSubmit, category }) => {
               )}
             />
           </Grid>
-          {/* Image URL */}
+          {/* Phần chỉnh sửa ảnh */}
+          <Grid item xs={12}>
+            <Typography variant="subtitle1" sx={{ mb: 1 }}>
+              Ảnh hiện tại:
+            </Typography>
+            {formValues.imageUrl ? (
+              <Box sx={{ position: "relative", width: "100%", textAlign: "center" }}>
+                <Box
+                  component="img"
+                  src={formValues.imageUrl}
+                  alt="Ảnh Category"
+                  sx={{
+                    width: "60%",
+                    height: "auto",
+                    borderRadius: 2,
+                    objectFit: "cover",
+                  }}
+                />
+                <IconButton
+                  size="small"
+                  onClick={handleRemoveImage}
+                  sx={{
+                    position: "absolute",
+                    top: 0,
+                    right: "20%",
+                    backgroundColor: "rgba(255,255,255,0.7)",
+                  }}
+                >
+                  <CloseIcon fontSize="small" />
+                </IconButton>
+              </Box>
+            ) : (
+              <Typography variant="body2" align="center">
+                Không có ảnh nào.
+              </Typography>
+            )}
+            <Box sx={{ textAlign: "center", mt: 1 }}>
+              <Button
+                variant="contained"
+                startIcon={<AddPhotoAlternateIcon />}
+                onClick={handleAddImageClick}
+                disabled={uploading}
+              >
+                {uploading ? "Đang upload..." : "Chọn ảnh"}
+              </Button>
+              <input
+                type="file"
+                accept="image/*"
+                style={{ display: "none" }}
+                ref={fileInputRef}
+                onChange={handleFileChange}
+              />
+            </Box>
+          </Grid>
+          {/* Nếu muốn người dùng chỉnh sửa trực tiếp URL ảnh thì giữ lại trường TextField */}
           <Grid item xs={12}>
             <TextField
               fullWidth

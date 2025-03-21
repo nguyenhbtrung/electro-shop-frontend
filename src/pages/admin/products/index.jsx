@@ -125,13 +125,6 @@ const ManageProduct = () => {
       minWidth: 120,
     },
     {
-      field: "ratingCount",
-      headerName: "Số đánh giá",
-      type: "number",
-      flex: 0.5,
-      minWidth: 100,
-    },
-    {
       field: "averageRating",
       headerName: "Đánh giá trung bình",
       type: "number",

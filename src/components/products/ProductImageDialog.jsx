@@ -24,13 +24,11 @@ const EditProductImagesDialog = ({ open, onClose, productId }) => {
   const [images, setImages] = useState([]);
   const fileInputRef = useRef(null);
 
-  // Khi mở dialog, fetch thông tin sản phẩm để lấy danh sách ảnh
   useEffect(() => {
     if (open && productId) {
       setLoading(true);
       GetProduct(productId)
         .then((res) => {
-          // Giả sử API trả về thông tin sản phẩm có trường productImages là danh sách ảnh
           if (res?.data?.productImages) {
             setImages(res.data.productImages);
           } else {
