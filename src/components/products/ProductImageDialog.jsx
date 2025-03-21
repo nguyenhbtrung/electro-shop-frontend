@@ -16,12 +16,16 @@ import {
 import CloseIcon from '@mui/icons-material/Close';
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import { GetProduct } from '../../services/productService';
-import { UpdateProductImage } from '../../services/productImgService';
-import { UploadImage } from '../../services/imageService';
+import { CreateProductImage, DeleteProductImage } from '../../services/productImgService';
 
 const EditProductImagesDialog = ({ open, onClose, productId }) => {
   const [loading, setLoading] = useState(false);
-  const [images, setImages] = useState([]);
+  // Ảnh hiện có trên backend
+  const [existingImages, setExistingImages] = useState([]);
+  // Các file mới được chọn (chưa upload)
+  const [newFiles, setNewFiles] = useState([]); // [{ file, previewUrl }]
+  // Lưu ID của ảnh đã bị xóa (để gọi API DELETE khi lưu thay đổi)
+  const [removedImageIds, setRemovedImageIds] = useState([]);
   const fileInputRef = useRef(null);
 
   useEffect(() => {
@@ -30,9 +34,9 @@ const EditProductImagesDialog = ({ open, onClose, productId }) => {
       GetProduct(productId)
         .then((res) => {
           if (res?.data?.productImages) {
-            setImages(res.data.productImages);
+            setExistingImages(res.data.productImages);
           } else {
-            setImages([]);
+            setExistingImages([]);
           }
         })
         .catch((err) => {
@@ -41,59 +45,63 @@ const EditProductImagesDialog = ({ open, onClose, productId }) => {
         .finally(() => {
           setLoading(false);
         });
+      // Reset các file mới và mảng xóa khi mở dialog
+      setNewFiles([]);
+      setRemovedImageIds([]);
     }
   }, [open, productId]);
 
-  // Xóa ảnh khỏi danh sách theo productImageId
-  const handleRemoveImage = (imageId) => {
-    setImages((prev) => prev.filter((img) => img.productImageId !== imageId));
+  // Khi nhấn nút "X" trên ảnh đã có, loại bỏ khỏi state và lưu ID vào removedImageIds
+  const handleRemoveExistingImage = (imageId) => {
+    setExistingImages((prev) => prev.filter((img) => img.productImageId !== imageId));
+    setRemovedImageIds((prev) => [...prev, imageId]);
   };
 
-  // Khi nhấn nút "Thêm ảnh", kích hoạt file input ẩn
+  // Xóa file mới khỏi state (chỉ ảnh mới chưa upload)
+  const handleRemoveNewFile = (previewUrl) => {
+    setNewFiles((prev) => prev.filter((f) => f.previewUrl !== previewUrl));
+  };
+
   const handleAddImageClick = () => {
     if (fileInputRef.current) {
       fileInputRef.current.click();
     }
   };
 
-  // Xử lý khi chọn file ảnh, upload ảnh để lấy URL và thêm vào danh sách
-  const handleFileChange = async (event) => {
-    const file = event.target.files[0];
-    if (!file) return;
-    const formData = new FormData();
-    formData.append('File', file);
-    try {
-      const res = await UploadImage(formData);
-      if (res?.status === 200 && res?.data?.imageUrl) {
-        // Tạo đối tượng ảnh mới. Nếu backend tạo id riêng, bạn có thể để id rỗng hoặc tạm thời.
-        const newImage = {
-          // Dùng Date.now() làm id tạm thời; khi cập nhật, backend sẽ xử lý theo logic riêng.
-          productImageId: Date.now(),
-          imageUrl: res.data.imageUrl,
-        };
-        setImages((prev) => [...prev, newImage]);
-      } else {
-        console.error('Có lỗi xảy ra khi upload ảnh.');
-      }
-    } catch (err) {
-      console.error('Upload error:', err);
-    }
+  // Khi chọn file, lưu file và tạo preview URL
+  const handleFileChange = (event) => {
+    const files = event.target.files;
+    if (!files) return;
+    const fileArray = Array.from(files);
+    const newFileObjects = fileArray.map((file) => ({
+      file,
+      previewUrl: URL.createObjectURL(file),
+    }));
+    setNewFiles((prev) => [...prev, ...newFileObjects]);
   };
 
-  // Lưu thay đổi danh sách ảnh bằng cách gọi API update
+  // Khi nhấn "Lưu thay đổi", thực hiện gọi API POST cho các ảnh mới và DELETE cho các ảnh bị xóa
   const handleSaveChanges = async () => {
-    // Giả sử API UpdateProductImage nhận đối tượng có thuộc tính productImages là mảng các ảnh
-    const data = {
-      productImages: images.map((img) => ({ imageUrl: img.imageUrl })),
-    };
+    // Tạo mảng Promise cho việc upload ảnh mới (POST)
+    const postPromises = [];
+    if (newFiles.length > 0) {
+      const formData = new FormData();
+      newFiles.forEach((fileObj) => {
+        formData.append('Images', fileObj.file);
+      });
+      // Gọi API POST để upload các ảnh mới
+      postPromises.push(CreateProductImage(productId, formData));
+    }
+
+    // Tạo mảng Promise cho việc xóa ảnh (DELETE)
+    const deletePromises = removedImageIds.map((imageId) => DeleteProductImage(imageId));
+
     try {
-      const res = await UpdateProductImage(productId, data);
-      if (res?.status === 200) {
-        alert('Cập nhật ảnh thành công!');
-        onClose();
-      } else {
-        alert('Có lỗi xảy ra khi cập nhật ảnh!');
-      }
+      // Chạy song song tất cả Promise
+      const results = await Promise.all([...postPromises, ...deletePromises]);
+      // Nếu đạt đến đây, nghĩa là tất cả API đã trả về thành công
+      alert('Bạn đã thay đổi ảnh của sản phẩm thành công');
+      onClose();
     } catch (err) {
       console.error('Error updating product images:', err);
       alert('Có lỗi xảy ra khi cập nhật ảnh!');
@@ -110,11 +118,11 @@ const EditProductImagesDialog = ({ open, onClose, productId }) => {
           </Box>
         ) : (
           <>
-            {images.length === 0 ? (
+            {existingImages.length === 0 && newFiles.length === 0 ? (
               <Typography variant="body1">Không có ảnh nào.</Typography>
             ) : (
               <Grid container spacing={2}>
-                {images.map((img) => (
+                {existingImages.map((img) => (
                   <Grid item xs={6} sm={4} md={3} key={img.productImageId}>
                     <Card sx={{ position: 'relative' }}>
                       <CardMedia
@@ -131,7 +139,31 @@ const EditProductImagesDialog = ({ open, onClose, productId }) => {
                           right: 5,
                           backgroundColor: 'rgba(255,255,255,0.7)',
                         }}
-                        onClick={() => handleRemoveImage(img.productImageId)}
+                        onClick={() => handleRemoveExistingImage(img.productImageId)}
+                      >
+                        <CloseIcon fontSize="small" />
+                      </IconButton>
+                    </Card>
+                  </Grid>
+                ))}
+                {newFiles.map((fileObj) => (
+                  <Grid item xs={6} sm={4} md={3} key={fileObj.previewUrl}>
+                    <Card sx={{ position: 'relative' }}>
+                      <CardMedia
+                        component="img"
+                        image={fileObj.previewUrl}
+                        alt="Ảnh mới"
+                        sx={{ height: 140, objectFit: 'cover' }}
+                      />
+                      <IconButton
+                        size="small"
+                        sx={{
+                          position: 'absolute',
+                          top: 5,
+                          right: 5,
+                          backgroundColor: 'rgba(255,255,255,0.7)',
+                        }}
+                        onClick={() => handleRemoveNewFile(fileObj.previewUrl)}
                       >
                         <CloseIcon fontSize="small" />
                       </IconButton>
@@ -151,6 +183,7 @@ const EditProductImagesDialog = ({ open, onClose, productId }) => {
               <input
                 type="file"
                 accept="image/*"
+                multiple
                 style={{ display: 'none' }}
                 ref={fileInputRef}
                 onChange={handleFileChange}
