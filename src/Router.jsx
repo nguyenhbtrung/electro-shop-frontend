@@ -54,6 +54,8 @@ import AddStockForm from "./pages/admin/stocks/addStock.jsx";
 import AdminChatPage from "./pages/admin/supportCustomer/AdminChatPage.jsx";
 import UpdateStockForm from "./pages/admin/stocks/updateStock.jsx";
 import ManageChatCustomer from "./pages/admin/supportCustomer/ManageChatCustomer.jsx";
+import DetailStock from "./pages/admin/stocks/detailStock.jsx";
+
 const AppRouter = () => {
   return (
     <Router>
@@ -86,6 +88,7 @@ const AppRouter = () => {
           <Route path="categories" element={<ManageCategory />} />
           <Route path="suppliers" element={<ManageSupplier />} />
           <Route path="stockimports" element={<ManageStock />} />
+          <Route path="stockimports/detail/:stockImportId" element={<DetailStock />} />
           <Route path="stockimports/add" element={<AddStockForm />} />
           <Route path="stockimports/edit/:stockImportId" element={<UpdateStockForm />} />
           <Route path="ratings" element={<ManageRating />} />

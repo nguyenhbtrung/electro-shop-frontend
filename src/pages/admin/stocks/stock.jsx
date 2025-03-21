@@ -15,7 +15,7 @@ import InfoDialog from "../../../components/InfoDialog";
 import { GetAllStocks, DeleteStock, UpdateStockStatus } from "../../../services/StockService";
 import IconButton from "@mui/material/IconButton";
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
+import { FormControl, MenuItem, Select } from "@mui/material";
 /*
 - ✓ Thay cách hiện thị thông báo bằng cửa sổ component riêng chứ không dùng cửa sổ alert mặc định
 - ✓ Quên mật khẩu cho user đồng thời phải có xác thực email
@@ -142,7 +142,7 @@ const ManageStock = () => {
 				return (
 					<IconButton
 						color={colors.primary[100]}
-						onClick={() => handleEditImage(params.row)}
+						onClick={handleDetail(params.row)}
 					>
 						<VisibilityIcon />
 					</IconButton>
@@ -150,6 +150,10 @@ const ManageStock = () => {
 			},
 		},
 	];
+
+	const handleDetail = (row) => () => {
+		navigate(`/admin/stockimports/detail/${row.stockImportId}`);
+	};
 
 	const GetAllStock = async () => {
 		try {
