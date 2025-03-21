@@ -1,5 +1,4 @@
-// ChatWindow.jsx
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
     Box,
     IconButton,
@@ -10,18 +9,19 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import SendIcon from "@mui/icons-material/Send";
 import { formatTimestamp } from "../../utils/formatDatetime";
+import { CreateMessage } from "../../services/SupportMessageService";
 
 const ChatWindow = ({ onClose }) => {
     // Khởi tạo danh sách tin nhắn với timestamp là đối tượng Date
     const [messages, setMessages] = useState([
         {
-            id: 1,
+            id: -1,
             sender: "user",
             text: "Chào admin, tôi cần giúp đỡ về đơn hàng!",
             timestamp: new Date(new Date().setHours(new Date().getHours() - 1)), // 1 giờ trước
         },
         {
-            id: 2,
+            id: -2,
             sender: "admin",
             text: "Chào bạn, admin đây. Tôi đã thấy yêu cầu của bạn.",
             timestamp: new Date(), // thời điểm hiện tại
@@ -29,16 +29,39 @@ const ChatWindow = ({ onClose }) => {
     ]);
     const [newMessage, setNewMessage] = useState("");
 
-    const handleSend = () => {
+    // Tạo một ref để nhắm đến phần cuối danh sách tin nhắn
+    const messagesEndRef = useRef(null);
+
+    // Hàm cuộn xuống cuối danh sách tin nhắn
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    };
+
+    // Mỗi khi 'messages' thay đổi, tự động cuộn xuống cuối
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages]);
+
+    const handleSend = async () => {
         if (newMessage.trim() !== "") {
-            const message = {
-                id: messages.length + 1,
-                sender: "user",
-                text: newMessage,
-                timestamp: new Date(),
+            const data = {
+                message: newMessage,
+                isFromAdmin: false,
             };
-            setMessages([...messages, message]);
-            setNewMessage("");
+            const res = await CreateMessage(data);
+            if (res?.status === 200 && res?.data) {
+                const message = {
+                    id: res.data.id,
+                    sender: "user",
+                    text: res.data.message,
+                    timestamp: new Date(res.data.sentAt),
+                };
+                setMessages([...messages, message]);
+                setNewMessage("");
+                // scrollToBottom();
+            } else {
+                alert("Không thể gửi tin nhắn, xin vui lòng thử lại.");
+            }
         }
     };
 
@@ -107,6 +130,8 @@ const ChatWindow = ({ onClose }) => {
                         </Typography>
                     </Box>
                 ))}
+                {/* Thẻ này dùng để cuộn cuối */}
+                <div ref={messagesEndRef} />
             </Box>
 
             {/* Phần nhập tin nhắn */}
