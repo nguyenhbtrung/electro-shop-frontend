@@ -10,7 +10,8 @@ export const convertToLocaleDateString = (date) => {
     return formattedDate;
 };
 
-export const formatTimestamp = (date) => {
+export const formatTimestamp = (dateStr) => {
+    const date = new Date(dateStr);
     const now = new Date();
     if (
         now.getDate() === date.getDate() &&
@@ -28,3 +29,4 @@ export const formatTimestamp = (date) => {
         );
     }
 };
+

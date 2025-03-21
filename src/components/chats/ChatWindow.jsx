@@ -9,28 +9,41 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import SendIcon from "@mui/icons-material/Send";
 import { formatTimestamp } from "../../utils/formatDatetime";
-import { CreateMessage } from "../../services/SupportMessageService";
+import { CreateMessage, GetUserMessages } from "../../services/SupportMessageService";
 
 const ChatWindow = ({ onClose }) => {
     // Khởi tạo danh sách tin nhắn với timestamp là đối tượng Date
     const [messages, setMessages] = useState([
         {
             id: -1,
-            sender: "user",
-            text: "Chào admin, tôi cần giúp đỡ về đơn hàng!",
-            timestamp: new Date(new Date().setHours(new Date().getHours() - 1)), // 1 giờ trước
+            isFromAdmin: false,
+            message: "Chào admin, tôi cần giúp đỡ về đơn hàng!",
+            sentAt: new Date(new Date().setHours(new Date().getHours() - 1)), // 1 giờ trước
         },
         {
             id: -2,
-            sender: "admin",
-            text: "Chào bạn, admin đây. Tôi đã thấy yêu cầu của bạn.",
-            timestamp: new Date(), // thời điểm hiện tại
+            isFromAdmin: true,
+            message: "Chào bạn, admin đây. Tôi đã thấy yêu cầu của bạn.",
+            sentAt: new Date(), // thời điểm hiện tại
         },
     ]);
     const [newMessage, setNewMessage] = useState("");
 
     // Tạo một ref để nhắm đến phần cuối danh sách tin nhắn
     const messagesEndRef = useRef(null);
+
+    useEffect(() => {
+        const FetchData = async () => {
+            const res = await GetUserMessages();
+            if (res?.status === 200 && res?.data) {
+                setMessages(res?.data);
+            } else {
+                alert("Lỗi khi tải tin nhắn");
+            }
+        };
+
+        FetchData();
+    }, []);
 
     // Hàm cuộn xuống cuối danh sách tin nhắn
     const scrollToBottom = () => {
@@ -52,9 +65,9 @@ const ChatWindow = ({ onClose }) => {
             if (res?.status === 200 && res?.data) {
                 const message = {
                     id: res.data.id,
-                    sender: "user",
-                    text: res.data.message,
-                    timestamp: new Date(res.data.sentAt),
+                    isFromAdmin: res.data.isFromAdmin,
+                    message: res.data.message,
+                    sentAt: new Date(res.data.sentAt),
                 };
                 setMessages([...messages, message]);
                 setNewMessage("");
@@ -110,23 +123,23 @@ const ChatWindow = ({ onClose }) => {
                         sx={{
                             display: "flex",
                             flexDirection: "column",
-                            alignItems: msg.sender === "user" ? "flex-end" : "flex-start",
+                            alignItems: !msg.isFromAdmin ? "flex-end" : "flex-start",
                             mb: 1,
                         }}
                     >
                         <Box
                             sx={{
-                                backgroundColor: msg.sender === "user" ? "#1976d2" : "#e0e0e0",
-                                color: msg.sender === "user" ? "#fff" : "#000",
+                                backgroundColor: !msg.isFromAdmin ? "#1976d2" : "#e0e0e0",
+                                color: !msg.isFromAdmin ? "#fff" : "#000",
                                 padding: 1.5,
                                 borderRadius: 2,
                                 maxWidth: "80%",
                             }}
                         >
-                            {msg.text}
+                            {msg.message}
                         </Box>
                         <Typography variant="caption" sx={{ mt: 0.25, color: "gray" }}>
-                            {formatTimestamp(msg.timestamp)}
+                            {formatTimestamp(msg.sentAt)}
                         </Typography>
                     </Box>
                 ))}

@@ -51,8 +51,9 @@ import ManageSupplier from "./pages/admin/suppliers/supplier.jsx";
 import ManageStock from "./pages/admin/stocks/stock.jsx";
 import SearchPage from "./pages/user/searchPage/SearchPage.jsx";
 import AddStockForm from "./pages/admin/stocks/addStock.jsx";
-import AdminChatPage from "./pages/admin/customerSupports/AdminChatPage.jsx";
+import AdminChatPage from "./pages/admin/supportCustomer/AdminChatPage.jsx";
 import UpdateStockForm from "./pages/admin/stocks/updateStock.jsx";
+import ManageChatCustomer from "./pages/admin/supportCustomer/ManageChatCustomer.jsx";
 const AppRouter = () => {
   return (
     <Router>
@@ -91,11 +92,12 @@ const AppRouter = () => {
           <Route path="orders" element={<ManageOrder />} />
           <Route path="returns" element={<ManageReturn />} />
           <Route path="returns/detail/:returnId" element={<ReturnRequestAdmin />} />
+          <Route path="chats" element={<ManageChatCustomer />} />
+          <Route path="chats/:userId/:userName" element={<AdminChatPage />} />
           <Route path="reasons" element={<ManageReason />} />
           <Route path="discounts" element={<ManageDiscount />} />
           <Route path="vouchers" element={<ManageVoucher />} />
           <Route path="banners" element={<ManageBanner />} />
-          <Route path="chat" element={<AdminChatPage />} />
           <Route path="contacts" element={<Contacts />} />
           <Route path="invoices" element={<Invoices />} />
           <Route path="form" element={<Form />} />
