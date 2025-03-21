@@ -56,26 +56,6 @@ const ManageRating = () => {
         }
     };
 
-    const handleDeleteSelectedRows = async () => {
-        if (window.confirm("Bạn có chắc chắn muốn xóa các đánh giá đã chọn không?")) {
-            try {
-                for (const ratingId of selectedRows) {
-                    const res = await DeleteRating(ratingId);
-                    if (res?.status !== 200 && res?.status !== 204) {
-                        console.log(">>>Error deleting rating:", res);
-                    }
-                }
-                setRatings((prevRatings) =>
-                    prevRatings.filter((rating) => !selectedRows.includes(rating.ratingId))
-                );
-                setSelectedRows([]);
-                alert("Xóa các đánh giá đã chọn thành công!");
-            } catch (error) {
-                console.log(">>>Error deleting selected ratings:", error);
-            }
-        }
-    };
-
     const columns = [
         {
             field: "productId",
@@ -134,9 +114,6 @@ const ManageRating = () => {
         <Box m="20px">
             <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
                 <Header title="Quản lý đánh giá" subtitle="Danh sách đánh giá" />
-                <Button variant="contained" color="error" onClick={handleDeleteSelectedRows} >
-                    Xóa đã chọn
-                </Button>
             </Box>
 
             <Box
