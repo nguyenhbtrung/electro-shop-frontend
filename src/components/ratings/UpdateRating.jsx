@@ -8,10 +8,9 @@ import {
     TextField,
     Grid,
 } from "@mui/material";
-import { UpdateRating } from "../../services/ratingService"; // Adjust the path as necessary
 
 const UpdateRatingDialog = ({ open, onClose, onSubmit, rating, productId }) => {
-    const [ratingScore, setRatingScore] = useState(0);
+    const [ratingScore, setRatingScore] = useState(1);
     const [ratingContent, setRatingContent] = useState("");
     const [error, setError] = useState("");
 
@@ -36,15 +35,14 @@ const UpdateRatingDialog = ({ open, onClose, onSubmit, rating, productId }) => {
 
         // Chuẩn bị DTO cho rating
         const updatedRating = {
-            score: ratingScore,
-            content: trimmedContent,
+            ratingScore: ratingScore,
+            ratingContent: trimmedContent,
+            status: null, // Ensure status is always null
+            timeStamp: new Date().toISOString() // Ensure timeStamp is included
         };
 
         try {
-            await UpdateRating(productId, updatedRating);
             onSubmit(updatedRating);
-            setRatingScore(0);
-            setRatingContent("");
             setError("");
         } catch (error) {
             setError("Có lỗi xảy ra khi cập nhật đánh giá.");
@@ -58,7 +56,7 @@ const UpdateRatingDialog = ({ open, onClose, onSubmit, rating, productId }) => {
 
     return (
         <Dialog open={open} onClose={handleCancel} fullWidth maxWidth="sm">
-            <DialogTitle>Cập nhật đánh giá</DialogTitle>
+            <DialogTitle sx={{ fontWeight: 'bold' }}>Cập nhật đánh giá</DialogTitle>
             <DialogContent dividers>
                 <Grid container spacing={2}>
                     <Grid item xs={12}>
@@ -67,7 +65,10 @@ const UpdateRatingDialog = ({ open, onClose, onSubmit, rating, productId }) => {
                             fullWidth
                             type="number"
                             value={ratingScore}
-                            onChange={(e) => setRatingScore(Math.max(1, Math.min(5, Number(e.target.value))))}
+                            onChange={(e) => {
+                                const value = parseInt(e.target.value, 10) || 1;
+                                setRatingScore(Math.max(1, Math.min(5, value)));
+                            }}
                             error={!!error}
                         />
                     </Grid>
@@ -75,6 +76,7 @@ const UpdateRatingDialog = ({ open, onClose, onSubmit, rating, productId }) => {
                         <TextField
                             label="Nội dung đánh giá"
                             fullWidth
+                            type="string"
                             value={ratingContent}
                             onChange={(e) => setRatingContent(e.target.value)}
                         />
