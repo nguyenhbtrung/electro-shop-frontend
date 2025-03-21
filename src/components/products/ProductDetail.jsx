@@ -18,6 +18,7 @@ import {
 import { formatPrice } from '../../utils/formatValue';
 import { ProductPricing } from '../../services/attributeService';
 import GetRatingByProductId from './ProductRatings';
+import RatingForm from '../ratings/NewRating';
 
 const ProductDetail = ({
   product,

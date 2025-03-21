@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, Rating, IconButton, useTheme } from '@mui/material';
+import { Box, Typography, Rating, IconButton, useTheme, Button } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { GetRatingByProductId, DeleteRating, UpdateRating } from '../../services/ratingService';
 import UpdateRatingDialog from '../ratings/UpdateRating';
+import NewRating from '../ratings/NewRating'; // Import NewRating component
 
 const ProductRatings = ({ productId, isAdmin }) => {
     const [ratings, setRatings] = useState([]);
     const [selectedRating, setSelectedRating] = useState(null);
     const [openEditDialog, setOpenEditDialog] = useState(false);
     const [currentUserName, setCurrentUserName] = useState(null);
+    const [showNewRatingForm, setShowNewRatingForm] = useState(false);
     const theme = useTheme();
 
     useEffect(() => {
@@ -93,12 +95,50 @@ const ProductRatings = ({ productId, isAdmin }) => {
 
     return (
         <Box sx={{ width: '100%' }}>
-            <Typography variant="h2" sx={{ fontWeight: 'bold', mt: 4, mb: 2, display: 'flex', alignItems: 'center' }}>
-                Đánh giá sản phẩm:
-                <Rating value={averageRatingScore} readOnly precision={0.5} sx={{ ml: 2 }} />
-                <Box component="span" sx={{ mx: 1 }}></Box>
-                ({ratings.length} đánh giá)
-            </Typography>
+            <Box sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between', // dàn đều 2 bên
+                mt: 4,
+                mb: 2
+            }}>
+                {/* Bên trái: Tiêu đề, điểm trung bình, số lượng đánh giá */}
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    <Typography variant="h2" sx={{ fontWeight: 'bold' }}>
+                        Đánh giá sản phẩm:
+                    </Typography>
+                    {/* Hiển thị điểm đánh giá trung bình */}
+                    <Rating
+                        value={averageRatingScore}
+                        readOnly
+                        precision={0.5}
+                        sx={{ ml: 2 }}
+                    />
+                    {/* Tổng số đánh giá */}
+                    <Typography variant="h6" sx={{ ml: 1 }}>
+                        ({ratings.length} đánh giá)
+                    </Typography>
+                </Box>
+
+                {/* Bên phải: Nút "Tạo đánh giá" */}
+                <Button
+                    variant="contained" color="secondary"
+                    onClick={() => setShowNewRatingForm(true)}
+                >
+                    Tạo đánh giá
+                </Button>
+            </Box>
+            {/* Hiển thị form tạo đánh giá nếu showNewRatingForm = true */}
+            <NewRating
+                productId={productId}
+                onSuccess={() => {
+                    // Khi đánh giá thành công => đóng form + refetch
+                    fetchRatings();
+                    setShowNewRatingForm(false);
+                }}
+                open={showNewRatingForm}
+                onClose={() => setShowNewRatingForm(false)}
+            />
             {ratings.length > 0 ? (
                 ratings.map((rating, index) => (
                     <Box key={`${rating.ratingId}-${index}`} sx={{ backgroundColor: '#fff', mb: 2, border: '1px solid #ccc', borderRadius: 2, p: 2 }}>
