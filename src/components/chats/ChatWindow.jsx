@@ -11,7 +11,7 @@ import SendIcon from "@mui/icons-material/Send";
 import { formatTimestamp } from "../../utils/formatDatetime";
 import { CreateMessage, GetUserMessages } from "../../services/SupportMessageService";
 
-const ChatWindow = ({ onClose }) => {
+const ChatWindow = ({ onClose, signalRService }) => {
     // Khởi tạo danh sách tin nhắn với timestamp là đối tượng Date
     const [messages, setMessages] = useState([
         {
@@ -45,6 +45,19 @@ const ChatWindow = ({ onClose }) => {
         FetchData();
     }, []);
 
+    useEffect(() => {
+        signalRService.startConnection();
+
+        signalRService.connection.on("ReceiveAdminMessage", (message) => {
+
+        });
+
+        // Dọn dẹp listener khi component unmount
+        return () => {
+            // signalRService.connection.off("ReceiveMessage");
+        };
+    }, []);
+
     // Hàm cuộn xuống cuối danh sách tin nhắn
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -70,6 +83,7 @@ const ChatWindow = ({ onClose }) => {
                     sentAt: new Date(res.data.sentAt),
                 };
                 setMessages([...messages, message]);
+                signalRService.sendUserMessage(res.data?.message);
                 setNewMessage("");
                 // scrollToBottom();
             } else {

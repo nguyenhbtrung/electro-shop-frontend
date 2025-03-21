@@ -14,11 +14,13 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import CloseIcon from "@mui/icons-material/Close";
 import SendIcon from "@mui/icons-material/Send";
 import { formatTimestamp } from "../../../utils/formatDatetime";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { CreateMessage, GetMessagesByUserId } from "../../../services/SupportMessageService";
+import adminSignalRService from "../../../services/signalR/adminSignalRService";
 
 const AdminChatPage = () => {
     const { userId, userName } = useParams();
+    let id = -3;
 
     // Danh sách tin nhắn với timestamp là đối tượng Date
     const [messages, setMessages] = useState([
@@ -54,6 +56,28 @@ const AdminChatPage = () => {
         FetchData();
     }, []);
 
+    useEffect(() => {
+        // Mở kết nối khi component được mount
+        adminSignalRService.startConnection();
+
+        adminSignalRService.connection.on("ReceiveUserMessage", (userId, message, userName) => {
+            setMessages((prev) => [...prev, {
+                id: id--,
+                senderName: userName,
+                isFromAdmin: false,
+                message: message,
+                sentAt: new Date()
+            }])
+        });
+        adminSignalRService.claimConversation(userId);
+
+        // Dọn dẹp listener khi component unmount
+        return () => {
+            adminSignalRService.connection.off("ReceiveUserMessage");
+            adminSignalRService.releaseConversation(userId);
+        };
+    }, []);
+
     // Hàm cuộn xuống cuối danh sách tin nhắn
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -80,6 +104,7 @@ const AdminChatPage = () => {
                     sentAt: new Date(res.data.sentAt),
                 };
                 setMessages([...messages, message]);
+                adminSignalRService.sendMessageToUser(userId, message?.message);
                 setNewMessage("");
                 // scrollToBottom();
             } else {
@@ -95,6 +120,7 @@ const AdminChatPage = () => {
     const handleBack = () => {
         // console.log("Quay lại trang danh sách chat");
         // Ví dụ: sử dụng react-router-dom: navigate(-1);
+        adminSignalRService.releaseConversation(userId);
         navigate("/admin/chats");
     };
 

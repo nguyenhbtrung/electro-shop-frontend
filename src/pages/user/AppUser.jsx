@@ -7,6 +7,7 @@ import SideBar from "./layout/sidebar";
 import { GetCategoryTree } from "../../services/categoryService";
 import ChatButton from "../../components/chats/ChatButton";
 import ChatWindow from "../../components/chats/ChatWindow";
+import signalRService from "../../services/signalR/signalRService";
 
 export const ToggledContext = createContext(null);
 
@@ -25,6 +26,21 @@ function App() {
             }
         };
         GetTree();
+    }, []);
+
+    useEffect(() => {
+        // Mở kết nối khi component được mount
+        signalRService.startConnection();
+
+        // Lắng nghe sự kiện "ReceiveMessage"
+        // signalRService.connection.on("ReceiveMessage", (sender, msg) => {
+        //     setMessages((prevMessages) => [...prevMessages, { sender, msg }]);
+        // });
+
+        // Dọn dẹp listener khi component unmount
+        return () => {
+            // signalRService.connection.off("ReceiveMessage");
+        };
     }, []);
 
     return (
@@ -52,7 +68,7 @@ function App() {
                     {/* Nút chat luôn hiển thị */}
                     <ChatButton onClick={() => setOpenChat(!openChat)} />
                     {/* Hiển thị chat khi toggled = true */}
-                    {openChat && <ChatWindow onClose={() => setOpenChat(false)} />}
+                    {openChat && <ChatWindow onClose={() => setOpenChat(false)} signalRService={signalRService} />}
                 </ToggledContext.Provider>
             </ThemeProvider>
         </ColorModeContext.Provider>

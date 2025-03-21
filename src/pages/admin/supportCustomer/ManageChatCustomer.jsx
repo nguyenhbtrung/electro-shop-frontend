@@ -6,10 +6,12 @@ import { tokens } from "../../../theme";
 import { useEffect, useState } from "react";
 import { GetAllUserLatestMessages } from "../../../services/SupportMessageService";
 import { useNavigate } from "react-router-dom";
+import adminSignalRService from "../../../services/signalR/adminSignalRService";
 
 const ManageChatCustomer = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const adminId = localStorage.getItem("userId");
 
   const [userMessages, setUserMessages] = useState([]);
   const navigate = useNavigate();
@@ -26,9 +28,37 @@ const ManageChatCustomer = () => {
 
   }, []);
 
+  useEffect(() => {
+    // Mở kết nối khi component được mount
+    adminSignalRService.startConnection();
+
+    // Lắng nghe sự kiện "ReceiveMessage"
+    adminSignalRService.connection.on("ReceiveUserMessage", (userId, message, userName) => {
+      setUserMessages((prevMessages) =>
+        prevMessages.some((m) => m.userId === userId)
+          ? prevMessages.map((m) =>
+            m.userId === userId ? { ...m, message, userName, isFromAdmin: false } : m
+          )
+          : [...prevMessages, { userId, message }]
+      );
+    });
+
+
+    // Dọn dẹp listener khi component unmount
+    return () => {
+      adminSignalRService.connection.off("ReceiveUserMessage");
+    };
+  }, []);
+
   const handleResponse = (row) => {
+    adminSignalRService.claimConversation(row.userId);
     navigate(`/admin/chats/${row.userId}/${row.userName}`);
-  }
+  };
+
+  const buttonStyle = {
+    textTransform: "none",
+    minWidth: 80, // sizing theo pixel hoặc "100%" nếu muốn full width trong cell
+  };
 
   const columns = [
     { field: "userName", headerName: "Tên đăng nhập", flex: 1 },
@@ -60,22 +90,28 @@ const ManageChatCustomer = () => {
       renderCell: (params) => {
         // Ánh xạ trạng thái sang màu sắc
         const statusColorMap = {
-          pending: colors.status[300],
-          approved: colors.status[100],
-          processing: colors.status[200],
-          completed: colors.status[100],
-          rejected: colors.status[400],
+          1: colors.status[300],
+          2: colors.status[100],
+          3: colors.status[200],
+          4: colors.status[100],
+          5: colors.status[400],
         };
 
-        const color = statusColorMap[params.value] || "inherit";
-        let status = "";
+        let statusText = "";
+        let status = 0;
         if (params.row.isFromAdmin != null && !params.row.isFromAdmin) {
-          status = "Chưa phản hồi";
+          statusText = "Chưa phản hồi";
+          status = 1;
+        }
+        if (params.row.adminId && params.row.adminId != adminId) {
+          statusText = "Admin khác đang phản hồi";
+          status = 3;
         }
 
+        const color = statusColorMap[status] || "inherit";
         return (
           <span style={{ color: color, fontWeight: "bold" }}>
-            {status}
+            {statusText}
           </span>
         );
       },
@@ -87,18 +123,55 @@ const ManageChatCustomer = () => {
       minWidth: 100,
       sortable: false,
       filterable: false,
-      renderCell: (params) => (
-        <Button
-          variant="contained"
-          color="secondary"
-          onClick={() => handleResponse(params.row)}
-          sx={{
-            textTransform: "none"
-          }}
-        >
-          Phản hồi
-        </Button>
-      ),
+      renderCell: (params) => {
+        // if (adminId && params.row.adminId === adminId) {
+        //   return (
+        //     <Box>
+        //       <Button
+        //         variant="contained"
+        //         color="error"
+        //         onClick={() => handleResponse(params.row)}
+        //         sx={buttonStyle}
+        //       >
+        //         Kết thúc
+        //       </Button>
+        //       <Button
+        //         variant="contained"
+        //         color="info"
+        //         disabled={params.row.adminId}
+        //         onClick={() => handleResponse(params.row)}
+        //         sx={buttonStyle}
+        //       >
+        //         Phản hồi
+        //       </Button>
+        //     </Box>
+        //   );
+        // }
+        if (params.row.isFromAdmin != null && !params.row.isFromAdmin) {
+          return (
+            <Button
+              variant="contained"
+              color="info"
+              disabled={params.row.adminId && params.row.adminId !== adminId}
+              onClick={() => handleResponse(params.row)}
+              sx={buttonStyle}
+            >
+              Phản hồi
+            </Button>
+          );
+        }
+        return (
+          <Button
+            variant="contained"
+            color="secondary"
+            disabled={params.row.adminId && params.row.adminId !== adminId}
+            onClick={() => handleResponse(params.row)}
+            sx={buttonStyle}
+          >
+            Gửi
+          </Button>
+        );
+      },
     }
   ];
   return (
