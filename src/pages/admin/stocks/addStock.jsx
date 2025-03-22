@@ -22,7 +22,6 @@ const initialValues = {
 
 const checkoutSchema = yup.object().shape({
 	stockImportName: yup.string().required('Tên đăng nhập là bắt buộc'),
-	stockImportStatus: yup.string().required('Trạng thái lô hàng là bắt buộc'),
 	supplierId: yup.number().required("Nhà cung cấp là bắt buộc"),
 	stockImportItems: yup.array().of(
 		yup.object().shape({
@@ -320,7 +319,7 @@ const AddStockForm = () => {
 									Hủy
 								</Button>
 								<Button type="submit" color="secondary" variant="contained">
-									Thêm người dùng mới
+									Thêm lô hàng mới
 								</Button>
 							</Box>
 						</form>
