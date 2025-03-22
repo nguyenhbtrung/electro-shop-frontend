@@ -5,6 +5,12 @@ const GetOrderByUser = (userId) => {
     return api.get(URL_API);
 };
 
+const GetOrderByStatus = (status) => {
+    const URL_API = "/api/Order/user/vieworderbystatus?status=successed";
+    return api.get(URL_API);
+}
+
 export {
-    GetOrderByUser
+    GetOrderByUser,
+    GetOrderByStatus
 };

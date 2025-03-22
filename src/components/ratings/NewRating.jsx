@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { CreateRating, GetRatingByProductId } from "../../services/ratingService";
-import axios from "axios";
+import { GetOrderByStatus } from "../../services/orderService";
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, Grid } from '@mui/material';
 
 const RatingForm = ({ productId, onSuccess, open, onClose }) => {
@@ -17,18 +17,19 @@ const RatingForm = ({ productId, onSuccess, open, onClose }) => {
     // Hàm kiểm tra mua hàng, trả về boolean
     const checkPurchaseStatus = async () => {
         try {
-            const response = await axios.get(`/api/Order/user/vieworderbystatus?status=successed`);
-            if (response.data.status === "successed") {
-                const orders = response.data.orders;
-                const userId = localStorage.getItem('userId');
-                const hasPurchasedProduct = orders.some(order =>
-                    order.userId === userId &&
-                    order.orderItems.some(item => item.productId === productId)
-                );
-                return hasPurchasedProduct;
-            } else {
-                return false;
-            }
+            const response = await GetOrderByStatus("successed");
+            console.log("Response from GetOrderByStatus:", response);
+            const currentUserId = localStorage.getItem('userId');
+            console.log("currentUserId: ", currentUserId);
+
+            const orders = response.data;
+            const hasPurchasedProduct = orders.some(order =>
+                order.status === "successed" && // Chỉ kiểm tra đơn hàng đã thành công
+                order.userId === currentUserId && // Chỉ kiểm tra đơn hàng của user hiện tại
+                order.orderItems.some(item => item.productId === productId) // Kiểm tra xem đơn hàng có chứa sản phẩm cần đánh giá không
+            );
+            console.log("hasPurchasedProduct: ", hasPurchasedProduct);
+            return hasPurchasedProduct;
         } catch (error) {
             console.error("Lỗi kiểm tra mua hàng:", error);
             return false;
@@ -39,6 +40,7 @@ const RatingForm = ({ productId, onSuccess, open, onClose }) => {
     useEffect(() => {
         async function fetchPurchaseStatus() {
             const purchased = await checkPurchaseStatus();
+            console.log("Purchased status: ", purchased);
             setHasPurchased(purchased);
         }
         fetchPurchaseStatus();
@@ -72,6 +74,7 @@ const RatingForm = ({ productId, onSuccess, open, onClose }) => {
         try {
             // Kiểm tra lại tình trạng mua hàng ngay trước khi submit
             const purchased = await checkPurchaseStatus();
+            console.log("Purchased status before submit: ", purchased);
             if (!purchased) {
                 alert("Bạn chưa mua sản phẩm này, không thể đánh giá!");
                 setSubmitting(false);
@@ -93,7 +96,10 @@ const RatingForm = ({ productId, onSuccess, open, onClose }) => {
                 productId,
                 ratingScore: parseInt(ratingScore),
                 ratingContent,
+                userId: localStorage.getItem('userId'),
+                userName: localStorage.getItem('userName')
             };
+
 
             // Gọi API tạo đánh giá qua ratingService.js
             await CreateRating(data);
