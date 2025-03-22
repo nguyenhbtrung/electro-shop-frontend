@@ -10,8 +10,10 @@ import {
 } from "@mui/material";
 import Autocomplete from "@mui/material/Autocomplete";
 import { UpdateProduct } from "../../services/productService";
+import { AddAttributeToProduct } from "../../services/attributeService";
 import { GetAllBrand } from "../../services/brandService";
 import { GetAllCategories } from "../../services/categoryService";
+import { GetAllAttribute } from "../../services/attributeService";
 
 const AddUpdateProductDialog = ({ open, onClose, onSubmit, product }) => {
   const [formValues, setFormValues] = useState({
@@ -27,6 +29,11 @@ const AddUpdateProductDialog = ({ open, onClose, onSubmit, product }) => {
   const [categoriesList, setCategoriesList] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [error, setError] = useState("");
+
+  // NEW: State cho thuộc tính và chi tiết thuộc tính của sản phẩm
+  const [attributeList, setAttributeList] = useState([]);
+  const [selectedProductAttribute, setSelectedProductAttribute] = useState(null);
+  const [selectedAttributeDetail, setSelectedAttributeDetail] = useState(null);
 
   // Fetch danh sách nhãn hàng từ API
   useEffect(() => {
@@ -58,6 +65,21 @@ const AddUpdateProductDialog = ({ open, onClose, onSubmit, product }) => {
     fetchCategories();
   }, []);
 
+  // Fetch danh sách thuộc tính từ API
+  useEffect(() => {
+    const fetchAttributes = async () => {
+      try {
+        const res = await GetAllAttribute();
+        if (res?.data) {
+          setAttributeList(res.data);
+        }
+      } catch (err) {
+        console.log("Error fetching attributes:", err);
+      }
+    };
+    fetchAttributes();
+  }, []);
+
   // Khi có sản phẩm được chọn hoặc dialog mở, cập nhật giá trị ban đầu
   useEffect(() => {
     if (product) {
@@ -85,6 +107,9 @@ const AddUpdateProductDialog = ({ open, onClose, onSubmit, product }) => {
     }
     // Reset lỗi khi mở lại dialog hoặc thay đổi sản phẩm
     setError("");
+    // Reset lựa chọn thuộc tính khi mở dialog
+    setSelectedProductAttribute(null);
+    setSelectedAttributeDetail(null);
   }, [product, open]);
 
   const handleChange = (e) => {
@@ -109,6 +134,35 @@ const AddUpdateProductDialog = ({ open, onClose, onSubmit, product }) => {
       ...prev,
       brandId: newValue ? newValue.brandId : null,
     }));
+  };
+
+  // Hàm thêm thuộc tính cho sản phẩm (dựa vào attribute detail được chọn)
+  const handleAddAttributeToProduct = async () => {
+    if (!product) {
+      setError("Sản phẩm chưa được chọn.");
+      return;
+    }
+    if (!selectedProductAttribute || !selectedAttributeDetail) {
+      setError("Vui lòng chọn thuộc tính và giá trị thuộc tính.");
+      return;
+    }
+    try {
+      const res = await AddAttributeToProduct(product.productId, {
+        attributeDetailId: [selectedAttributeDetail.attributeDetailId],
+      });
+      if (res?.status === 200) {
+        alert("Thêm thuộc tính cho sản phẩm thành công!");
+        // Reset lựa chọn sau khi thêm
+        setSelectedProductAttribute(null);
+        setSelectedAttributeDetail(null);
+        setError("");
+      } else {
+        setError("Có lỗi xảy ra khi thêm thuộc tính cho sản phẩm.");
+      }
+    } catch (err) {
+      console.log("Error adding attribute to product:", err);
+      setError("Có lỗi xảy ra khi thêm thuộc tính cho sản phẩm.");
+    }
   };
 
   const handleSubmit = async () => {
@@ -234,6 +288,44 @@ const AddUpdateProductDialog = ({ open, onClose, onSubmit, product }) => {
                 <TextField {...params} label="Chọn nhãn hàng" placeholder="Nhãn hàng" />
               )}
             />
+          </Grid>
+          {/* NEW: Combobox chọn thuộc tính */}
+          <Grid item xs={12} sm={6}>
+            <Autocomplete
+              options={attributeList}
+              getOptionLabel={(option) => option.name || ""}
+              value={selectedProductAttribute}
+              onChange={(event, newValue) => {
+                setSelectedProductAttribute(newValue);
+                // Reset lựa chọn chi tiết khi thay đổi thuộc tính
+                setSelectedAttributeDetail(null);
+              }}
+              renderInput={(params) => (
+                <TextField {...params} label="Chọn thuộc tính" placeholder="Thuộc tính" />
+              )}
+            />
+          </Grid>
+          {/* NEW: Combobox chọn giá trị thuộc tính (chi tiết) */}
+          <Grid item xs={12} sm={6}>
+            <Autocomplete
+              options={selectedProductAttribute ? selectedProductAttribute.details : []}
+              getOptionLabel={(option) => option.value || ""}
+              value={selectedAttributeDetail}
+              onChange={(event, newValue) => setSelectedAttributeDetail(newValue)}
+              renderInput={(params) => (
+                <TextField {...params} label="Chọn giá trị thuộc tính" placeholder="Giá trị" />
+              )}
+            />
+          </Grid>
+          {/* Nút thêm thuộc tính cho sản phẩm */}
+          <Grid item xs={12}>
+            <Button
+              variant="outlined"
+              color="primary"
+              onClick={handleAddAttributeToProduct}
+            >
+              Thêm thuộc tính cho sản phẩm
+            </Button>
           </Grid>
           {error && (
             <Grid item xs={12}>

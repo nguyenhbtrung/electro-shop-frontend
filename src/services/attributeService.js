@@ -20,4 +20,8 @@ const CreateAttributeDetail =(attributeId,data)=>{
   const URL_API = `/api/ProductAttributes/${attributeId}/details`;
   return api.post(URL_API,data);
 }
-export { ProductPricing,GetAllAttribute,CreateAttribute,CreateAttributeDetail };
+const AddAttributeToProduct=(productId,data)=>{
+  const URL_API = `/api/Product/${productId}/addAttributeId`;
+  return api.post(URL_API,data);
+}
+export { ProductPricing,GetAllAttribute,CreateAttribute,CreateAttributeDetail,AddAttributeToProduct };
