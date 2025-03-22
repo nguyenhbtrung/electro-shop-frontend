@@ -1,6 +1,6 @@
 import api from './axios/axios.customize'
 
-const GetOrderByUser = () => {
+const GetOrderByUser = (userId) => {
     const URL_API = "/api/Order/user/vieworder";
     return api.get(URL_API);
 };
@@ -8,8 +8,3 @@ const GetOrderByUser = () => {
 export {
     GetOrderByUser
 };
-
-export const GetUserOrders = (userId) => {
-    const URL_API = `/api/Order/user/vieworder`;
-    return api.get(URL_API);
-}
