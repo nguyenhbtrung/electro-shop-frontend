@@ -11,6 +11,7 @@ import ChatWindow from "../../components/chats/ChatWindow";
 import signalRService from "../../services/signalR/signalRService";
 
 export const ToggledContext = createContext(null);
+export const ChatContext = createContext();
 
 function App() {
     const [theme, colorMode] = useMode();
@@ -54,44 +55,46 @@ function App() {
             <ThemeProvider theme={theme}>
                 <CssBaseline />
                 <ToggledContext.Provider value={values}>
-                    <Box sx={{ display: "flex", height: "100vh", maxWidth: "100%" }}>
-                        <SideBar categories={categoryTree} />
-                        <Box
-                            sx={{
-                                flexGrow: 1,
-                                display: "flex",
-                                flexDirection: "column",
-                                height: "100%",
-                                maxWidth: "100%",
-                            }}
-                        >
-                            <Navbar />
-                            <Box sx={{ overflowY: "auto", flex: 1, maxWidth: "100%" }}>
-                                <Outlet />
+                    <ChatContext.Provider value={{ setOpenChat, setHasNewMessage }}>
+                        <Box sx={{ display: "flex", height: "100vh", maxWidth: "100%" }}>
+                            <SideBar categories={categoryTree} />
+                            <Box
+                                sx={{
+                                    flexGrow: 1,
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    height: "100%",
+                                    maxWidth: "100%",
+                                }}
+                            >
+                                <Navbar />
+                                <Box sx={{ overflowY: "auto", flex: 1, maxWidth: "100%" }}>
+                                    <Outlet />
+                                </Box>
                             </Box>
                         </Box>
-                    </Box>
-                    {/* Nút chat luôn hiển thị */}
-                    <ChatButton
-                        // Truyền props hasNotification dựa trên sự kết hợp của tin nhắn mới và trạng thái openChat 
-                        hasNotification={hasNewMessage && !openChat}
-                        onClick={() => {
-                            // Nếu người dùng mở chat, hãy xóa cảnh báo
-                            if (!openChat) {
-                                setHasNewMessage(false);
-                            }
-                            setOpenChat(!openChat);
-                        }}
-                    />
-                    {/* Hiển thị chat khi openChat = true */}
-                    {openChat && (
-                        <ChatWindow
-                            onClose={() => {
-                                setOpenChat(false);
+                        {/* Nút chat luôn hiển thị */}
+                        <ChatButton
+                            // Truyền props hasNotification dựa trên sự kết hợp của tin nhắn mới và trạng thái openChat 
+                            hasNotification={hasNewMessage && !openChat}
+                            onClick={() => {
+                                // Nếu người dùng mở chat, hãy xóa cảnh báo
+                                if (!openChat) {
+                                    setHasNewMessage(false);
+                                }
+                                setOpenChat(!openChat);
                             }}
-                            signalRService={signalRService}
                         />
-                    )}
+                        {/* Hiển thị chat khi openChat = true */}
+                        {openChat && (
+                            <ChatWindow
+                                onClose={() => {
+                                    setOpenChat(false);
+                                }}
+                                signalRService={signalRService}
+                            />
+                        )}
+                    </ChatContext.Provider>
                 </ToggledContext.Provider>
             </ThemeProvider>
         </ColorModeContext.Provider>

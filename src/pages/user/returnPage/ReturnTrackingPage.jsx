@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
     Box,
     Container,
@@ -17,12 +17,14 @@ import { convertToLocaleDateString } from '../../../utils/formatDatetime';
 import ReturnStepper from '../../../components/returns/ReturnStepper';
 import { ErrorOutline } from '@mui/icons-material';
 import CheckCircleOutline from '@mui/icons-material/CheckCircleOutline'; // Icon thành công
+import { ChatContext } from '../AppUser';
 
 const ReturnDetailPage = () => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
     const { returnId } = useParams();
     const [returnData, setReturnData] = useState({});
+    const { setOpenChat, setHasNewMessage } = useContext(ChatContext);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -185,7 +187,14 @@ const ReturnDetailPage = () => {
                         - Trong trường hợp có thắc mắc, hãy liên hệ với bộ phận hỗ trợ qua Chat hoặc Hotline.
                     </Typography>
                     <Box display="flex" justifyContent="flex-start" mt={2}>
-                        <Button variant="contained" color="secondary">
+                        <Button
+                            variant="contained"
+                            color="secondary"
+                            onClick={() => {
+                                setOpenChat(true);
+                                setHasNewMessage(false); // Xóa thông báo nếu có
+                            }}
+                        >
                             Liên Hệ Hỗ Trợ
                         </Button>
                     </Box>
