@@ -200,7 +200,7 @@ const ManageStock = () => {
 				setInfoDialogOpen(true);
 				GetAllStock();
 			} catch (error) {
-				setInfo(`Có lỗi khi xóa người dùng!`);
+				setInfo(`Có lỗi khi xóa lô hàng!`);
 				setInfoDialogOpen(true);
 				console.error(error);
 			}

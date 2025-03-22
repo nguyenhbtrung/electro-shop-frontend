@@ -103,7 +103,7 @@ const ManageSupplier = () => {
 		if (res?.status === 200 && res?.data) {
 			setInfo(`Thêm nhà cung cấp thành công!`);
 			setInfoDialogOpen(true);
-			GetAllSuppliers();
+			fetchSuppliers();
 		} else {
 			setInfo(`Có lỗi khi thêm nhà cung cấp!`);
 			setInfoDialogOpen(true);
@@ -116,7 +116,7 @@ const ManageSupplier = () => {
 		if (res?.status === 200 && res?.data) {
 			setInfo(`Cập nhật nhà cung cấp thành công!`);
 			setInfoDialogOpen(true);
-			GetAllSuppliers();
+			fetchSuppliers();
 		} else {
 			setInfo(`Có lỗi khi cập nhật nhà cung cấp!`);
 			setInfoDialogOpen(true);
@@ -134,7 +134,7 @@ const ManageSupplier = () => {
 				}
 				setInfo(`Đã xoá ${selectedRows.length} nhà cung cấp!`);
 				setInfoDialogOpen(true);
-				GetAllSuppliers();
+				fetchSuppliers();
 			} catch (error) {
 				setInfo(`Có lỗi khi xóa nhà cung cấp!`);
 				setInfoDialogOpen(true);
