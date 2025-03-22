@@ -46,7 +46,7 @@ class AdminSignalRService {
             console.error("Lỗi:", error);
         });
         this.connection.on("ClaimStatus", (status) => {
-            console.error("ClaimStatus:", status);
+            console.log("ClaimStatus:", status);
         });
     }
 

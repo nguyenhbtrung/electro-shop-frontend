@@ -78,6 +78,8 @@ const ManageChatCustomer = () => {
     return () => {
       adminSignalRService.connection.off("ReceiveUserMessage");
       adminSignalRService.connection.off("ReceiveAdminMessage");
+      adminSignalRService.connection.off("ConversationClaimed");
+      adminSignalRService.connection.off("ConversationReleased");
     };
   }, []);
 

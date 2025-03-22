@@ -61,22 +61,40 @@ const AdminChatPage = () => {
         adminSignalRService.startConnection();
 
         adminSignalRService.connection.on("ReceiveUserMessage", (userId, message, userName) => {
-            setMessages((prev) => [...prev, {
-                id: id--,
-                senderName: userName,
-                isFromAdmin: false,
-                message: message,
-                sentAt: new Date()
-            }]);
+            setMessages((prev) => [
+                ...prev,
+                {
+                    id: id--,
+                    senderName: userName,
+                    isFromAdmin: false,
+                    message: message,
+                    sentAt: new Date(),
+                },
+            ]);
         });
-        adminSignalRService.claimConversation(userId);
 
-        // Dọn dẹp listener khi component unmount
+        // Số lần gọi claimConversation cần thực hiện
+        const repeatCount = 5;
+        let callIndex = 0;
+
+        // Gọi hàm mỗi 1000ms (1 giây)
+        const intervalId = setInterval(() => {
+            adminSignalRService.claimConversation(userId);
+            callIndex++;
+
+            if (callIndex >= repeatCount) {
+                clearInterval(intervalId);
+            }
+        }, 1000);
+
+        // Dọn dẹp listener và interval khi component unmount
         return () => {
             adminSignalRService.connection.off("ReceiveUserMessage");
             adminSignalRService.releaseConversation(userId);
+            clearInterval(intervalId);
         };
-    }, []);
+    }, [userId]);
+
 
     // Hàm cuộn xuống cuối danh sách tin nhắn
     const scrollToBottom = () => {
