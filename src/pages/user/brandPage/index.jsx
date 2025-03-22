@@ -8,12 +8,12 @@ import {
   MenuItem,
   Button,
 } from "@mui/material";
+import Footer from "../../../components/Footer";
 import ProductCard from "../../../components/products/ProductCard";
 import { useParams } from "react-router-dom";
 import { GetProductByBrandId } from "../../../services/brandService";
 import { FilterInBrand } from "../../../services/filterProductService";
 import { GetAllCategory } from "../../../services/productService";
-
 const BrandProductPage = () => {
   const { brandId } = useParams();
   const [products, setProducts] = useState([]);
@@ -67,7 +67,8 @@ const BrandProductPage = () => {
   };
 
   return (
-    <Box sx={{ maxWidth: 1200, margin: "0 auto", p: 2 }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+              <Box sx={{ maxWidth: 1200, margin: "0 auto", p: 2 }}>
       <Typography variant="h5" sx={{ mb: 2 }}>
         Sản phẩm của thương hiệu
       </Typography>
@@ -155,6 +156,10 @@ const BrandProductPage = () => {
           )}
         </Box>
       </Box>
+    </Box>
+
+
+        <Footer />
     </Box>
   );
 };

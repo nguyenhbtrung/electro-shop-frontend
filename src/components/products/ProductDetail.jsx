@@ -15,10 +15,11 @@ import {
   Security,
   HeadsetMic,
 } from '@mui/icons-material';
+import { Link } from 'react-router-dom';
 import { formatPrice } from '../../utils/formatValue';
 import { ProductPricing } from '../../services/attributeService';
 import GetRatingByProductId from './ProductRatings';
-
+import Footer from '../Footer';
 const ProductDetail = ({
   product,
   defaultSelectedAttributes,
@@ -79,7 +80,8 @@ const ProductDetail = ({
   const handleThumbnailClick = (index) => setCurrentImageIndex(index);
 
   return (
-    <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
+     <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+          <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
       <Box sx={{ maxWidth: '1200px', width: '100%' }}>
         {/* Khối chứa ảnh và thông tin sản phẩm */}
         <Box sx={{ border: '1px solid #ccc', borderRadius: 2, p: 2, backgroundColor: '#f9f9f9' }}>
@@ -182,7 +184,7 @@ const ProductDetail = ({
 
             {/* Phần thông tin sản phẩm */}
             <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', mx: 'auto', color: '#000' }}>
-              <Box sx={{ mb: 2 ,height: '20%'}}>
+              <Box sx={{ mb: 2, height: '20%' }}>
                 <Typography variant="h4" sx={{ fontWeight: 'bold', fontSize: '2rem' }}>
                   {product.name}
                 </Typography>
@@ -248,7 +250,7 @@ const ProductDetail = ({
                       </>
                     )}
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap', mt: 2 }}>
-                      <Box sx={{ display: 'flex', alignItems: 'center', color: '#000'  }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', color: '#000' }}>
                         <Typography variant="subtitle1" sx={{ mr: 2 }}>
                           Số lượng:
                         </Typography>
@@ -262,72 +264,69 @@ const ProductDetail = ({
                       </Box>
                     </Box>
                     <Box sx={{ display: 'flex', gap: 2 }}>
-                        <Button variant="contained" color="error" disabled={product.stock === 0}>
-                          Thêm vào giỏ
-                        </Button>
-                        <Button variant="contained" color="primary" disabled={product.stock === 0}>
-                          Mua ngay
-                        </Button>
-                      </Box>
+                      <Button variant="contained" color="error" disabled={product.stock === 0}>
+                        Thêm vào giỏ
+                      </Button>
+                      <Button variant="contained" color="primary" disabled={product.stock === 0}>
+                        Mua ngay
+                      </Button>
+                    </Box>
                   </Box>
                 </Box>
 
                 {/* Chính sách bán hàng */}
                 <Box
-  sx={{
-    p: 2,
-    border: '1px solid #ccc',
-    borderRadius: 2,
-    backgroundColor: '#fff',
-    width: '40%',
-    height: '400px', // chiều cao cố định ví dụ 400px
-    display: 'flex',
-    flexDirection: 'column',
-  }}
->
-  {/* Phần văn bản chiếm 60% */}
-  <Box
-    sx={{
-      height: '60%',
-      display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'center',
-    }}
-  >
-    <Typography variant="h6" sx={{ mb: 1, fontWeight: 'bold', color: '#000'  }}>
-      Chính sách bán hàng
-    </Typography>
-    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1, color: '#000'  }}>
-      <LocalShipping color="primary" sx={{ mr: 1 }} />
-      <Typography variant="body2">Miễn phí giao hàng toàn quốc</Typography>
-    </Box>
-    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1, color: '#000'  }}>
-      <Replay color="primary" sx={{ mr: 1 }} />
-      <Typography variant="body2">Đổi trả trong 7 ngày</Typography>
-    </Box>
-    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1, color: '#000'  }}>
-      <Security color="primary" sx={{ mr: 1 }} />
-      <Typography variant="body2">Bảo hành chính hãng 12 tháng</Typography>
-    </Box>
-    <Box sx={{ display: 'flex', alignItems: 'center', color: '#000'  }}>
-      <HeadsetMic color="primary" sx={{ mr: 1 }} />
-      <Typography variant="body2">Tổng đài hỗ trợ 24/7</Typography>
-    </Box>
-  </Box>
-
-  {/* Phần hình ảnh chiếm 40% */}
-  <Box sx={{ height: '40%' }}>
-    <Box
-      component="img"
-      src="https://theme.hstatic.net/1000288298/1001020793/14/product_banner.jpg?v=1422"
-      sx={{
-        width: '100%',
-        objectFit: 'cover',
-        borderRadius: 1,
-      }}
-    />
-  </Box>
-</Box>
+                  sx={{
+                    p: 2,
+                    border: '1px solid #ccc',
+                    borderRadius: 2,
+                    backgroundColor: '#fff',
+                    width: '40%',
+                    height: '400px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                  }}
+                >
+                  <Box
+                    sx={{
+                      height: '60%',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    <Typography variant="h6" sx={{ mb: 1, fontWeight: 'bold', color: '#000' }}>
+                      Chính sách bán hàng
+                    </Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1, color: '#000' }}>
+                      <LocalShipping color="primary" sx={{ mr: 1 }} />
+                      <Typography variant="body2">Miễn phí giao hàng toàn quốc</Typography>
+                    </Box>
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1, color: '#000' }}>
+                      <Replay color="primary" sx={{ mr: 1 }} />
+                      <Typography variant="body2">Đổi trả trong 7 ngày</Typography>
+                    </Box>
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1, color: '#000' }}>
+                      <Security color="primary" sx={{ mr: 1 }} />
+                      <Typography variant="body2">Bảo hành chính hãng 12 tháng</Typography>
+                    </Box>
+                    <Box sx={{ display: 'flex', alignItems: 'center', color: '#000' }}>
+                      <HeadsetMic color="primary" sx={{ mr: 1 }} />
+                      <Typography variant="body2">Tổng đài hỗ trợ 24/7</Typography>
+                    </Box>
+                  </Box>
+                  <Box sx={{ height: '40%' }}>
+                    <Box
+                      component="img"
+                      src="https://theme.hstatic.net/1000288298/1001020793/14/product_banner.jpg?v=1422"
+                      sx={{
+                        width: '100%',
+                        objectFit: 'cover',
+                        borderRadius: 1,
+                      }}
+                    />
+                  </Box>
+                </Box>
               </Box>
             </Box>
           </Box>
@@ -335,19 +334,35 @@ const ProductDetail = ({
 
         {/* Thông tin sản phẩm bổ sung */}
         <Box sx={{ mt: 2, p: 2, border: '1px solid #ccc', borderRadius: 2, backgroundColor: '#fff' }}>
-          <Typography variant="h7" sx={{ fontWeight: 'bold', fontSize: '2rem', color: '#000'  }}>
+          <Typography variant="h7" sx={{ fontWeight: 'bold', fontSize: '2rem', color: '#000' }}>
             Mô tả sản phẩm:
           </Typography>
           <Typography variant="subtitle1" sx={{ mb: 1, color: '#000' }}>
-            Thương hiệu: {product.brand?.brandName || 'Không xác định'}
+            Thương hiệu:{' '}
+            {product.brand ? (
+              <Link to={`/brands/${product.brand.brandId}`} style={{ textDecoration: 'none', color: '#1976d2' }}>
+                {product.brand.brandName}
+              </Link>
+            ) : (
+              'Không xác định'
+            )}
           </Typography>
-          <Typography variant="subtitle1" sx={{ mb: 1, color: '#000'  }}>
+          <Typography variant="subtitle1" sx={{ mb: 1, color: '#000' }}>
             Danh mục:{' '}
-            {product.categories && product.categories.length > 0
-              ? product.categories.map((cat) => cat.name).join(', ')
-              : 'Chưa phân loại'}
+            {product.categories && product.categories.length > 0 ? (
+              product.categories.map((cat, index) => (
+                <React.Fragment key={cat.categoryId}>
+                  <Link to={`/categories/${cat.categoryId}`} style={{ textDecoration: 'none', color: '#1976d2' }}>
+                    {cat.name}
+                  </Link>
+                  {index < product.categories.length - 1 && ', '}
+                </React.Fragment>
+              ))
+            ) : (
+              'Chưa phân loại'
+            )}
           </Typography>
-          <Typography variant="subtitle1" sx={{ mb: 1, color: '#000'  }}>
+          <Typography variant="subtitle1" sx={{ mb: 1, color: '#000' }}>
             Đã bán: {product.unitsSold} sản phẩm
           </Typography>
         </Box>
@@ -356,6 +371,10 @@ const ProductDetail = ({
           <GetRatingByProductId productId={productId} />
         </Box>
       </Box>
+    </Box>
+
+
+        <Footer />
     </Box>
   );
 };

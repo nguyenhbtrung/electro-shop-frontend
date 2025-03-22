@@ -56,6 +56,7 @@ import UpdateStockForm from "./pages/admin/stocks/updateStock.jsx";
 import ManageChatCustomer from "./pages/admin/supportCustomer/ManageChatCustomer.jsx";
 import DetailStock from "./pages/admin/stocks/detailStock.jsx";
 import ManageBanner from "./pages/admin/banners/banners.jsx";
+import BrandProductPage from "./pages/user/brandPage/index.jsx";
 
 const AppRouter = () => {
   return (
@@ -63,6 +64,7 @@ const AppRouter = () => {
       <Routes>
         <Route path="/" element={<AppUser />}>
           <Route index element={<HomePage />} />
+          <Route path="brands/:brandId" element={<BrandProductPage />} />
           <Route path="categories/:categoryId" element={<CategoryPage />} />
           <Route path="/product/:id" element={<ProductDetailWrapper />} />
           <Route path="history" element={<ProductViewHistoryPage />} />

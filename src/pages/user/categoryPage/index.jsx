@@ -13,6 +13,7 @@ import { GetProductByCategoryId } from "../../../services/categoryService";
 import { FilterInCategory } from "../../../services/filterProductService";
 import { GetAllBrand } from "../../../services/brandService"; 
 import { useParams } from "react-router-dom";
+import Footer from "../../../components/Footer";
 
 const CategoryProductsPage = () => {
   const { categoryId } = useParams();
@@ -78,7 +79,8 @@ const CategoryProductsPage = () => {
   };
 
   return (
-    <Box
+    <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+          <Box
       sx={{
         maxWidth: 1200,
         margin: "0 auto",
@@ -170,6 +172,10 @@ const CategoryProductsPage = () => {
         </Box>
       </Box>
     </Box>
+
+
+        <Footer />
+        </Box>
   );
 };
 
