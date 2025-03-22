@@ -16,18 +16,45 @@ const OrderItem = ({ item }) => (
     }}
   >
     <img
-      src={item.productImage || "https://via.placeholder.com/80"}
+      src={item.productImage}
       alt={item.productName}
       style={{ width: "80px", height: "80px", objectFit: "cover" }}
     />
     <Box sx={{ flex: 1, marginLeft: "16px" }}>
-      <Typography variant="h6">{item.productName || "Sản phẩm không có tên"}</Typography>
+      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <Typography variant="h6">{item.productName || "Sản phẩm không có tên"}</Typography>
+        <Button
+          variant="text"
+          color="primary"
+          sx={{ opacity: 0.5, fornSize: "0.8rem" }}
+          href={`/review/${item.productId}`}
+        >
+          Đánh giá
+        </Button>
+      </Box>
       <Typography color="text.secondary">
         Giá: {item.price.toLocaleString()} đ x {item.quantity}
       </Typography>
     </Box>
   </Box>
 );
+
+const getStatusLabel = (status) => {
+  switch (status) {
+    case "pending":
+      return "Đang chuẩn bị";
+    case "successed":
+      return "Đã hoàn thành";
+    case "shipping":
+      return "Đang vận chuyển";
+    case "return":
+      return "Trả hàng";
+    case "cancelled":
+      return "Đã hủy";
+    default:
+      return "Không xác định";
+  }
+};
 
 const ViewUserOrders = () => {
   const [orders, setOrders] = useState([]);
@@ -38,7 +65,6 @@ const ViewUserOrders = () => {
     const fetchOrderData = async () => {
       try {
         const response = await GetOrderByUser();
-        console.log("Dữ liệu đơn hàng:", response.data);
         setOrders(response.data);
       } catch (err) {
         setError("Không thể lấy dữ liệu đơn hàng.");
@@ -57,9 +83,7 @@ const ViewUserOrders = () => {
   return (
     <Box>
       {orders.length === 0 ? (
-        <Typography
-          sx={{ fontSize: "1.2rem", textAlign: "center", margin: "20px 0" }}
-        >
+        <Typography sx={{ fontSize: "1.2rem", textAlign: "center", margin: "20px 0" }}>
           Bạn chưa có đơn hàng nào!
         </Typography>
       ) : (
@@ -71,16 +95,25 @@ const ViewUserOrders = () => {
               borderRadius: "8px",
               marginBottom: "24px",
               padding: "16px",
+              position: "relative"
             }}
           >
-            <Typography variant="h6" sx={{ marginBottom: "12px" }}>
-              Mã đơn hàng: {order.orderId}
+            <Typography
+              sx={{
+                position: "absolute",
+                top: "16px",
+                right: "16px",
+                fontWeight: "bold",
+                color: order.status === "pending" ? "orange" : order.status === "successed" ? "green" : order.status === "shipping" ? "blue" : order.status === "return" ? "red" : "gray"
+              }}
+            >
+              {getStatusLabel(order.status)}
             </Typography>
             <Typography sx={{ marginBottom: "8px" }}>
-              Trạng thái: {order.status}
+              Người nhận: {order.fullName}
             </Typography>
             <Typography sx={{ marginBottom: "8px" }}>
-              Tổng tiền: {order.total.toLocaleString()} đ
+              Địa chỉ: {order.address}
             </Typography>
             <Typography sx={{ marginBottom: "8px" }}>
               Ngày đặt: {new Date(order.timeStamp).toLocaleDateString()}
@@ -90,8 +123,16 @@ const ViewUserOrders = () => {
                 <OrderItem key={item.orderItemId} item={item} />
               ))}
             </Box>
-            <Button variant="outlined" color="primary">
-              Xem chi tiết
+            <Typography sx={{ marginBottom: "8px", fontWeight: "bold" }}>
+              Tổng tiền: {order.total.toLocaleString()} đ
+            </Typography>
+            <Button
+              variant="contained"
+              color="secondary"
+              sx={{ position: "absolute", bottom: "8px", right: "8px" }}
+              href={`/return/${order.orderId}`}
+            >
+              Trả hàng
             </Button>
           </Box>
         ))

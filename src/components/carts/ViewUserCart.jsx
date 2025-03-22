@@ -19,8 +19,7 @@ const CartItem = ({ item, onUpdateQuantity, onRemove }) => {
         >
             <img
                 src={
-                    item.productImage ||
-                    "https://bizweb.dktcdn.net/thumb/grande/100/329/122/products/chuot-khong-day-rapoo-b30-silent-03.jpg?v=1723173790500"
+                    item.productImage
                 }
                 alt={item.productName}
                 style={{ width: "80px", height: "80px", objectFit: "cover" }}
