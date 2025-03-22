@@ -21,13 +21,13 @@ const OrderItem = ({ item }) => (
       style={{ width: "80px", height: "80px", objectFit: "cover" }}
     />
     <Box sx={{ flex: 1, marginLeft: "16px" }}>
-      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center"}}>
         <Typography variant="h6">{item.productName || "Sản phẩm không có tên"}</Typography>
         <Button
           variant="text"
           color="primary"
           sx={{ opacity: 0.5, fornSize: "0.8rem" }}
-          href={`/review/${item.productId}`}
+          href={`/product/${item.productId}`}
         >
           Đánh giá
         </Button>

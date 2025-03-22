@@ -18,7 +18,6 @@ import {
 import { formatPrice } from '../../utils/formatValue';
 import { ProductPricing } from '../../services/attributeService';
 import GetRatingByProductId from './ProductRatings';
-import RatingForm from '../ratings/NewRating';
 
 const ProductDetail = ({
   product,
@@ -182,7 +181,7 @@ const ProductDetail = ({
             </Box>
 
             {/* Phần thông tin sản phẩm */}
-            <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', mx: 'auto' }}>
+            <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', mx: 'auto', color: '#000' }}>
               <Box sx={{ mb: 2 ,height: '20%'}}>
                 <Typography variant="h4" sx={{ fontWeight: 'bold', fontSize: '2rem' }}>
                   {product.name}
@@ -249,7 +248,7 @@ const ProductDetail = ({
                       </>
                     )}
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap', mt: 2 }}>
-                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', color: '#000'  }}>
                         <Typography variant="subtitle1" sx={{ mr: 2 }}>
                           Số lượng:
                         </Typography>
@@ -295,22 +294,22 @@ const ProductDetail = ({
       justifyContent: 'center',
     }}
   >
-    <Typography variant="h6" sx={{ mb: 1, fontWeight: 'bold' }}>
+    <Typography variant="h6" sx={{ mb: 1, fontWeight: 'bold', color: '#000'  }}>
       Chính sách bán hàng
     </Typography>
-    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1, color: '#000'  }}>
       <LocalShipping color="primary" sx={{ mr: 1 }} />
       <Typography variant="body2">Miễn phí giao hàng toàn quốc</Typography>
     </Box>
-    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1, color: '#000'  }}>
       <Replay color="primary" sx={{ mr: 1 }} />
       <Typography variant="body2">Đổi trả trong 7 ngày</Typography>
     </Box>
-    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1, color: '#000'  }}>
       <Security color="primary" sx={{ mr: 1 }} />
       <Typography variant="body2">Bảo hành chính hãng 12 tháng</Typography>
     </Box>
-    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+    <Box sx={{ display: 'flex', alignItems: 'center', color: '#000'  }}>
       <HeadsetMic color="primary" sx={{ mr: 1 }} />
       <Typography variant="body2">Tổng đài hỗ trợ 24/7</Typography>
     </Box>
@@ -336,19 +335,19 @@ const ProductDetail = ({
 
         {/* Thông tin sản phẩm bổ sung */}
         <Box sx={{ mt: 2, p: 2, border: '1px solid #ccc', borderRadius: 2, backgroundColor: '#fff' }}>
-          <Typography variant="h7" sx={{ fontWeight: 'bold', fontSize: '2rem' }}>
+          <Typography variant="h7" sx={{ fontWeight: 'bold', fontSize: '2rem', color: '#000'  }}>
             Mô tả sản phẩm:
           </Typography>
-          <Typography variant="subtitle1" sx={{ mb: 1 }}>
+          <Typography variant="subtitle1" sx={{ mb: 1, color: '#000' }}>
             Thương hiệu: {product.brand?.brandName || 'Không xác định'}
           </Typography>
-          <Typography variant="subtitle1" sx={{ mb: 1 }}>
+          <Typography variant="subtitle1" sx={{ mb: 1, color: '#000'  }}>
             Danh mục:{' '}
             {product.categories && product.categories.length > 0
               ? product.categories.map((cat) => cat.name).join(', ')
               : 'Chưa phân loại'}
           </Typography>
-          <Typography variant="subtitle1" sx={{ mb: 1 }}>
+          <Typography variant="subtitle1" sx={{ mb: 1, color: '#000'  }}>
             Đã bán: {product.unitsSold} sản phẩm
           </Typography>
         </Box>
