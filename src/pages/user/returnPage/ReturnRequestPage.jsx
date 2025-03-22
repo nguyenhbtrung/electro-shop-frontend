@@ -25,19 +25,10 @@ import CloseIcon from '@mui/icons-material/Close';
 import { GetOrderByUser } from '../../../services/orderService';
 import { CreateReturnRequest } from '../../../services/returnService';
 import { useNavigate, useParams } from 'react-router-dom';
+import { GetAllReturnReason } from '../../../services/reasonService';
 
 const ReturnRequestPage = () => {
-    // Sample order data
-    // const orderData = {
-    //     orderId: 'ORDER#12345',
-    //     orderItems: [
-    //         { orderItemId: 1, productName: 'Laptop HP', quantity: 1 },
-    //         { orderItemId: 2, productName: 'PC Dell Inspiron', quantity: 2 },
-    //         { orderItemId: 3, productName: 'Chuột Logitech', quantity: 1 }
-    //     ]
-    // };
 
-    // State for form
     const { orderId } = useParams();
     const [selectedItems, setSelectedItems] = useState({});
     const [returnQuantities, setReturnQuantities] = useState({});
@@ -47,6 +38,8 @@ const ReturnRequestPage = () => {
         not_as_described: false,
         other: false
     });
+    const [returnReasons, setReturnReasons] = useState([]);
+    const [selectedReasonNames, setSelectedReasonNames] = useState([]);
     const [description, setDescription] = useState('');
     const [handlingMethod, setHandlingMethod] = useState('refund');
     const [files, setFiles] = useState([]);
@@ -61,11 +54,19 @@ const ReturnRequestPage = () => {
             const orderRes = await GetOrderByUser();
             if (orderRes?.status === 200 && orderRes?.data) {
                 console.log(">>>check orders:", orderRes?.data);
-                setOrderData(orderRes?.data?.[5]);
+                setOrderData(orderRes?.data?.[4]);
             }
         };
 
+        const GetReturnReason = async () => {
+            const reasonRes = await GetAllReturnReason();
+            if (reasonRes?.status === 200 && reasonRes?.data) {
+                setReturnReasons(reasonRes.data);
+            }
+        }
+
         GetOrder();
+        GetReturnReason();
     }, []);
 
     const handleImageClick = (file) => {
@@ -145,8 +146,12 @@ const ReturnRequestPage = () => {
             alert("Vui lòng chọn sản phẩm cần hoàn trả");
             return;
         }
-        const selectedReasons = Object.keys(reasons).filter(key => reasons[key]);
-        if (selectedReasons.length === 0) {
+        // const selectedReasons = Object.keys(reasons).filter(key => reasons[key]);
+        // if (selectedReasons.length === 0) {
+        //     alert("Vui lòng chọn lý do hoàn trả");
+        //     return;
+        // }
+        if (selectedReasonNames.length === 0) {
             alert("Vui lòng chọn lý do hoàn trả");
             return;
         }
@@ -160,7 +165,8 @@ const ReturnRequestPage = () => {
         }));
         const formData = new FormData();
         formData.append('OrderId', orderData.orderId);
-        formData.append('Reason', selectedReasons);
+        formData.append('Reason', selectedReasonNames.join(', '));
+        // formData.append('Reason', selectedReasons);
         formData.append('Detail', description);
         formData.append('ReturnMethod', handlingMethod);
         files.forEach((file, index) => {
@@ -261,46 +267,26 @@ const ReturnRequestPage = () => {
                                 <Typography variant="h6">Lý do hoàn trả (có thể chọn nhiều):</Typography>
                             </FormLabel>
                             <FormGroup>
-                                <FormControlLabel
-                                    control={
-                                        <Checkbox
-                                            checked={reasons.wrong_product}
-                                            onChange={handleReasonChange}
-                                            name="wrong_product"
-                                        />
-                                    }
-                                    label="Sai sản phẩm"
-                                />
-                                <FormControlLabel
-                                    control={
-                                        <Checkbox
-                                            checked={reasons.technical_issue}
-                                            onChange={handleReasonChange}
-                                            name="technical_issue"
-                                        />
-                                    }
-                                    label="Lỗi kỹ thuật"
-                                />
-                                <FormControlLabel
-                                    control={
-                                        <Checkbox
-                                            checked={reasons.not_as_described}
-                                            onChange={handleReasonChange}
-                                            name="not_as_described"
-                                        />
-                                    }
-                                    label="Không đúng mô tả"
-                                />
-                                <FormControlLabel
-                                    control={
-                                        <Checkbox
-                                            checked={reasons.other}
-                                            onChange={handleReasonChange}
-                                            name="other"
-                                        />
-                                    }
-                                    label="Khác"
-                                />
+                                {returnReasons.map((reason) => (
+                                    <FormControlLabel
+                                        key={reason.reasonId}
+                                        control={
+                                            <Checkbox
+                                                checked={selectedReasonNames.includes(reason.name)}
+                                                onChange={(e) => {
+                                                    if (e.target.checked) {
+                                                        setSelectedReasonNames(prev => [...prev, reason.name]);
+                                                    } else {
+                                                        setSelectedReasonNames(prev =>
+                                                            prev.filter(name => name !== reason.name)
+                                                        );
+                                                    }
+                                                }}
+                                            />
+                                        }
+                                        label={reason.name}
+                                    />
+                                ))}
                             </FormGroup>
                         </FormControl>
                     </Box>
