@@ -9,7 +9,8 @@ import {
     CardContent,
     Grid,
     Avatar,
-    useTheme
+    useTheme,
+    Modal
 } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import { GetReturnDetailByAdmin, UpdateReturnStatus } from '../../../services/returnService';
@@ -27,6 +28,7 @@ const ReturnRequestAdmin = () => {
     const { returnId } = useParams();
     const [returnData, setReturnData] = useState({});
     const [dayDifference, setDayDifference] = useState(0);
+    const [selectedImage, setSelectedImage] = useState(null);
     const [info, setInfo] = useState({
         open: false,
         content: ""
@@ -56,6 +58,15 @@ const ReturnRequestAdmin = () => {
         };
         GetReturnData();
     }, []);
+
+
+    const handleOpenModal = (url) => {
+        setSelectedImage(url);
+    };
+
+    const handleCloseModal = () => {
+        setSelectedImage(null);
+    };
 
     const StyledStatus = (status) => {
         // Ánh xạ trạng thái (status) sang màu sắc
@@ -341,8 +352,14 @@ const ReturnRequestAdmin = () => {
                         <strong>Hình ảnh minh chứng:</strong>
                     </Typography>
                     <Grid container spacing={2}>
-                        {returnData?.returnImageUrls?.map((url) => (
-                            <Grid item>
+                        {returnData?.returnImageUrls?.map((url, index) => (
+                            <Grid
+                                item
+                                key={index}
+                                // Khi nhấn vào item, mở modal với URL tương ứng
+                                onClick={() => handleOpenModal(url)}
+                                sx={{ cursor: 'pointer' }}  // Thêm hiệu ứng trỏ tay
+                            >
                                 <Avatar
                                     variant="square"
                                     src={url}
@@ -352,6 +369,33 @@ const ReturnRequestAdmin = () => {
                             </Grid>
                         ))}
                     </Grid>
+
+                    {/* Modal hiển thị ảnh mở rộng */}
+                    <Modal
+                        open={Boolean(selectedImage)}
+                        onClose={handleCloseModal}
+                    >
+                        <Box
+                            sx={{
+                                position: 'absolute',
+                                top: '50%',
+                                left: '50%',
+                                transform: 'translate(-50%, -50%)',
+                                bgcolor: 'background.paper',
+                                boxShadow: 24,
+                                p: 2,
+                                outline: 'none'
+                            }}
+                        >
+                            {selectedImage && (
+                                <img
+                                    src={selectedImage}
+                                    alt="Expanded view"
+                                    style={{ maxWidth: '100%', maxHeight: '80vh' }}
+                                />
+                            )}
+                        </Box>
+                    </Modal>
                     <Typography variant="body1" sx={{ mt: 2 }}>
                         <strong>Phương thức xử lý:</strong> {MapMethod(returnData?.returnMethod)}
                     </Typography>
