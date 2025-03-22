@@ -12,4 +12,12 @@ const GetAllAttribute =()=>{
   const URL_API = "/api/ProductAttributes";
   return api.get(URL_API);
 }
-export { ProductPricing,GetAllAttribute };
+const CreateAttribute =(data)=>{
+  const URL_API = "/api/ProductAttributes";
+  return api.post(URL_API,data);
+}
+const CreateAttributeDetail =(attributeId,data)=>{
+  const URL_API = `/api/ProductAttributes/${attributeId}/details`;
+  return api.post(URL_API,data);
+}
+export { ProductPricing,GetAllAttribute,CreateAttribute,CreateAttributeDetail };

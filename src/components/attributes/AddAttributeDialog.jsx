@@ -1,31 +1,49 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Dialog,
   DialogTitle,
   DialogContent,
-  List,
-  ListItem,
-  ListItemText,
+  DialogActions,
+  TextField,
+  Button,
 } from "@mui/material";
 
-const ViewAttributeDetailsDialog = ({ open, onClose, attribute }) => {
+const AddAttributeDialog = ({ open, onClose, onSubmit }) => {
+  const [name, setName] = useState("");
+
+  const handleSubmit = () => {
+    if (!name.trim()) {
+      alert("Tên thuộc tính không được để trống!");
+      return;
+    }
+    // Trả về dữ liệu cho hàm onSubmit
+    onSubmit({ name });
+    setName("");
+  };
+
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
-      <DialogTitle>Chi tiết thuộc tính: {attribute.name}</DialogTitle>
+      <DialogTitle>Thêm Thuộc Tính Mới</DialogTitle>
       <DialogContent>
-        <List>
-          {attribute.details.map((detail) => (
-            <ListItem key={detail.attributeDetailId}>
-              <ListItemText
-                primary={detail.value}
-                secondary={`Price Modifier: ${detail.priceModifier}`}
-              />
-            </ListItem>
-          ))}
-        </List>
+        <TextField
+          autoFocus
+          margin="dense"
+          label="Tên thuộc tính"
+          fullWidth
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
       </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose} color="secondary">
+          Hủy
+        </Button>
+        <Button onClick={handleSubmit} variant="contained" color="primary">
+          Thêm
+        </Button>
+      </DialogActions>
     </Dialog>
   );
 };
 
-export default ViewAttributeDetailsDialog;
+export default AddAttributeDialog;
