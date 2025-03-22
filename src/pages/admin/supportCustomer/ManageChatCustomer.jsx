@@ -37,20 +37,39 @@ const ManageChatCustomer = () => {
       setUserMessages((prevMessages) =>
         prevMessages.some((m) => m.userId === userId)
           ? prevMessages.map((m) =>
-            m.userId === userId ? { ...m, message, userName, isFromAdmin: false } : m
+            m.userId === userId ? { ...m, message, senderName: userName, isFromAdmin: false } : m
           )
-          : [...prevMessages, { userId, message }]
+          : [...prevMessages, { userId, message, senderName: userName, isFromAdmin: false }]
       );
     });
 
     adminSignalRService.connection.on("ReceiveAdminMessage", (message, userId, adminName) => {
-      console.log("ReceiveAdminMessage");
       setUserMessages((prevMessages) =>
         prevMessages.some((m) => m.userId === userId)
           ? prevMessages.map((m) =>
-            m.userId === userId ? { ...m, message, adminName, isFromAdmin: true } : m
+            m.userId === userId ? { ...m, message, senderName: adminName, isFromAdmin: true } : m
           )
-          : [...prevMessages, { userId, message }]
+          : [...prevMessages, { userId, message, senderName: adminName, isFromAdmin: true }]
+      );
+    });
+
+    adminSignalRService.connection.on("ConversationClaimed", (userId, adminId) => {
+      setUserMessages((prevMessages) =>
+        prevMessages.some((m) => m.userId === userId)
+          ? prevMessages.map((m) =>
+            m.userId === userId ? { ...m, adminId } : m
+          )
+          : [...prevMessages, { userId, adminId }]
+      );
+    });
+
+    adminSignalRService.connection.on("ConversationReleased", (userId, adminId) => {
+      setUserMessages((prevMessages) =>
+        prevMessages.some((m) => m.userId === userId)
+          ? prevMessages.map((m) =>
+            m.userId === userId ? { ...m, adminId: null } : m
+          )
+          : [...prevMessages, { userId, adminId: null }]
       );
     });
 
