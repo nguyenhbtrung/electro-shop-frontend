@@ -7,18 +7,28 @@ import {
   TextField,
   Button,
 } from "@mui/material";
+import { CreateAttribute } from "../../services/attributeService";
 
-const AddAttributeDialog = ({ open, onClose, onSubmit }) => {
+const AddAttributeDialog = ({ open, onClose, onSuccess }) => {
   const [name, setName] = useState("");
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!name.trim()) {
       alert("Tên thuộc tính không được để trống!");
       return;
     }
-    // Trả về dữ liệu cho hàm onSubmit
-    onSubmit({ name });
-    setName("");
+    try {
+      const res = await CreateAttribute({ name });
+      if (res?.data) {
+        alert("Thêm thuộc tính thành công!");
+        onSuccess && onSuccess(res.data);
+        setName("");
+        onClose();
+      }
+    } catch (error) {
+      console.log("Error creating attribute", error);
+      alert("Lỗi khi thêm thuộc tính!");
+    }
   };
 
   return (

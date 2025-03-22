@@ -33,8 +33,6 @@ const AddAttributeDetailDialog = ({ open, onClose, attribute, onSuccess }) => {
         onSuccess && onSuccess();
       }
     } catch (error) {
-      console.log("Error creating attribute detail", error);
-      alert("Lỗi khi thêm chi tiết thuộc tính!");
     }
     setValue("");
     setPriceModifier(0);

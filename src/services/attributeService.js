@@ -24,4 +24,12 @@ const AddAttributeToProduct=(productId,data)=>{
   const URL_API = `/api/Product/${productId}/addAttributeId`;
   return api.post(URL_API,data);
 }
-export { ProductPricing,GetAllAttribute,CreateAttribute,CreateAttributeDetail,AddAttributeToProduct };
+const UpdateAttributeDetail = (attributeId, detailId, data) => {
+  const URL_API = `/api/ProductAttributes/${attributeId}/details/${detailId}`;
+  return api.put(URL_API, data);
+};
+const DeleteAttribute =(attributeId)=>{
+  const URL_API = `/api/ProductAttributes/${attributeId}`;
+  return api.delete(URL_API);
+}
+export { ProductPricing,GetAllAttribute,CreateAttribute,CreateAttributeDetail,AddAttributeToProduct ,UpdateAttributeDetail,DeleteAttribute};
