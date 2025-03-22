@@ -6,7 +6,6 @@ import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, G
 const RatingForm = ({ productId, onSuccess, open, onClose }) => {
     // State để kiểm tra user đã mua sản phẩm hay chưa
     const [hasPurchased, setHasPurchased] = useState(false);
-    const [loadingCheck, setLoadingCheck] = useState(true);
     const [hasRated, setHasRated] = useState(false);
 
     // State form đánh giá
@@ -15,24 +14,34 @@ const RatingForm = ({ productId, onSuccess, open, onClose }) => {
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState("");
 
-    // Kiểm tra xem user đã mua sản phẩm chưa thông qua API
-    useEffect(() => {
-        async function checkPurchaseStatus() {
-            try {
-                const response = await axios.get(`/api/Order/user/vieworderbyid/${productId}`);
-                if (response.data.status === "Successed") {
-                    setHasPurchased(true);
-                } else {
-                    setHasPurchased(false);
-                }
-            } catch (error) {
-                console.error("Lỗi kiểm tra mua hàng:", error);
-                setHasPurchased(false);
-            } finally {
-                setLoadingCheck(false);
+    // Hàm kiểm tra mua hàng, trả về boolean
+    const checkPurchaseStatus = async () => {
+        try {
+            const response = await axios.get(`/api/Order/user/vieworderbystatus?status=successed`);
+            if (response.data.status === "successed") {
+                const orders = response.data.orders;
+                const userId = localStorage.getItem('userId');
+                const hasPurchasedProduct = orders.some(order =>
+                    order.userId === userId &&
+                    order.orderItems.some(item => item.productId === productId)
+                );
+                return hasPurchasedProduct;
+            } else {
+                return false;
             }
+        } catch (error) {
+            console.error("Lỗi kiểm tra mua hàng:", error);
+            return false;
         }
-        checkPurchaseStatus();
+    };
+
+    // Sử dụng useEffect để kiểm tra mua hàng khi productId thay đổi
+    useEffect(() => {
+        async function fetchPurchaseStatus() {
+            const purchased = await checkPurchaseStatus();
+            setHasPurchased(purchased);
+        }
+        fetchPurchaseStatus();
     }, [productId]);
 
     // Kiểm tra xem user đã đánh giá sản phẩm chưa
@@ -61,9 +70,9 @@ const RatingForm = ({ productId, onSuccess, open, onClose }) => {
         setSubmitting(true);
 
         try {
-            // Kiểm tra xem user đã mua sản phẩm chưa thông qua API
-            const purchaseResponse = await axios.get(`/api/Order/user/vieworderbyid/${productId}`);
-            if (purchaseResponse.data.status !== "Successed") {
+            // Kiểm tra lại tình trạng mua hàng ngay trước khi submit
+            const purchased = await checkPurchaseStatus();
+            if (!purchased) {
                 alert("Bạn chưa mua sản phẩm này, không thể đánh giá!");
                 setSubmitting(false);
                 return;
@@ -84,15 +93,15 @@ const RatingForm = ({ productId, onSuccess, open, onClose }) => {
                 productId,
                 ratingScore: parseInt(ratingScore),
                 ratingContent,
-                //timestamp: new Date().toISOString(),
             };
+
             // Gọi API tạo đánh giá qua ratingService.js
-            const res = await CreateRating(data);
+            await CreateRating(data);
             alert("Đánh giá đã được gửi thành công!");
             // Reset form
             setRatingScore(5);
             setRatingContent("");
-            onSuccess(); // Gọi hàm onSuccess để thông báo thành công
+            onSuccess(); // Thông báo thành công cho component cha
             onClose(); // Đóng dialog
         } catch (error) {
             console.error("Lỗi tạo đánh giá:", error);
@@ -110,6 +119,9 @@ const RatingForm = ({ productId, onSuccess, open, onClose }) => {
         <Dialog open={open} onClose={handleCancel} fullWidth maxWidth="sm">
             <DialogTitle sx={{ fontWeight: 'bold' }}>Tạo đánh giá</DialogTitle>
             <DialogContent dividers>
+                {!hasPurchased && (
+                    <p style={{ color: "red" }}>Bạn cần mua sản phẩm này mới có thể đánh giá!</p>
+                )}
                 <Grid container spacing={2}>
                     <Grid item xs={12}>
                         <TextField
@@ -128,7 +140,6 @@ const RatingForm = ({ productId, onSuccess, open, onClose }) => {
                         <TextField
                             label="Nội dung đánh giá"
                             fullWidth
-                            type="string"
                             value={ratingContent}
                             onChange={(e) => setRatingContent(e.target.value)}
                         />
@@ -140,7 +151,7 @@ const RatingForm = ({ productId, onSuccess, open, onClose }) => {
                 <Button onClick={handleCancel} color="secondary">
                     Huỷ
                 </Button>
-                <Button onClick={handleSubmit} variant="contained" color="primary" disabled={submitting}>
+                <Button onClick={handleSubmit} variant="contained" color="primary" disabled={submitting || !hasPurchased}>
                     {submitting ? "Đang gửi..." : "Gửi đánh giá"}
                 </Button>
             </DialogActions>
