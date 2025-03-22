@@ -6,15 +6,20 @@ import { Menu, MenuItem, Sidebar } from "react-pro-sidebar";
 import {
   BarChartOutlined,
   CalendarTodayOutlined,
+  ChatOutlined,
   ContactsOutlined,
   DashboardOutlined,
   DonutLargeOutlined,
+  FormatListBulletedOutlined,
   HelpOutlineOutlined,
+  KeyboardReturnOutlined,
   MapOutlined,
   MenuOutlined,
   PeopleAltOutlined,
   PersonOutlined,
   ReceiptOutlined,
+  ShoppingCart,
+  ShoppingCartOutlined,
   TimelineOutlined,
   WavesOutlined,
 } from "@mui/icons-material";
@@ -180,6 +185,12 @@ const SideBar = () => {
             colors={colors}
             icon={<PeopleAltOutlined />}
           />
+          <Item
+            title="Chat"
+            path="/admin/chats"
+            colors={colors}
+            icon={<ChatOutlined />}
+          />
 
         </Menu>
         <Typography
@@ -265,7 +276,7 @@ const SideBar = () => {
             title="Đơn hàng"
             path="/admin/orders"
             colors={colors}
-            icon={<ContactsOutlined />}
+            icon={<ShoppingCart />}
           />
         </Menu>
 
@@ -291,13 +302,13 @@ const SideBar = () => {
             title="Lý do hoàn trả"
             path="/admin/reasons"
             colors={colors}
-            icon={<ContactsOutlined />}
+            icon={<FormatListBulletedOutlined />}
           />
           <Item
             title="Đơn hàng hoàn trả"
             path="/admin/returns"
             colors={colors}
-            icon={<ContactsOutlined />}
+            icon={<KeyboardReturnOutlined />}
           />
         </Menu>
 
