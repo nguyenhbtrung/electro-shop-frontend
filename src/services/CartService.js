@@ -1,6 +1,6 @@
 import api from './axios/axios.customize'
 
-const AddToCart = (productId, quantity) => {
+export const AddToCart = (productId, quantity) => {
     const URL_API = `/api/Cart/user/addtocart`;
     const params = {
         productId,
@@ -20,8 +20,4 @@ export const DeleteCartItem = async (productId) => {
 
 export const EditCartItemQuantity = async (productId, quantity) => {
     return await api.put(`/api/Cart/user/editcartitemquantity?productId=${productId}&quantity=${quantity}`);
-};
-
-export {
-    AddToCart
 };

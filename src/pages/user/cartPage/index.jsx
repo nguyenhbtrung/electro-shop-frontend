@@ -1,4 +1,3 @@
-// src/pages/user/cartPage/index.jsx
 import React, { useState, useEffect } from "react";
 import { Box, Typography } from "@mui/material";
 import { GetUserCart } from "../../../services/CartService";
