@@ -55,7 +55,12 @@ const Navbar = () => {
     };
 
     const handleCartClick = () => {
-        navigate("/cart");
+        if (!isLoggedIn) {
+            navigate("/login");
+        }
+        else {
+            navigate("/cart");
+        }
     };
 
     const handleProfileClick = () => {

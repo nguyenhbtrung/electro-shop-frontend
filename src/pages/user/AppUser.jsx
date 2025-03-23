@@ -1,5 +1,5 @@
 // App.js
-import React, { useState, useEffect, createContext } from "react";
+import React, { useState, useEffect, createContext, useContext } from "react";
 import { Box, CssBaseline, ThemeProvider } from "@mui/material";
 import { Outlet } from "react-router-dom";
 import { ColorModeContext, useMode } from "../../theme";
@@ -9,6 +9,7 @@ import { GetCategoryTree } from "../../services/categoryService";
 import ChatButton from "../../components/chats/ChatButton";
 import ChatWindow from "../../components/chats/ChatWindow";
 import signalRService from "../../services/signalR/signalRService";
+import { AuthContext } from "../../contexts/AuthContext";
 
 export const ToggledContext = createContext(null);
 export const ChatContext = createContext();
@@ -19,7 +20,8 @@ function App() {
     const values = { toggled, setToggled };
     const [categoryTree, setCategoryTree] = useState([]);
     const [openChat, setOpenChat] = useState(false);
-    const [hasNewMessage, setHasNewMessage] = useState(false); // state theo dõi tin nhắn chưa đọc
+    const [hasNewMessage, setHasNewMessage] = useState(false);
+    const { isLoggedIn } = useContext(AuthContext);
 
     useEffect(() => {
         const GetTree = async () => {
@@ -73,18 +75,20 @@ function App() {
                                 </Box>
                             </Box>
                         </Box>
-                        {/* Nút chat luôn hiển thị */}
-                        <ChatButton
-                            // Truyền props hasNotification dựa trên sự kết hợp của tin nhắn mới và trạng thái openChat 
-                            hasNotification={hasNewMessage && !openChat}
-                            onClick={() => {
-                                // Nếu người dùng mở chat, hãy xóa cảnh báo
-                                if (!openChat) {
-                                    setHasNewMessage(false);
-                                }
-                                setOpenChat(!openChat);
-                            }}
-                        />
+                        {isLoggedIn && (
+                            <ChatButton
+                                // Truyền props hasNotification dựa trên sự kết hợp của tin nhắn mới và trạng thái openChat 
+                                hasNotification={hasNewMessage && !openChat}
+                                onClick={() => {
+                                    // Nếu người dùng mở chat, hãy xóa cảnh báo
+                                    if (!openChat) {
+                                        setHasNewMessage(false);
+                                    }
+                                    setOpenChat(!openChat);
+                                }}
+                            />
+
+                        )}
                         {/* Hiển thị chat khi openChat = true */}
                         {openChat && (
                             <ChatWindow
