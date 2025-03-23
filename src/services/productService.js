@@ -40,7 +40,10 @@ const GetDiscountedProduct = () => {
     const URL_API = `/api/Product/discounted`;
     return api.get(URL_API);
 };
-
+const RecommendProduct =(productId)=>{
+    const URL_API = `/api/Product/recommend/${productId}`;
+    return api.get(URL_API);
+};
 const GetProductByDiscountId = (discountId, searchQuery) => {
     const URL_API = `/api/Product/by_discount`;
 
@@ -54,6 +57,7 @@ const GetProductByDiscountId = (discountId, searchQuery) => {
 
 
 export {
+    RecommendProduct,
     GetAllProduct,
     GetProduct,
     CreateProduct,

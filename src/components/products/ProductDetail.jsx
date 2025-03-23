@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Typography,
   IconButton,
   Button,
+  Grid,
 } from '@mui/material';
 import {
   Add,
@@ -20,7 +21,9 @@ import { formatPrice } from '../../utils/formatValue';
 import { ProductPricing } from '../../services/attributeService';
 import GetRatingByProductId from './ProductRatings';
 import Footer from '../Footer';
-import DiscountPaper from "../discounts/DiscountPaper"; // Import DiscountPaper
+import DiscountPaper from "../discounts/DiscountPaper"; 
+import ProductCard from "./ProductCard";
+import { RecommendProduct } from '../../services/productService';
 
 const ProductDetail = ({
   product,
@@ -28,11 +31,23 @@ const ProductDetail = ({
   pricingData: initialPricing,
   productId,
 }) => {
-  // Quản lý ảnh hiện tại, thuộc tính chọn, giá và số lượng
+  // State của trang chi tiết sản phẩm
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [selectedAttributes, setSelectedAttributes] = useState(defaultSelectedAttributes);
   const [pricingData, setPricingData] = useState(initialPricing);
   const [quantity, setQuantity] = useState(1);
+  
+  // State để lưu danh sách sản phẩm được gợi ý
+  const [recommendedProducts, setRecommendedProducts] = useState([]);
+
+  // Call API gợi ý sản phẩm khi productId thay đổi
+  useEffect(() => {
+    RecommendProduct(productId)
+      .then((response) => {
+        setRecommendedProducts(response.data);
+      })
+      .catch((error) => console.error("Error fetching recommendations:", error));
+  }, [productId]);
 
   // Gom các attribute detail theo nhóm (ví dụ: "Ram", "SSD")
   const attributeGroups = product.productAttributeDetail.reduce((acc, detail) => {
@@ -85,20 +100,20 @@ const ProductDetail = ({
     <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
         <Box sx={{ maxWidth: '1200px', width: '100%', position: 'relative' }}>
-          {/* Hiển thị DiscountPaper ở góc trên bên phải */}
+          {/* Hiển thị DiscountPaper ở góc trái đè lên ảnh sản phẩm */}
           {product.discountValue > 0 && (
-  <Box
-    sx={{
-      position: 'absolute',
-      top: 16,
-      left: 16, // đặt ở góc trái
-      zIndex: 1,
-      transform: 'scale(1.2)', // phóng to 20%
-    }}
-  >
-    <DiscountPaper discountType={product.discountType} discountValue={product.discountValue} />
-  </Box>
-)}
+            <Box
+              sx={{
+                position: 'absolute',
+                top: 16,
+                left: 16,
+                zIndex: 1,
+                transform: 'scale(1.2)',
+              }}
+            >
+              <DiscountPaper discountType={product.discountType} discountValue={product.discountValue} />
+            </Box>
+          )}
           {/* Khối chứa ảnh và thông tin sản phẩm */}
           <Box sx={{ border: '1px solid #ccc', borderRadius: 2, p: 2, backgroundColor: '#f9f9f9' }}>
             <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 3 }}>
@@ -160,7 +175,8 @@ const ProductDetail = ({
                       )}
                     </>
                   ) : (
-                    <Typography>No image available</Typography>
+                    // Nếu không có ảnh, hiển thị Box trống có kích thước như ảnh
+                    <Box sx={{ width: '100%', height: '100%', backgroundColor: '#f0f0f0' }} />
                   )}
                 </Box>
                 {product.productImages && product.productImages.length > 1 && (
@@ -341,7 +357,7 @@ const ProductDetail = ({
             </Box>
           </Box>
 
-          {/* Thông tin sản phẩm bổ sung */}
+          {/* Phần mô tả sản phẩm bổ sung */}
           <Box sx={{ mt: 2, p: 2, border: '1px solid #ccc', borderRadius: 2, backgroundColor: '#fff' }}>
             <Typography variant="h7" sx={{ fontWeight: 'bold', fontSize: '2rem', color: '#000' }}>
               Mô tả sản phẩm:
@@ -374,11 +390,44 @@ const ProductDetail = ({
             <Typography variant="subtitle1" sx={{ mb: 1, color: '#000' }}>
               Đã bán: {product.unitsSold} sản phẩm
             </Typography>
+            {/* Thêm thông tin bổ sung từ product.info */}
+            {product.info && (
+              <Typography variant="body1" sx={{ mt: 2, color: '#000' }}>
+                {product.info}
+              </Typography>
+            )}
           </Box>
 
           <Box sx={{ mt: 4 }}>
             <GetRatingByProductId productId={productId} />
           </Box>
+
+          {/* Phần gợi ý sản phẩm */}
+          {recommendedProducts.length > 0 && (
+            <Box sx={{ mt: 4 }}>
+              <Typography variant="h4" sx={{ mb: 2, fontWeight: 'bold' }}>
+                Các sản phẩm tương tự
+              </Typography>
+              <Grid container spacing={2}>
+                {recommendedProducts.map((prod) => {
+                  // Nếu không có trường "images", chuyển đổi từ "productImages"
+                  const productForCard = {
+                    ...prod,
+                    images:
+                      prod.images ||
+                      (prod.productImages
+                        ? prod.productImages.map((pi) => pi.imageUrl)
+                        : []),
+                  };
+                  return (
+                    <Grid item xs={12} sm={6} md={3} key={prod.productId}>
+                      <ProductCard product={productForCard} />
+                    </Grid>
+                  );
+                })}
+              </Grid>
+            </Box>
+          )}
         </Box>
       </Box>
 
