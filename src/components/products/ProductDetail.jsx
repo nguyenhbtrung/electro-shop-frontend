@@ -17,6 +17,7 @@ import {
   HeadsetMic,
 } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { formatPrice } from '../../utils/formatValue';
 import { ProductPricing } from '../../services/attributeService';
 import GetRatingByProductId from './ProductRatings';
@@ -37,6 +38,10 @@ const ProductDetail = ({
   const [pricingData, setPricingData] = useState(initialPricing);
   const [quantity, setQuantity] = useState(1);
   
+  const handleCloseAddToCart = () => {
+    setOpenAddToCart(false);
+  };
+
   // State để lưu danh sách sản phẩm được gợi ý
   const [recommendedProducts, setRecommendedProducts] = useState([]);
 
@@ -289,8 +294,16 @@ const ProductDetail = ({
                         </Box>
                       </Box>
                       <Box sx={{ display: 'flex', gap: 2 }}>
-                        <Button variant="contained" color="error" disabled={product.stock === 0}>
-                          Thêm vào giỏ
+                        <Button
+                          variant="contained"
+                          startIcon={<ShoppingCartIcon />}
+                          onClick={(e) => {
+                            e.stopPropagation(); // Ngăn sự kiện nổi bọt lên thẻ cha
+                            setOpenAddToCart(true);
+                          }}
+                          fullWidth
+                        >
+                          Thêm vào giỏ hàng
                         </Button>
                         <Button variant="contained" color="primary" disabled={product.stock === 0}>
                           Mua ngay
