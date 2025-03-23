@@ -35,12 +35,18 @@ const UpdateReturnStatus = (returnId, data) => {
     return api.put(URL_API, data);
 };
 
+const Refund = (data) => {
+    const URL_API = `/api/Return/Refund`;
+    return api.post(URL_API, data);
+};
+
 export {
     CreateReturnRequest,
     GetReturnDetailById,
     GetUserReturnHistory,
     GetAllReturns,
     GetReturnDetailByAdmin,
-    UpdateReturnStatus
+    UpdateReturnStatus,
+    Refund
 };
 

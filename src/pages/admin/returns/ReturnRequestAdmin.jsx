@@ -21,6 +21,7 @@ import { ErrorOutline } from '@mui/icons-material';
 import CustomConfirmDialog from '../../../components/CustomConfirmDialog';
 import InfoDialog from '../../../components/InfoDialog';
 import RejectReturnDialog from '../../../components/returns/RejectReturnDialog';
+import RefundConfirmDialog from '../../../components/returns/RefundConfirmDialog';
 
 const ReturnRequestAdmin = () => {
     const theme = useTheme();
@@ -137,6 +138,13 @@ const ReturnRequestAdmin = () => {
         }
     };
 
+    const handleCloseRefund = (isConfirm) => {
+        setOpenRefund(false);
+        if (isConfirm) {
+            handleComplete();
+        }
+    };
+
     const handleApprove = () => {
         const data = {
             returnStatus: "approved",
@@ -191,6 +199,10 @@ const ReturnRequestAdmin = () => {
             adminComment: "Quy trình hoàn trả đã hoàn tất"
         }
         UpdateStatus(data);
+    };
+
+    const handleRefund = async () => {
+
     };
 
     return (
@@ -476,6 +488,10 @@ const ReturnRequestAdmin = () => {
                 open={info?.open}
                 question={info?.content}
                 onClose={handleCloseInfo}
+            />
+            <RefundConfirmDialog
+                open={openRefund}
+                onClose={handleCloseRefund}
             />
         </Box>
     );
