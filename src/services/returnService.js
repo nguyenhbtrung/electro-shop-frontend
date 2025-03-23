@@ -40,6 +40,11 @@ const Refund = (data) => {
     return api.post(URL_API, data);
 };
 
+const GetPaymentByOrderId = (orderId) => {
+    const URL_API = `/api/Return/payment${orderId}`;
+    return api.get(URL_API);
+};
+
 export {
     CreateReturnRequest,
     GetReturnDetailById,
@@ -47,6 +52,7 @@ export {
     GetAllReturns,
     GetReturnDetailByAdmin,
     UpdateReturnStatus,
-    Refund
+    Refund,
+    GetPaymentByOrderId
 };
 

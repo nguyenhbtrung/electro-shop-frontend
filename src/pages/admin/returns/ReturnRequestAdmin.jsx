@@ -13,7 +13,7 @@ import {
     Modal
 } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
-import { GetReturnDetailByAdmin, UpdateReturnStatus } from '../../../services/returnService';
+import { GetPaymentByOrderId, GetReturnDetailByAdmin, UpdateReturnStatus } from '../../../services/returnService';
 import { convertToLocaleDateString } from '../../../utils/formatDatetime';
 import { tokens } from '../../../theme';
 import { MapMethod, MapStatus } from '../../../utils/returnHelper';
@@ -202,7 +202,12 @@ const ReturnRequestAdmin = () => {
     };
 
     const handleRefund = async () => {
+        const paymentRes = await GetPaymentByOrderId(returnData?.orderId);
+        if (paymentRes?.status === 200 && paymentRes?.data) {
+            if (paymentRes?.data?.paymentMethod !== 'vnpay') {
 
+            }
+        }
     };
 
     return (
