@@ -16,7 +16,6 @@ import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { UserRegister } from "../../services/UserService";
 import FormHelperText from '@mui/material/FormHelperText';
-
 const Card = styled(MuiCard)(({ theme }) => ({
     display: 'flex',
     flexDirection: 'column',
@@ -59,6 +58,11 @@ const SignUpContainer = styled(Stack)(({ theme }) => ({
     },
 }));
 
+const validateEmail = (email) => {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(String(email).toLowerCase());
+};
+
 export default function Register(props) {
     const [passwordError, setPasswordError] = useState(false);
     const [passwordErrorMessage, setPasswordErrorMessage] = useState('');
@@ -69,6 +73,11 @@ export default function Register(props) {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+        if (!validateEmail(email)) {
+            console.log('Invalid email format');
+            displayError('Invalid email format');
+            return;
+        }
         try {
             const data = {
                 username: userName,
@@ -123,6 +132,9 @@ export default function Register(props) {
         else if (error === 'DuplicateEmail') {
             setPasswordErrorMessage('Email đã tồn tại!');
         }
+        else if (error === 'Invalid email format') {
+            setPasswordErrorMessage('Email không hợp lệ!');
+        }
         else {
             setPasswordErrorMessage("Đã có lỗi không xác định xảy ra!");
         }
@@ -167,7 +179,7 @@ export default function Register(props) {
                             textAlign: 'center',
                         }}
                     >
-                        Đăng kí
+                        Đăng ký
                     </Typography>
                     <Box
                         component="form"
@@ -247,7 +259,7 @@ export default function Register(props) {
                             // onClick={validateInputs}
                             sx={{ fontFamily: 'Roboto, sans-serif' }}
                         >
-                            Đăng kí
+                            Đăng ký
                         </Button>
                         <Typography sx={{ textAlign: 'center', fontFamily: 'Roboto, sans-serif' }}>
                             Đã có tài khoản?{' '}

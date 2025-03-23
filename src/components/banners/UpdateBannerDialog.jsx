@@ -147,7 +147,7 @@ const UpdateBannerDialog = ({ open, onClose, onSubmit, banner }) => {
 									Huỷ
 								</Button>
 								<Button type="submit" variant="contained" color="primary">
-									Thêm
+									Sửa
 								</Button>
 							</DialogActions>
 						</form>

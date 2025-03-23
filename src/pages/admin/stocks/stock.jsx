@@ -59,7 +59,12 @@ const ManageStock = () => {
 				);
 				setStocks(updatedStocks);
 			} else {
-				console.error('Failed to update status');
+				if (response.data === "Invalid status transition") {
+					setInfo(`Trạng thái không hợp lệ!`);
+					setInfoDialogOpen(true);
+				} else {
+					console.error('Failed to update status');
+				}
 			}
 		} catch (error) {
 			console.error('Error updating status:', error);
