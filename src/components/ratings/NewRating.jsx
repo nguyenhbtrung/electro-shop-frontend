@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { CreateRating, GetRatingByProductId } from "../../services/ratingService";
 import { GetOrderByStatus } from "../../services/orderService";
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, Grid } from '@mui/material';
+import Rating from '@mui/material/Rating';
 
 const RatingForm = ({ productId, onSuccess, open, onClose }) => {
     // State để kiểm tra user đã mua sản phẩm hay chưa
@@ -100,7 +101,6 @@ const RatingForm = ({ productId, onSuccess, open, onClose }) => {
                 userName: localStorage.getItem('userName')
             };
 
-
             // Gọi API tạo đánh giá qua ratingService.js
             await CreateRating(data);
             alert("Đánh giá đã được gửi thành công!");
@@ -130,16 +130,14 @@ const RatingForm = ({ productId, onSuccess, open, onClose }) => {
                 )}
                 <Grid container spacing={2}>
                     <Grid item xs={12}>
-                        <TextField
-                            label="Điểm đánh giá"
-                            fullWidth
-                            type="number"
+                        <Rating
+                            name="rating"
                             value={ratingScore}
-                            onChange={(e) => {
-                                const value = parseInt(e.target.value, 10) || 1;
-                                setRatingScore(Math.max(1, Math.min(5, value)));
+                            onChange={(event, newValue) => {
+                                setRatingScore(newValue);
                             }}
-                            error={!!error}
+                            precision={1}
+                            max={5}
                         />
                     </Grid>
                     <Grid item xs={12}>

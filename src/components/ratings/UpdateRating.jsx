@@ -8,6 +8,7 @@ import {
     TextField,
     Grid,
 } from "@mui/material";
+import Rating from '@mui/material/Rating';
 
 const UpdateRatingDialog = ({ open, onClose, onSubmit, rating, productId }) => {
     const [ratingScore, setRatingScore] = useState(1);
@@ -60,16 +61,14 @@ const UpdateRatingDialog = ({ open, onClose, onSubmit, rating, productId }) => {
             <DialogContent dividers>
                 <Grid container spacing={2}>
                     <Grid item xs={12}>
-                        <TextField
-                            label="Điểm đánh giá"
-                            fullWidth
-                            type="number"
+                        <Rating
+                            name="rating-score"
                             value={ratingScore}
-                            onChange={(e) => {
-                                const value = parseInt(e.target.value, 10) || 1;
-                                setRatingScore(Math.max(1, Math.min(5, value)));
+                            onChange={(event, newValue) => {
+                                setRatingScore(newValue || 1);
                             }}
-                            error={!!error}
+                            max={5}
+                            precision={1}
                         />
                     </Grid>
                     <Grid item xs={12}>
