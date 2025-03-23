@@ -190,7 +190,7 @@ const SideBar = () => {
             icon={<PeopleAltOutlined />}
           />
           <Item
-            title="Chat"
+            title="Tin nhắn hỗ trợ"
             path="/admin/chats"
             colors={colors}
             icon={<ChatOutlined />}
@@ -225,7 +225,7 @@ const SideBar = () => {
             title="Danh mục"
             path="/admin/categories"
             colors={colors}
-            icon={<CategoryIcon  />}
+            icon={<CategoryIcon />}
           />
           <Item
             title="Thuộc tính sản phẩm"

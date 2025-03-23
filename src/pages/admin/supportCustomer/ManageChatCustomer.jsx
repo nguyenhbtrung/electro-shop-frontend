@@ -210,8 +210,8 @@ const ManageChatCustomer = () => {
   return (
     <Box m="20px">
       <Header
-        title="CONTACTS"
-        subtitle="List of Contacts for Future Reference"
+        title="Tin nhắn hỗ trợ"
+        subtitle="Nhắn tin với người dùng"
       />
       <Box
         mt="40px"
