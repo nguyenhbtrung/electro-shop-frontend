@@ -24,7 +24,6 @@ import Footer from '../Footer';
 import DiscountPaper from "../discounts/DiscountPaper"; 
 import ProductCard from "./ProductCard";
 import { RecommendProduct } from '../../services/productService';
-import AddToCartDialog from "./AddToCartDialog";
 
 const ProductDetail = ({
   product,
@@ -38,10 +37,6 @@ const ProductDetail = ({
   const [pricingData, setPricingData] = useState(initialPricing);
   const [quantity, setQuantity] = useState(1);
   
-  const handleCloseAddToCart = () => {
-    setOpenAddToCart(false);
-  };
-
   // State để lưu danh sách sản phẩm được gợi ý
   const [recommendedProducts, setRecommendedProducts] = useState([]);
 
@@ -294,23 +289,9 @@ const ProductDetail = ({
                         </Box>
                       </Box>
                       <Box sx={{ display: 'flex', gap: 2 }}>
-                        <Button
-                          variant="contained"
-                          startIcon={<ShoppingCartIcon />}
-                          onClick={(e) => {
-                            e.stopPropagation(); // Ngăn sự kiện nổi bọt lên thẻ cha
-                            setOpenAddToCart(true);
-                          }}
-                          fullWidth
-                        >
-                          Thêm vào giỏ hàng
+                        <Button variant="contained" color="error" disabled={product.stock === 0}>
+                          Thêm vào giỏ
                         </Button>
-                        <AddToCartDialog
-                          open={openAddToCart}
-                          onClose={handleCloseAddToCart}
-                          productId={product.productId}
-                          discountedPrice={product.discountedPrice}
-                        />
                         <Button variant="contained" color="primary" disabled={product.stock === 0}>
                           Mua ngay
                         </Button>
