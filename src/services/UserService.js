@@ -10,6 +10,7 @@ export const UserLogin = (data) => {
 };
 
 export const GetAllUsers = () => {
+    console.log("GetAllUsers");
     return axiosInstance.get(url);
 };
 
@@ -42,4 +43,24 @@ export const UserUpdate = (userName, data) => {
 
 export const UpdateAvatar = (data) => {
     return axiosInstance.put(url + '/user/avatar?url=' + data);
+}
+
+export const ChangePassword = (data) => {
+    return axiosInstance.put(url + '/changePassword', data);
+}
+
+export const SendForgotPasswordEmail = (data) => {
+    return axiosInstance.post(url + '/forgotPassword?email=' + data);
+}
+
+export const ResetPassword = (data) => {
+    return axiosInstance.put(url + '/resetPassword', data);
+}
+
+export const ConfirmEmail = (data) => {
+    const encodedEmail = encodeURIComponent(data.email);
+    const encodedToken = encodeURIComponent(data.token);
+    const urlWithParams = `${url}/confirmedEmail?email=${encodedEmail}&token=${encodedToken}`;
+    console.log("Url: ", urlWithParams);
+    return axiosInstance.put(urlWithParams);
 }

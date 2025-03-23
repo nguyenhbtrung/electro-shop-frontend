@@ -116,10 +116,10 @@ const UpdateSupplierDialog = ({ open, onClose, onSubmit, supplier }) => {
 								/>
 							</Box>
 							<DialogActions>
-								<Button variant="contained" onClick={handleCancel} color="error">
+								<Button onClick={handleCancel} color="error" variant="contained">
 									Huỷ
 								</Button>
-								<Button type="submit" variant="contained" color="primary">
+								<Button type="submit" color="secondary" variant="contained">
 									Sửa
 								</Button>
 							</DialogActions>

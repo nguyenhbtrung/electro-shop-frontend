@@ -17,6 +17,8 @@ import { UploadImage } from "../../../services/imageService";
 import { useEffect } from "react";
 import { GetUserProfileData } from "../../../services/UserService";
 import { DeleteImage } from "../../../services/imageService";
+import ChangePasswordDialog from "../../../components/users/changePasswordDialog";
+import { ChangePassword } from "../../../services/UserService";
 
 const phoneRegExp =
 	/^((\+[1-9]{1,4}[ -]?)|(\([0-9]{2,3}\)[ -]?)|([0-9]{2,4})[ -]?)*?[0-9]{3,4}[ -]?[0-9]{3,4}$/;
@@ -40,6 +42,7 @@ const UserInfoPage = () => {
 	const isNonMobile = useMediaQuery("(min-width:600px)");
 	const [avatar, setAvatar] = useState("/static/images/avatar/1.jpg");
 	const [formValues, setFormValues] = useState(null); // State to store form values
+	const [changePasswordDialog, setChangePasswordDialogOpen] = useState(false);
 
 	const [initialValues, setInitialValues] = useState({
 		email: '',
@@ -109,10 +112,6 @@ const UserInfoPage = () => {
 		}
 	}
 
-	const closeInfoDialog = () => {
-		setInfoDialogOpen(false);
-	}
-
 	const handleAvatarChange = async (event) => {
 		const file = event.target.files[0];
 		const formData = new FormData();
@@ -161,6 +160,23 @@ const UserInfoPage = () => {
 				return role;
 		}
 	};
+
+	const handleChangePassword = async (oldPassword, newPassword) => {
+		const data = {
+			userName: localStorage.getItem("userName"),
+			currentPassword: oldPassword,
+			newPassword: newPassword,
+		};
+		const response = await ChangePassword(data);
+		if (response.status === 200) {
+			setInfo(`Đổi mật khẩu thành công!`);
+			setChangePasswordDialogOpen(false);
+			setInfoDialogOpen(true);
+			console.log(response.data);
+		} else {
+			displayError(response.data[0].code);
+		}
+	}
 
 	return (
 		<div>
@@ -319,9 +335,10 @@ const UserInfoPage = () => {
 										justifyContent="start"
 										mt="20px"
 									>
-										<Button type="submit" color="secondary" variant="contained">
+										<Button type="submit" color="secondary" variant="contained" sx={{ marginRight: '10px' }}>
 											Lưu
 										</Button>
+										<Button variant="contained" color="secondary" onClick={setChangePasswordDialogOpen}>Đổi mật khẩu</Button>
 									</Box>
 								</form>
 							)}
@@ -365,7 +382,12 @@ const UserInfoPage = () => {
 				<InfoDialog
 					open={infoDialogOpen}
 					question={info}
-					onClose={closeInfoDialog}
+					onClose={() => setInfoDialogOpen(false)}
+				/>
+				<ChangePasswordDialog
+					open={changePasswordDialog}
+					onClose={() => setChangePasswordDialogOpen(false)}
+					onSubmit={handleChangePassword}
 				/>
 			</Box>
 			<Footer />

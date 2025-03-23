@@ -143,10 +143,10 @@ const UpdateBannerDialog = ({ open, onClose, onSubmit, banner }) => {
 								/>
 							</Box>
 							<DialogActions>
-								<Button onClick={handleCancel} color="secondary">
+								<Button onClick={handleCancel} color="error" variant="contained">
 									Huỷ
 								</Button>
-								<Button type="submit" variant="contained" color="primary">
+								<Button type="submit" color="secondary" variant="contained">
 									Sửa
 								</Button>
 							</DialogActions>

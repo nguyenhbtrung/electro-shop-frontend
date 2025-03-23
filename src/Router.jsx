@@ -32,7 +32,6 @@ import CategoryPage from "./pages/user/categoryPage";
 import HomePage from "./pages/user/homePage";
 import AddUserForm from "./pages/admin/users/addUser";
 import UpdateUserForm from "./pages/admin/users/updateUser";
-import DiscountManagerTest from "./components/discounts/ApplyDiscountNew";
 import ProductViewHistoryPage from "./pages/user/ProductViewHistoryPage";
 import Cart from "./pages/user/cartPage";
 import CheckoutPage from "./pages/user/paymentPage";
@@ -57,6 +56,8 @@ import ManageChatCustomer from "./pages/admin/supportCustomer/ManageChatCustomer
 import DetailStock from "./pages/admin/stocks/detailStock.jsx";
 import ManageBanner from "./pages/admin/banners/banners.jsx";
 import BrandProductPage from "./pages/user/brandPage/index.jsx";
+import EmailConfirmed from "./pages/auth/EmailConfirmed.jsx";
+import ResetPasswordForm from "./pages/auth/ResetPassword.jsx";
 
 const AppRouter = () => {
   return (
@@ -79,6 +80,8 @@ const AppRouter = () => {
           <Route path="/search" element={<SearchPage />} />
         </Route>
 
+        <Route path="emailConfirmed" element={<EmailConfirmed />} />
+        <Route path="reset-password" element={<ResetPasswordForm />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 

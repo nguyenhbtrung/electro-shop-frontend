@@ -135,10 +135,10 @@ const AddBannerDialog = ({ open, onClose, onSubmit }) => {
 								/>
 							</Box>
 							<DialogActions>
-								<Button onClick={handleCancel} color="secondary">
+								<Button onClick={handleCancel} color="error" variant="contained">
 									Huỷ
 								</Button>
-								<Button type="submit" variant="contained" color="primary">
+								<Button type="submit" color="secondary" variant="contained">
 									Thêm
 								</Button>
 							</DialogActions>
