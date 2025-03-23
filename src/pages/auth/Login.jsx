@@ -21,6 +21,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 import IconButton from '@mui/material/IconButton';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { UserLogin } from "../../services/UserService";
+import { AuthContext } from '../../contexts/AuthContext';
 
 const Card = styled(MuiCard)(({ theme }) => ({
     display: 'flex',
@@ -68,6 +69,7 @@ export default function Login(props) {
     const [passwordError, setPasswordError] = React.useState(false);
     const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
     const [open, setOpen] = React.useState(false);
+    const { login } = React.useContext(AuthContext);
 
     const [userName, setUserName] = React.useState('');
     const [password, setPassword] = React.useState('');
@@ -110,7 +112,7 @@ export default function Login(props) {
                 console.log('Đăng nhập thành công: ', response);
                 const token = response.data.token;
                 console.log("token: ", token);
-                localStorage.setItem('access_token', token);
+                login(token);
                 localStorage.setItem('userName', userName);
                 localStorage.setItem('userId', response.data.userId);
                 if (response.data.roles === "User") {
