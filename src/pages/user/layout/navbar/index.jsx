@@ -1,3 +1,4 @@
+import React, { useState, useContext } from "react";
 import {
     Box,
     IconButton,
@@ -6,6 +7,9 @@ import {
     useMediaQuery,
     useTheme,
     Button,
+    Menu,
+    MenuItem,
+    Divider,
 } from "@mui/material";
 import {
     DarkModeOutlined,
@@ -18,21 +22,24 @@ import {
 } from "@mui/icons-material";
 import { ColorModeContext, tokens } from "../../../../theme";
 import { ToggledContext } from "../../AppUser";
-import logo from "../../../../assets/images/logo.png";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../../../contexts/AuthContext";
 import { Search } from "../../../../services/filterProductService";
-import React, { useState, useContext } from "react";
+
 const Navbar = () => {
     const theme = useTheme();
-    const colorMode = useContext(ColorModeContext);
-    const { toggled, setToggled } = useContext(ToggledContext);
+    const colors = tokens(theme.palette.mode);
     const isMdDevices = useMediaQuery("(max-width:768px)");
     const isXsDevices = useMediaQuery("(max-width:466px)");
-    const colors = tokens(theme.palette.mode);
+    const colorMode = useContext(ColorModeContext);
+    const { toggled, setToggled } = useContext(ToggledContext);
     const navigate = useNavigate();
     const { isLoggedIn, logout } = useContext(AuthContext);
     const [searchTerm, setSearchTerm] = useState("");
+    const [anchorEl, setAnchorEl] = useState(null);
+
+    const openProfileMenu = Boolean(anchorEl);
+
     const handleLogin = () => {
         navigate("/login");
     };
@@ -57,8 +64,7 @@ const Navbar = () => {
     const handleCartClick = () => {
         if (!isLoggedIn) {
             navigate("/login");
-        }
-        else {
+        } else {
             navigate("/cart");
         }
     };
@@ -66,11 +72,11 @@ const Navbar = () => {
     const handleProfileClick = () => {
         if (!isLoggedIn) {
             navigate("/login");
-        }
-        else {
+        } else {
             navigate("/profile");
         }
     };
+
     const handleSearch = () => {
         Search(searchTerm)
             .then((response) => {
@@ -80,9 +86,18 @@ const Navbar = () => {
                 console.error(error);
             });
     };
+
+    const handleProfileMenuOpen = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleProfileMenuClose = () => {
+        setAnchorEl(null);
+    };
+
     return (
         <Box display="flex" alignItems="center" justifyContent="space-between" p={2}>
-            {/* Phần bên trái: menu, logo, title và tìm kiếm */}
+            {/* Phần bên trái: menu, logo, tiêu đề và tìm kiếm */}
             <Box display="flex" alignItems="center" gap={2}>
                 <IconButton
                     sx={{ display: `${isMdDevices ? "flex" : "flex"}` }}
@@ -90,11 +105,7 @@ const Navbar = () => {
                 >
                     <MenuOutlined />
                 </IconButton>
-                <IconButton
-                    onClick={() => navigate("/")}
-                    disableRipple
-                    disableFocusRipple
-                >
+                <IconButton onClick={() => navigate("/")} disableRipple disableFocusRipple>
                     <img
                         style={{ width: "30px", height: "30px", borderRadius: "8px" }}
                         src="https://yt3.googleusercontent.com/ytc/AIdro_kt-sUf4kFDrZ4iaFcyK4EHwVz-jlvQBwjZSA6hQ9ogPEg=s900-c-k-c0x00ffffff-no-rj"
@@ -110,7 +121,6 @@ const Navbar = () => {
                         GTG SHOP
                     </Typography>
                 </IconButton>
-
                 <Box
                     display="flex"
                     alignItems="center"
@@ -133,51 +143,81 @@ const Navbar = () => {
                 </Box>
             </Box>
 
-            {/* Phần bên phải: các nút và icon */}
+            {/* Phần bên phải: các icon */}
             <Box display="flex" alignItems="center" gap={1}>
-                {isLoggedIn && (
-                    <>
-                        <Button onClick={handleOrdersClick} variant="text" color={colors.primary[400]}>
-                            Đơn Hàng
-                        </Button>
-                        <Button onClick={handleHistoryClick} variant="text" color={colors.primary[400]}>
-                            Lịch Sử Duyệt Sản Phẩm
-                        </Button>
-                        <Button onClick={handleReturnsClick} variant="text" color={colors.primary[400]}>
-                            Hoàn Trả
-                        </Button>
-                    </>
-                )}
                 <IconButton onClick={handleCartClick}>
                     <ShoppingCartOutlined />
                 </IconButton>
                 <IconButton onClick={colorMode.toggleColorMode}>
-                    {theme.palette.mode === "dark" ? (
-                        <LightModeOutlined />
-                    ) : (
-                        <DarkModeOutlined />
-                    )}
+                    {theme.palette.mode === "dark" ? <LightModeOutlined /> : <DarkModeOutlined />}
                 </IconButton>
                 <IconButton>
                     <NotificationsOutlined />
                 </IconButton>
-                <IconButton onClick={handleProfileClick}>
-                    <PersonOutlined />
-                </IconButton>
+
                 {isLoggedIn ? (
-                    <Button
-                        variant="text"
-                        color={colors.primary[400]}
-                        onClick={handleLogout}
-                    >
-                        Đăng xuất
-                    </Button>
+                    <>
+                        <IconButton onClick={handleProfileMenuOpen}>
+                            <PersonOutlined />
+                        </IconButton>
+                        <Menu
+                            anchorEl={anchorEl}
+                            open={openProfileMenu}
+                            onClose={handleProfileMenuClose}
+                            anchorOrigin={{
+                                vertical: "bottom",
+                                horizontal: "right",
+                            }}
+                            transformOrigin={{
+                                vertical: "top",
+                                horizontal: "right",
+                            }}
+                        >
+                            <MenuItem
+                                onClick={() => {
+                                    handleProfileClick();
+                                    handleProfileMenuClose();
+                                }}
+                            >
+                                Hồ sơ
+                            </MenuItem>
+                            <MenuItem
+                                onClick={() => {
+                                    handleOrdersClick();
+                                    handleProfileMenuClose();
+                                }}
+                            >
+                                Đơn Hàng
+                            </MenuItem>
+                            <MenuItem
+                                onClick={() => {
+                                    handleHistoryClick();
+                                    handleProfileMenuClose();
+                                }}
+                            >
+                                Lịch Sử Duyệt Sản Phẩm
+                            </MenuItem>
+                            <MenuItem
+                                onClick={() => {
+                                    handleReturnsClick();
+                                    handleProfileMenuClose();
+                                }}
+                            >
+                                Hoàn Trả
+                            </MenuItem>
+                            <Divider />
+                            <MenuItem
+                                onClick={() => {
+                                    handleLogout();
+                                    handleProfileMenuClose();
+                                }}
+                            >
+                                Đăng Xuất
+                            </MenuItem>
+                        </Menu>
+                    </>
                 ) : (
-                    <Button
-                        variant="text"
-                        color={colors.primary[400]}
-                        onClick={handleLogin}
-                    >
+                    <Button variant="text" color={colors.primary[400]} onClick={handleLogin}>
                         Đăng nhập
                     </Button>
                 )}
