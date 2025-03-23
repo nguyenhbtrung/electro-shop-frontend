@@ -30,8 +30,12 @@ import MoveToInboxIcon from '@mui/icons-material/MoveToInbox';
 import { ToggledContext } from "../../../../App";
 import { useEffect } from "react";
 import { GetUserProfileData } from "../../../../services/UserService";
-
-
+import CategoryIcon from '@mui/icons-material/Category';
+import InventoryIcon from '@mui/icons-material/Inventory';
+import MemoryIcon from '@mui/icons-material/Memory';
+import AppleIcon from '@mui/icons-material/Apple';
+import GradeIcon from '@mui/icons-material/Grade';
+import DiscountIcon from '@mui/icons-material/Discount';
 const SideBar = () => {
   const [collapsed, setCollapsed] = useState(false);
   const { toggled, setToggled } = useContext(ToggledContext);
@@ -215,31 +219,31 @@ const SideBar = () => {
             title="Sản phẩm"
             path="/admin/products"
             colors={colors}
-            icon={<ContactsOutlined />}
+            icon={<InventoryIcon />}
           />
           <Item
             title="Danh mục"
             path="/admin/categories"
             colors={colors}
-            icon={<ContactsOutlined />}
+            icon={<CategoryIcon  />}
           />
           <Item
             title="Thuộc tính sản phẩm"
             path="/admin/attributes"
             colors={colors}
-            icon={<ContactsOutlined />}
+            icon={<MemoryIcon />}
           />
           <Item
             title="Nhãn hàng"
             path="/admin/brands"
             colors={colors}
-            icon={<ContactsOutlined />}
+            icon={<AppleIcon />}
           />
           <Item
             title="Đánh giá"
             path="/admin/ratings"
             colors={colors}
-            icon={<ContactsOutlined />}
+            icon={<GradeIcon />}
           />
           <Item
             title="Nhập hàng"
@@ -335,7 +339,7 @@ const SideBar = () => {
             title="Giảm giá"
             path="/admin/discounts"
             colors={colors}
-            icon={<ContactsOutlined />}
+            icon={<DiscountIcon />}
           />
           <Item
             title="Voucher"
