@@ -56,8 +56,6 @@ import ManageChatCustomer from "./pages/admin/supportCustomer/ManageChatCustomer
 import DetailStock from "./pages/admin/stocks/detailStock.jsx";
 import ManageBanner from "./pages/admin/banners/banners.jsx";
 import BrandProductPage from "./pages/user/brandPage/index.jsx";
-import EmailConfirmed from "./pages/auth/EmailConfirmed.jsx";
-import ResetPasswordForm from "./pages/auth/ResetPassword.jsx";
 
 const AppRouter = () => {
   return (
@@ -108,6 +106,7 @@ const AppRouter = () => {
           <Route path="reasons" element={<ManageReason />} />
           <Route path="discounts" element={<ManageDiscount />} />
           <Route path="vouchers" element={<ManageVoucher />} />
+          <Route path="vouchers/create" element={<CreateVoucherPage />} />
           <Route path="banners" element={<ManageBanner />} />
           <Route path="contacts" element={<Contacts />} />
           <Route path="invoices" element={<Invoices />} />
