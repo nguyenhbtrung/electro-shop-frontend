@@ -10,7 +10,13 @@ const GetOrderByStatus = (status) => {
     return api.get(URL_API);
 }
 
+const CancelOrder = (orderId) => {
+    const URL_API = `/api/Order/admin/cancelorder/${orderId}`;
+    return api.post(URL_API); // Sử dụng phương thức POST để hủy đơn hàng
+};
+
 export {
     GetOrderByUser,
-    GetOrderByStatus
+    GetOrderByStatus,
+    CancelOrder
 };

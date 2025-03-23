@@ -1,10 +1,16 @@
 // src/components/carts/ViewUserCart.jsx
 import React, { useState } from "react";
 import { Box, Typography, Button } from "@mui/material";
-import { useNavigate } from "react-router-dom"; // Sử dụng useNavigate để điều hướng
+import { useNavigate } from "react-router-dom"; 
 import { DeleteCartItem, EditCartItemQuantity } from "../../services/CartService";
 
 const CartItem = ({ item, onUpdateQuantity, onRemove }) => {
+    const navigate = useNavigate(); 
+
+    const handleNavigate = (path) => {
+        navigate(path);
+    };
+
     return (
         <Box
             sx={{
@@ -22,7 +28,8 @@ const CartItem = ({ item, onUpdateQuantity, onRemove }) => {
                     item.productImage
                 }
                 alt={item.productName}
-                style={{ width: "80px", height: "80px", objectFit: "cover" }}
+                onClick={() => handleNavigate(`/product/${item.productId}`)}
+                style={{ cursor: "pointer", width: "80px", height: "80px", objectFit: "cover" }}
             />
             <Box sx={{ flex: 1, marginLeft: "16px" }}>
                 <Typography variant="h6">{item.productName}</Typography>
@@ -73,7 +80,7 @@ const CartItem = ({ item, onUpdateQuantity, onRemove }) => {
 };
 
 const ViewUserCart = ({ cartItems, setCartItems }) => {
-    const navigate = useNavigate(); // Hook để điều hướng
+    const navigate = useNavigate(); 
 
     const removeItem = async (productId) => {
         try {
@@ -110,7 +117,6 @@ const ViewUserCart = ({ cartItems, setCartItems }) => {
 
     return (
         <Box>
-            {/* Nút quay lại */}
             <Button
                 variant="outlined"
                 sx={{ marginBottom: "16px" }}
@@ -156,6 +162,7 @@ const ViewUserCart = ({ cartItems, setCartItems }) => {
                 color="success"
                 fullWidth
                 disabled={cartItems.length === 0}
+                onClick={() => navigate("/cart/checkout")}
                 sx={{ marginTop: "16px" }}
             >
                 Thanh toán
