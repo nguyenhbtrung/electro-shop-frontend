@@ -21,6 +21,8 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import ZoomInIcon from '@mui/icons-material/ZoomIn';
 import { GetProduct } from '../../services/productService';
 import { AddToCart } from '../../services/CartService';
+import { ProductPricing } from '../../services/attributeService';
+import { useNavigate } from 'react-router-dom';
 
 // Styled components
 const StrikethroughText = styled(Typography)({
@@ -178,6 +180,20 @@ const CloseModalButton = styled(IconButton)({
     },
 });
 
+// New styled component for attribute options
+const AttributeOption = styled(Box)(({ selected }) => ({
+    cursor: 'pointer',
+    padding: '8px 12px',
+    border: selected ? '2px solid #1976d2' : '1px solid #ccc',
+    backgroundColor: selected ? '#e3f2fd' : 'transparent',
+    borderRadius: 4,
+    transition: 'all 0.2s ease',
+    minWidth: '60px',
+    textAlign: 'center',
+    marginRight: 8,
+    marginBottom: 8,
+}));
+
 const AddToCartDialog = ({
     open,
     onClose,
@@ -189,33 +205,99 @@ const AddToCartDialog = ({
     const [zoomOpen, setZoomOpen] = useState(false);
     const [product, setProduct] = useState({});
 
+    // New state for attributes
+    const [attributeGroups, setAttributeGroups] = useState({});
+    const [selectedAttributes, setSelectedAttributes] = useState({});
+    const [pricingData, setPricingData] = useState({ originalPrice: 0, discountedPrice: 0 });
+    const navigate = useNavigate();
+
     useEffect(() => {
         if (!open) {
             return;
         }
         const GetProductInfo = async () => {
-            const res = await GetProduct(productId);
-            if (res?.status === 200 && res?.data) {
-                console.log(">>>check product:", res?.data);
-                const productInfo = {
-                    id: res?.data?.productId,
-                    name: res?.data?.name,
-                    images: res?.data?.productImages?.map(item => item.imageUrl),
-                    inStock: res?.data?.stock,
-                    originalPrice: res?.data?.price,
-                    discountedPrice: discountedPrice,
-                    url: '/products/smartphone-xyz-2025'
-                };
-                setProduct(productInfo);
+            try {
+                const res = await GetProduct(productId);
+                if (res?.status === 200 && res?.data) {
+                    console.log(">>>check product:", res?.data);
+                    const productInfo = {
+                        id: res?.data?.productId,
+                        name: res?.data?.name,
+                        images: res?.data?.productImages?.map(item => item.imageUrl),
+                        inStock: res?.data?.stock,
+                        originalPrice: res?.data?.price,
+                        discountedPrice: discountedPrice,
+                        url: '/products/' + res?.data?.productId,
+                        productAttributeDetail: res?.data?.productAttributeDetail || []
+                    };
+                    setProduct(productInfo);
+
+                    // Process attribute groups
+                    const groups = {};
+                    const defaultSelected = {};
+
+                    if (productInfo.productAttributeDetail && productInfo.productAttributeDetail.length > 0) {
+                        productInfo.productAttributeDetail.forEach(detail => {
+                            const groupName = detail.productAttributeName;
+                            if (!groups[groupName]) {
+                                groups[groupName] = [];
+                            }
+                            groups[groupName].push(detail);
+
+                            // Set first attribute of each group as default
+                            if (!defaultSelected[groupName] && detail.attributeDetailId) {
+                                defaultSelected[groupName] = detail.attributeDetailId;
+                            }
+                        });
+                    }
+
+                    setAttributeGroups(groups);
+                    setSelectedAttributes(defaultSelected);
+
+                    // Calculate initial pricing based on default attributes
+                    const selectedIds = Object.values(defaultSelected);
+                    if (selectedIds.length > 0) {
+                        updatePricing(productInfo.id, selectedIds);
+                    } else {
+                        setPricingData({
+                            originalPrice: productInfo.originalPrice,
+                            discountedPrice: productInfo.discountedPrice
+                        });
+                    }
+                }
+            } catch (error) {
+                console.error("Error fetching product details:", error);
             }
         };
 
         GetProductInfo();
-    }, [open]);
+    }, [open, productId, discountedPrice]);
+
+    // Handle attribute selection
+    const handleAttributeChange = (groupName, detailId) => {
+        const newSelectedAttributes = { ...selectedAttributes, [groupName]: detailId };
+        setSelectedAttributes(newSelectedAttributes);
+
+        // Update pricing based on new selection
+        const selectedIds = Object.values(newSelectedAttributes);
+        updatePricing(product.id, selectedIds);
+    };
+
+    // Get updated pricing from API
+    const updatePricing = async (productId, attributeIds) => {
+        try {
+            const response = await ProductPricing(productId, attributeIds);
+            if (response?.status === 200 && response?.data) {
+                setPricingData(response.data);
+            }
+        } catch (error) {
+            console.error("Error calculating price:", error);
+        }
+    };
 
     // Calculate savings
-    const savings = product.originalPrice - product.discountedPrice;
-    const savingsPercentage = Math.round((savings / product.originalPrice) * 100);
+    const savings = pricingData.originalPrice - pricingData.discountedPrice;
+    const savingsPercentage = Math.round((savings / pricingData.originalPrice) * 100);
 
     // Format price to VND
     const formatPrice = (price) => {
@@ -263,6 +345,11 @@ const AddToCartDialog = ({
             alert("Sản phẩm không đủ tồn kho");
             return;
         }
+
+        // Include selected attribute IDs with the cart request
+        // const selectedAttributeIds = Object.values(selectedAttributes);
+
+        // const res = await AddToCart(product.id, quantity, selectedAttributeIds);
         const res = await AddToCart(product.id, quantity);
         if (res?.status === 200 && res?.data) {
             onClose();
@@ -274,10 +361,25 @@ const AddToCartDialog = ({
         }
     };
 
-    const handleBuyNow = () => {
-        console.log(`Buying ${quantity} of ${product?.name} now`);
-        // Implement your buy now logic here
-        onClose();
+    const handleBuyNow = async () => {
+        if (quantity > product.inStock) {
+            alert("Sản phẩm không đủ tồn kho");
+            return;
+        }
+
+        // Include selected attribute IDs with the cart request
+        // const selectedAttributeIds = Object.values(selectedAttributes);
+
+        // const res = await AddToCart(product.id, quantity, selectedAttributeIds);
+        const res = await AddToCart(product.id, quantity);
+        if (res?.status === 200 && res?.data) {
+            onClose();
+            console.log(">>>check add to cart:", res?.data);
+        }
+        else {
+            alert("Có lỗi xảy ra khi thêm vào giỏ hàng");
+        }
+        navigate("/cart");
     };
 
     return (
@@ -374,16 +476,17 @@ const AddToCartDialog = ({
                             <Box sx={{ mb: 2 }}>
                                 <Typography variant="subtitle1" fontWeight="bold">Giá:</Typography>
                                 <Box sx={{ display: 'flex', alignItems: 'center', mt: 0.5 }}>
-                                    {product.originalPrice !== product.discountedPrice && (
+                                    {pricingData.originalPrice !== pricingData.discountedPrice && (
                                         <StrikethroughText variant="body1">
-                                            {formatPrice(product.originalPrice)}
+                                            {formatPrice(pricingData.originalPrice)}
                                         </StrikethroughText>
                                     )}
 
                                     <DiscountText variant="h6">
-                                        {formatPrice(product.discountedPrice)}
+                                        {formatPrice(pricingData.discountedPrice)}
                                     </DiscountText>
-                                    {product.originalPrice !== product.discountedPrice && (
+
+                                    {pricingData.originalPrice !== pricingData.discountedPrice && (
                                         <SavingsText variant="body2">
                                             Tiết kiệm {savingsPercentage}%
                                         </SavingsText>
@@ -393,14 +496,45 @@ const AddToCartDialog = ({
 
                             <Divider sx={{ my: 2 }} />
 
+                            {/* Product Attributes */}
+                            {Object.keys(attributeGroups).length > 0 && (
+                                <Box sx={{ mb: 2 }}>
+                                    <Typography variant="subtitle1" fontWeight="bold">Thuộc tính sản phẩm:</Typography>
+
+                                    {Object.entries(attributeGroups).map(([groupName, details]) => (
+                                        <Box key={groupName} sx={{ mt: 2 }}>
+                                            <Typography variant="body2" fontWeight="bold" sx={{ mb: 1 }}>
+                                                {groupName}:
+                                            </Typography>
+                                            <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
+                                                {details.map((detail) => (
+                                                    <AttributeOption
+                                                        key={detail.attributeDetailId}
+                                                        selected={selectedAttributes[groupName] === detail.attributeDetailId}
+                                                        onClick={() => handleAttributeChange(groupName, detail.attributeDetailId)}
+                                                    >
+                                                        <Typography variant="body2">
+                                                            {detail.value}
+                                                        </Typography>
+                                                    </AttributeOption>
+                                                ))}
+                                            </Box>
+                                        </Box>
+                                    ))}
+                                </Box>
+                            )}
+
                             {/* View Details Link */}
                             <Box sx={{ mb: 2 }}>
                                 <Link
-                                    href={product.url}
+                                    onClick={() => navigate(`/product/${productId}`)}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     color="primary"
-                                    sx={{ textDecoration: 'none' }}
+                                    sx={{
+                                        // textDecoration: 'none',
+                                        cursor: 'pointer'
+                                    }}
                                 >
                                     <Typography>Xem chi tiết sản phẩm</Typography>
                                 </Link>
