@@ -12,6 +12,10 @@ const GetAllCategories = () => {
     const URL_API = `/api/Category`;
     return api.get(URL_API);
 };
+const GetCategoryById = (categoryId) => {
+    const URL_API = `/api/Category/${categoryId}`;
+    return api.get(URL_API);
+};
 const UpdateCategory = (id,data) => {
     const URL_API = `/api/Category/${id}`;
     return api.put(URL_API,data);
@@ -29,6 +33,7 @@ const GetProductByCategoryId = (id) => {
     return api.get(URL_API);
 };
 export {
+    GetCategoryById,
     GetCategoryTree,
     GetCategory,
     UpdateCategory,

@@ -21,6 +21,7 @@ const GetProductByBrandId = (id) => {
     const URL_API = `/api/Brand/${id}/Product`;
     return api.get(URL_API);
 };
+
 export {
     GetAllBrand ,
     UpdateBrand,
