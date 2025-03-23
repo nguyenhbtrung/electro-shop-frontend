@@ -12,11 +12,23 @@ const GetOrderByStatus = (status) => {
 
 const CancelOrder = (orderId) => {
     const URL_API = `/api/Order/admin/cancelorder/${orderId}`;
-    return api.post(URL_API); // Sử dụng phương thức POST để hủy đơn hàng
+    return api.post(URL_API); 
+};
+
+const GetAllOrder = () => {
+    const URL_API = "/api/Order/admin/allorders";
+    return api.get(URL_API);
+}
+
+const UpdateOrderStatus = (orderId, orderStatus) => {
+    const URL_API = `/api/Order/admin/updateorderstatus?orderId=${orderId}&orderStatus=${orderStatus}`;
+    return api.put(URL_API); 
 };
 
 export {
     GetOrderByUser,
     GetOrderByStatus,
-    CancelOrder
+    CancelOrder,
+    GetAllOrder,
+    UpdateOrderStatus
 };
