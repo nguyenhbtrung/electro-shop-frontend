@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { 
-  Box, 
-  Typography, 
-  FormControl, 
-  InputLabel, 
-  Select, 
-  MenuItem, 
-  Button 
+import {
+  Box,
+  Typography,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Button,
 } from "@mui/material";
 import ProductCard from "../../../components/products/ProductCard";
 import { GetProductByCategoryId, GetCategoryById } from "../../../services/categoryService";
 import { FilterInCategory } from "../../../services/filterProductService";
-import { GetAllBrand } from "../../../services/brandService"; 
+import { GetAllBrand } from "../../../services/brandService";
 import { useParams } from "react-router-dom";
 import Footer from "../../../components/Footer";
 
@@ -24,7 +24,7 @@ const CategoryProductsPage = () => {
   const [priceFilter, setPriceFilter] = useState("");
   const [brandId, setBrandId] = useState("");
   const [ratingFilter, setRatingFilter] = useState("");
-  
+
   // State lưu danh sách thương hiệu
   const [brands, setBrands] = useState([]);
 
@@ -40,7 +40,6 @@ const CategoryProductsPage = () => {
         console.error("Error fetching brands:", error);
       }
     };
-
     fetchBrands();
   }, []);
 
@@ -56,7 +55,6 @@ const CategoryProductsPage = () => {
         console.error("Error fetching products by category id:", error);
       }
     };
-
     if (categoryId) {
       fetchProductsByCategory();
     }
@@ -74,7 +72,6 @@ const CategoryProductsPage = () => {
         console.error("Error fetching category details:", error);
       }
     };
-
     if (categoryId) {
       fetchCategory();
     }
@@ -98,7 +95,7 @@ const CategoryProductsPage = () => {
   };
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+    <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
       <Box
         sx={{
           maxWidth: 1200,
@@ -109,7 +106,9 @@ const CategoryProductsPage = () => {
         <Typography variant="h5" sx={{ mb: 2 }}>
           Sản phẩm của danh mục {category ? category.name : categoryId}
         </Typography>
-        <Box sx={{ display: "flex", gap: 2 }}>
+
+        {/* Container chứa Filter Panel và danh sách sản phẩm */}
+        <Box sx={{ display: "flex", alignItems: "flex-start", gap: 2 }}>
           {/* Filter Panel bên trái */}
           <Box
             sx={{
@@ -117,6 +116,9 @@ const CategoryProductsPage = () => {
               border: "1px solid #ccc",
               borderRadius: 2,
               p: 2,
+              // Nếu muốn cố định chiều cao và cuộn nội dung
+              // maxHeight: 600,
+              // overflow: 'auto',
             }}
           >
             <Typography variant="h6" sx={{ mb: 2 }}>
@@ -177,7 +179,7 @@ const CategoryProductsPage = () => {
             sx={{
               flexGrow: 1,
               display: "grid",
-              gridTemplateColumns: "repeat(5, 1fr)",
+              gridTemplateColumns: "repeat(4, 1fr)",
               gap: 2,
             }}
           >
@@ -192,6 +194,7 @@ const CategoryProductsPage = () => {
         </Box>
       </Box>
 
+      {/* Footer */}
       <Footer />
     </Box>
   );
