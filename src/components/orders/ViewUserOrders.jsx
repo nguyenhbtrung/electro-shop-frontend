@@ -95,6 +95,7 @@ const ViewUserOrders = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchOrderData = async () => {
@@ -213,8 +214,9 @@ const ViewUserOrders = () => {
               <Button
                 variant="contained"
                 color="secondary"
-                href={`/return/request/${order.orderId}`}
-                disabled={order.status === "cancelled"}
+                // href={`/returns/request/${order.orderId}`}
+                onClick={() => navigate(`/returns/request/${order.orderId}`)}
+                disabled={order.status !== "successed"}
               >
                 Trả hàng
               </Button>

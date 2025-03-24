@@ -41,7 +41,7 @@ const Refund = (data) => {
 };
 
 const GetPaymentByOrderId = (orderId) => {
-    const URL_API = `/api/Return/payment${orderId}`;
+    const URL_API = `/api/Return/payment/${orderId}`;
     return api.get(URL_API);
 };
 

@@ -40,6 +40,7 @@ const ReturnRequestAdmin = () => {
     const [openCancel, setOpenCancel] = useState(false);
     const [openComplete, setOpenComplete] = useState(false);
     const [openRefund, setOpenRefund] = useState(false);
+    const [payment, setPayment] = useState({});
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -91,7 +92,7 @@ const ReturnRequestAdmin = () => {
 
     const handleOpenComplete = () => {
         if (returnData?.returnMethod === "refund") {
-            setOpenRefund(true);
+            handleRefund();
         } else {
             setOpenComplete(true);
         }
@@ -202,12 +203,12 @@ const ReturnRequestAdmin = () => {
     };
 
     const handleRefund = async () => {
-        const paymentRes = await GetPaymentByOrderId(returnData?.orderId);
-        if (paymentRes?.status === 200 && paymentRes?.data) {
-            if (paymentRes?.data?.paymentMethod !== 'vnpay') {
-
-            }
+        const res = await GetPaymentByOrderId(returnData?.orderId);
+        console.log("check orderid:", returnData?.orderId);
+        if (res?.status === 200 && res?.data) {
+            setPayment(res.data);
         }
+        setOpenRefund(true);
     };
 
     return (
@@ -497,6 +498,7 @@ const ReturnRequestAdmin = () => {
             <RefundConfirmDialog
                 open={openRefund}
                 onClose={handleCloseRefund}
+                payment={payment}
             />
         </Box>
     );
