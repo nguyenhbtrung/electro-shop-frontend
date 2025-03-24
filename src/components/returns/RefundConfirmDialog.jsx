@@ -52,7 +52,7 @@ const RefundConfirmDialog = ({ open, onClose, payment }) => {
     // Xử lý đóng hộp thoại
     const handleClose = (confirmed) => {
         // Nếu xác nhận hoàn tất quá trình nhưng chưa hoàn tiền thì không cho phép đóng dialog
-        if (confirmed && !refundCompleted) return;
+        if (!confirmed) return;
         onClose(confirmed);
         // Reset lại trạng thái khi đóng hộp thoại
         setRefundCompleted(false);
@@ -114,9 +114,9 @@ const RefundConfirmDialog = ({ open, onClose, payment }) => {
                         textTransform: 'none',
                     }}
                     variant="contained"
-                    color={refundCompleted ? 'secondary' : 'error'}
+                    color={refundCompleted ? 'secondary' : 'secondary'}
                     onClick={() => handleClose(true)}
-                    disabled={!refundCompleted}
+                    disabled={!refundCompleted && payment.paymentMethod === "vnpay"}
                     autoFocus
                 >
                     Xác nhận

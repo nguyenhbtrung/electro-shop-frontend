@@ -8,8 +8,8 @@ const GetProductViewHistoryById = (HistoryId) => {
     const URL_API = `/api/ProductViewHistory/${HistoryId}`;
     return api.get(URL_API);
 };
-const CreateProductViewHistory = (productId) => {
-    const URL_API = `/api/ProductViewHistory/${productId}`;
+const CreateProductViewHistory = (ProductId) => {
+    const URL_API = `/api/ProductViewHistory/${ProductId}`;
     return api.put(URL_API);
 };
 const UpdateProductViewHistory = (data) => {

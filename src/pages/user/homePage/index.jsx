@@ -161,7 +161,7 @@ const HomePage = () => {
                 </Box>
 
                 {/* Hàng sản phẩm khuyến mãi */}
-                <Typography variant="h5" sx={{ mb: 2 }}>
+                <Typography variant="h5" sx={{ mb: 2, fontWeight: "bold", fontSize: "1.5rem" }}>
                     Sản phẩm khuyến mãi
                 </Typography>
                 {discountProducts?.length > 0 && (
@@ -180,7 +180,7 @@ const HomePage = () => {
                 )}
 
                 {/* Hàng sản phẩm bán chạy */}
-                <Typography variant="h5" sx={{ mb: 2 }}>
+                <Typography variant="h5" sx={{ mb: 2, fontWeight: "bold", fontSize: "1.5rem" }}>
                     Sản phẩm bán chạy
                 </Typography>
                 <Box
