@@ -3,17 +3,25 @@ import { useParams } from 'react-router-dom';
 import ProductDetail from './ProductDetail';
 import { GetProduct } from '../../services/productService';
 import { ProductPricing } from '../../services/attributeService';
+import { CreateProductViewHistory } from '../../services/historyService';
 
 const ProductDetailWrapper = () => {
   const { id } = useParams();
   const productId = parseInt(id, 10);
-  
+
   const [product, setProduct] = useState(null);
   const [defaultSelectedAttributes, setDefaultSelectedAttributes] = useState({});
   const [pricingData, setPricingData] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const CreateHistory = async () => {
+
+      const res = await CreateProductViewHistory(id);
+
+    }
+
+    CreateHistory();
     // Lấy dữ liệu sản phẩm
     GetProduct(productId)
       .then(response => {
@@ -58,8 +66,8 @@ const ProductDetailWrapper = () => {
   if (loading) return <div>Loading...</div>;
 
   return (
-    <ProductDetail 
-      product={product} 
+    <ProductDetail
+      product={product}
       defaultSelectedAttributes={defaultSelectedAttributes}
       pricingData={pricingData}
       productId={productId}

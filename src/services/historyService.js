@@ -10,7 +10,7 @@ const GetProductViewHistoryById = (HistoryId) => {
 };
 const CreateProductViewHistory = (ProductId) => {
     const URL_API = `/api/ProductViewHistory/${ProductId}`;
-    return api.put(URL_API);
+    return api.post(URL_API);
 };
 const UpdateProductViewHistory = (data) => {
     const URL_API = `/api/ProductViewHistory/${HistoryId}`;
