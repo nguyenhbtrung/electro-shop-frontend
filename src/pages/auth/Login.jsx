@@ -125,6 +125,9 @@ export default function Login(props) {
                 if (response.data === "Email not confirmed") {
                     setPasswordError(true);
                     setPasswordErrorMessage("Tài khoản chưa được xác nhận, vui lòng kiểm tra email của bạn!");
+                } else if (response.data === "User is banned") {
+                    setPasswordError(true);
+                    setPasswordErrorMessage("Tài khoản của bạn đã bị khóa!");
                 } else {
                     setPasswordError(true);
                     setPasswordErrorMessage("Tên tài khoản hoặc mật khẩu không đúng");

@@ -158,12 +158,12 @@ const SideBar = () => {
             },
           }}
         >
-          <Item
+          {/* <Item
             title="Dashboard"
             path="/admin"
             colors={colors}
             icon={<DashboardOutlined />}
-          />
+          /> */}
         </Menu>
         <Typography
           variant="h6"
@@ -373,14 +373,14 @@ const SideBar = () => {
             icon={<ContactsOutlined />}
           />
         </Menu>
-        <Typography
+        {/* <Typography
           variant="h6"
           color={colors.gray[300]}
           sx={{ m: "15px 0 5px 20px" }}
         >
           {!collapsed ? "Template" : " "}
-        </Typography>{" "}
-        <Menu
+        </Typography>{" "} */}
+        {/* <Menu
           menuItemStyles={{
             button: {
               ":hover": {
@@ -453,7 +453,7 @@ const SideBar = () => {
             colors={colors}
             icon={<WavesOutlined />}
           />
-        </Menu>
+        </Menu> */}
 
       </Box>
     </Sidebar>
