@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Select, Box, Typography, Button, MenuItem } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { GetAllOrder, CancelOrder, UpdateOrderStatus } from "../../../services/orderService";
+import { GetAllOrder, CancelOrder, UpdateOrderStatus, DeleteOrder } from "../../../services/orderService";
 
 const OrderItem = ({ item }) => {
     const navigate = useNavigate();
@@ -119,6 +119,22 @@ const ViewUserOrders = () => {
         }
     };
 
+    const handleDeleteOrder = async (orderId) => {
+        if (window.confirm("Bạn có chắc chắn muốn xóaxóa đơn hàng này không?")) {
+            try {
+                await DeleteOrder(orderId);
+                alert("Đơn hàng đã được xóa thành công!");
+
+                const response = await GetAllOrder();
+                setOrders(response.data);
+            } catch (err) {
+                console.error("Lỗi khi xóa đơn hàng:", err);
+                alert("Không thể xóa đơn hàng. Vui lòng thử lại sau.");
+            }
+        }
+    };
+    
+
     if (loading) return <Typography>Đang tải dữ liệu đơn hàng...</Typography>;
     if (error) return <Typography color="error">{error}</Typography>;
 
@@ -186,6 +202,14 @@ const ViewUserOrders = () => {
                             Tổng tiền: {order.total.toLocaleString()} đ
                         </Typography>
                         <Box sx={{ display: "flex", justifyContent: "flex-end", gap: "8px" }}>
+                            <Button
+                                variant="outlined"
+                                color="error"
+                                onClick={() => handleDeleteOrder(order.orderId)}
+                                disabled={order.status === "cancelled" || order.status === "successed"}
+                            >
+                                Xóa đơn hàng
+                            </Button>
                             <Button
                                 variant="contained"
                                 color="secondary"

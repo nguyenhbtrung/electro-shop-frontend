@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Box, Typography, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { GetOrderByUser, CancelOrder } from "../../services/orderService";
+import { GetOrderByUser, CancelOrder, RePay } from "../../services/orderService";
 
 const OrderItem = ({ item }) => {
   const navigate = useNavigate();
@@ -74,6 +74,8 @@ const getPaymentStatusLabel = (paymentStatus) => {
       return "Chờ thanh toán";
     case "paid":
       return "Đã thanh toán";
+    case "refund":
+      return "Hoàn tiền";
     default:
       return "Đã hủy";
   }
@@ -131,6 +133,24 @@ const ViewUserOrders = () => {
       } catch (err) {
         console.error("Lỗi khi hủy đơn hàng:", err);
         alert("Không thể hủy đơn hàng. Vui lòng thử lại sau.");
+      }
+    }
+  };
+
+  const handleRePay = async (orderId) => {
+    if (window.confirm("Bạn có chắc chắn muốn thanh toán lại đơn hàng này không?")) {
+      try {
+        const response = await RePay(orderId);
+
+        console.log("API Response:", response);
+        if (response?.data?.paymentUrl) {
+          window.open(response.data.paymentUrl, "_blank");
+        } else {
+          throw new Error("Không tìm thấy URL thanh toán.");
+        }
+      } catch (err) {
+        console.error("Lỗi khi tái thanh toán đơn hàng:", err);
+        alert(err.message || "Không thể tái thanh toán đơn hàng. Vui lòng thử lại sau.");
       }
     }
   };
@@ -211,15 +231,24 @@ const ViewUserOrders = () => {
               >
                 Hủy đơn hàng
               </Button>
-              <Button
-                variant="contained"
-                color="secondary"
-                // href={`/returns/request/${order.orderId}`}
-                onClick={() => navigate(`/returns/request/${order.orderId}`)}
-                disabled={order.status !== "successed"}
-              >
-                Trả hàng
-              </Button>
+              {order.paymentMethod === "vnpay" && order.paymentStatus === "pending" ? (
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  onClick={() => handleRePay(order.orderId)}
+                >
+                  Thanh toán lại
+                </Button>
+              ) : (
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  onClick={() => navigate(`/returns/request/${order.orderId}`)}
+                  disabled={order.status !== "successed"}
+                >
+                  Trả hàng
+                </Button>
+              )}
             </Box>
           </Box>
         ))

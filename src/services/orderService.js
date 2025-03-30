@@ -12,7 +12,7 @@ const GetOrderByStatus = (status) => {
 
 const CancelOrder = (orderId) => {
     const URL_API = `/api/Order/admin/cancelorder/${orderId}`;
-    return api.post(URL_API); 
+    return api.put(URL_API); 
 };
 
 const GetAllOrder = () => {
@@ -25,10 +25,22 @@ const UpdateOrderStatus = (orderId, orderStatus) => {
     return api.put(URL_API); 
 };
 
+const RePay = (orderId) => {
+    const URL_API = `/api/Order/user/repayment/${orderId}`;
+    return api.put(URL_API); 
+}
+
+const DeleteOrder = (orderId) => {
+    const URL_API = `/api/Order/admin/deleteorder/${orderId}`;
+    return api.delete(URL_API); 
+}
+
 export {
     GetOrderByUser,
     GetOrderByStatus,
     CancelOrder,
     GetAllOrder,
-    UpdateOrderStatus
+    UpdateOrderStatus,
+    RePay,
+    DeleteOrder,
 };
