@@ -301,7 +301,7 @@ const ManageDiscount = () => {
                     "& .MuiDataGrid-cell": { border: "none" },
                     "& .name-column--cell": { color: colors.greenAccent[300] },
                     "& .MuiDataGrid-columnHeaders": {
-                        backgroundColor: colors.blueAccent[700],
+                        backgroundColor: colors.gray[900],
                         "--DataGrid-containerBackground": "transparent",
                         borderBottom: "none",
                     },
@@ -310,7 +310,7 @@ const ManageDiscount = () => {
                     },
                     "& .MuiDataGrid-footerContainer": {
                         borderTop: "none",
-                        backgroundColor: colors.blueAccent[700],
+                        backgroundColor: colors.gray[900],
                     },
                     "& .MuiCheckbox-root": {
                         color: `${colors.greenAccent[200]} !important`,

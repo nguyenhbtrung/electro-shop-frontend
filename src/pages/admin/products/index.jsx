@@ -61,7 +61,7 @@ const ManageProduct = () => {
       console.log(">>>Check err:", res);
     }
   };
-  
+
 
   const handleEdit = (row) => {
     setSelectedProduct(row);
@@ -202,7 +202,8 @@ const ManageProduct = () => {
           "& .MuiDataGrid-cell": { border: "none" },
           "& .name-column--cell": { color: colors.greenAccent[300] },
           "& .MuiDataGrid-columnHeaders": {
-            backgroundColor: colors.blueAccent[700],
+            backgroundColor: colors.gray[900],
+            "--DataGrid-containerBackground": "transparent",
             borderBottom: "none",
           },
           "& .MuiDataGrid-virtualScroller": {
@@ -210,7 +211,7 @@ const ManageProduct = () => {
           },
           "& .MuiDataGrid-footerContainer": {
             borderTop: "none",
-            backgroundColor: colors.blueAccent[700],
+            backgroundColor: colors.gray[900],
           },
           "& .MuiCheckbox-root": {
             color: `${colors.greenAccent[200]} !important`,
@@ -249,12 +250,12 @@ const ManageProduct = () => {
         open={openEditProductDialog}
         onClose={() => setEditProductDialog(false)}
         onSubmit={(updatedProduct) => {
-    // Sau khi chỉnh sửa, fetch lại danh sách sản phẩm từ server
-        fetchProducts();
-        setEditProductDialog(false);
-      }}
-      product={selectedProduct}
-      categories={[]}
+          // Sau khi chỉnh sửa, fetch lại danh sách sản phẩm từ server
+          fetchProducts();
+          setEditProductDialog(false);
+        }}
+        product={selectedProduct}
+        categories={[]}
       />
 
 

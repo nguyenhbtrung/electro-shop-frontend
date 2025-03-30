@@ -124,7 +124,8 @@ const ManageRating = () => {
                     "& .MuiDataGrid-root": { border: "none" },
                     "& .MuiDataGrid-cell": { border: "none" },
                     "& .MuiDataGrid-columnHeaders": {
-                        backgroundColor: colors.blueAccent[700],
+                        backgroundColor: colors.gray[900],
+                        "--DataGrid-containerBackground": "transparent",
                         borderBottom: "none",
                     },
                     "& .MuiDataGrid-virtualScroller": {
@@ -132,7 +133,7 @@ const ManageRating = () => {
                     },
                     "& .MuiDataGrid-footerContainer": {
                         borderTop: "none",
-                        backgroundColor: colors.blueAccent[700],
+                        backgroundColor: colors.gray[900],
                     },
                     "& .MuiCheckbox-root": {
                         color: `${colors.greenAccent[200]} !important`,

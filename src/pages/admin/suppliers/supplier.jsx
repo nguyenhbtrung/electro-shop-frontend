@@ -240,7 +240,7 @@ const ManageSupplier = () => {
 						color: colors.greenAccent[0],
 					},
 					"& .MuiDataGrid-columnHeaders": {
-						backgroundColor: colors.blueAccent[500],
+						backgroundColor: colors.gray[900],
 						"--DataGrid-containerBackground": "transparent",
 						borderBottom: "none",
 					},
@@ -249,7 +249,7 @@ const ManageSupplier = () => {
 					},
 					"& .MuiDataGrid-footerContainer": {
 						borderTop: "none",
-						backgroundColor: colors.blueAccent[600],
+						backgroundColor: colors.gray[900],
 					},
 					"& .MuiCheckbox-root": {
 						color: `${colors.greenAccent[200]} !important`,

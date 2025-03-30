@@ -144,7 +144,8 @@ const ManageAttribute = () => {
         maxWidth="100%"
         sx={{
           "& .MuiDataGrid-columnHeaders": {
-            backgroundColor: colors.blueAccent[700],
+            backgroundColor: colors.gray[900],
+            "--DataGrid-containerBackground": "transparent",
             borderBottom: `1px solid ${colors.grey ? colors.grey[300] : "#e0e0e0"}`,
           },
           "& .MuiDataGrid-virtualScroller": {
@@ -152,7 +153,7 @@ const ManageAttribute = () => {
           },
           "& .MuiDataGrid-footerContainer": {
             borderTop: `1px solid ${colors.grey ? colors.grey[300] : "#e0e0e0"}`,
-            backgroundColor: colors.blueAccent[700],
+            backgroundColor: colors.gray[900],
           },
           "& .MuiCheckbox-root": {
             color: `${colors.greenAccent[200]} !important`,
