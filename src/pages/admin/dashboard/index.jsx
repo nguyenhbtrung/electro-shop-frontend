@@ -84,6 +84,7 @@ function Dashboard() {
             subtitle="Email Sent"
             progress="0.75"
             increase="+14%"
+            // color={colors.red[600]}
             icon={
               <Email
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}

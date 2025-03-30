@@ -59,6 +59,7 @@ import BrandProductPage from "./pages/user/brandPage/index.jsx";
 import EmailConfirmed from "./pages/auth/EmailConfirmed.jsx";
 import ResetPasswordForm from "./pages/auth/ResetPassword.jsx";
 import CreateVoucherPage from "./pages/admin/vouchers/CreateVoucherPage";
+import AdminDashboard from "./pages/admin/dashboard/AdminDashboard.jsx";
 
 const AppRouter = () => {
   return (
@@ -88,7 +89,7 @@ const AppRouter = () => {
 
         {/* Giao diện Admin */}
         <Route path="/admin" element={<App />}>
-          <Route path="" element={<Dashboard />} />
+          <Route path="" element={<AdminDashboard />} />
           <Route path="users" element={<ManageUser />} />
           <Route path="users/add" element={<AddUserForm />} />
           <Route path="users/edit/:userName" element={<UpdateUserForm />} />

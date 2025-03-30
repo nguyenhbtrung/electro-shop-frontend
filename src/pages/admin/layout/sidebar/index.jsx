@@ -158,12 +158,12 @@ const SideBar = () => {
             },
           }}
         >
-          {/* <Item
+          <Item
             title="Dashboard"
             path="/admin"
             colors={colors}
             icon={<DashboardOutlined />}
-          /> */}
+          />
         </Menu>
         <Typography
           variant="h6"
