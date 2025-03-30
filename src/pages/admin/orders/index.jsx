@@ -120,7 +120,7 @@ const ViewUserOrders = () => {
     };
 
     const handleDeleteOrder = async (orderId) => {
-        if (window.confirm("Bạn có chắc chắn muốn xóaxóa đơn hàng này không?")) {
+        if (window.confirm("Bạn có chắc chắn muốn xóa đơn hàng này không?")) {
             try {
                 await DeleteOrder(orderId);
                 alert("Đơn hàng đã được xóa thành công!");
