@@ -12,7 +12,6 @@ const CartPage = () => {
     const fetchCartData = async () => {
       try {
         const response = await GetUserCart();
-        //console.log("Dữ liệu giỏ hàng:", response.data); // Kiểm tra dữ liệu nhận về từ API
         setCartItems(response.data);
       } catch (err) {
         setError("Không thể lấy dữ liệu giỏ hàng.");

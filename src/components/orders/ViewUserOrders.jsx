@@ -1,4 +1,3 @@
-// src/components/orders/ViewUserOrders.jsx
 import React, { useState, useEffect } from "react";
 import { Box, Typography, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
@@ -49,7 +48,6 @@ const OrderItem = ({ item }) => {
   );
 };
 
-// Hàm hiển thị trạng thái đơn hàng
 const getStatusLabel = (status) => {
   switch (status) {
     case "pending":
@@ -67,7 +65,6 @@ const getStatusLabel = (status) => {
   }
 };
 
-// Hàm hiển thị trạng thái thanh toán
 const getPaymentStatusLabel = (paymentStatus) => {
   switch (paymentStatus) {
     case "pending":
@@ -81,7 +78,6 @@ const getPaymentStatusLabel = (paymentStatus) => {
   }
 };
 
-// Hàm hiển thị phương thức thanh toán
 const getPaymentMethodLabel = (paymentMethod) => {
   switch (paymentMethod) {
     case "cod":
@@ -97,6 +93,7 @@ const ViewUserOrders = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [filter, setFilter] = useState("all");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -104,10 +101,8 @@ const ViewUserOrders = () => {
       try {
         const response = await GetOrderByUser();
         setOrders(response.data);
-        console.log("Response Data:", response.data);
       } catch (err) {
         setError("Không thể lấy dữ liệu đơn hàng.");
-        console.error("Lỗi khi gọi API:", err);
       } finally {
         setLoading(false);
       }
@@ -116,8 +111,6 @@ const ViewUserOrders = () => {
     fetchOrderData();
   }, []);
 
-
-  // Hàm xử lý hủy đơn hàng
   const handleCancelOrder = async (orderId) => {
     if (window.confirm("Bạn có chắc chắn muốn hủy đơn hàng này không?")) {
       try {
@@ -157,15 +150,35 @@ const ViewUserOrders = () => {
 
   if (loading) return <Typography>Đang tải dữ liệu đơn hàng...</Typography>;
   if (error) return <Typography color="error">{error}</Typography>;
+  const filteredOrders = filter === "all" ? orders : orders.filter((order) => order.status === filter);
 
   return (
     <Box>
-      {orders.length === 0 ? (
+      <Box sx={{ display: "flex", gap: "8px", marginBottom: "16px", flexWrap: "wrap", justifyContent: "center" }}>
+        {[
+          { label: "Tất cả", value: "all" },
+          { label: "Đang chuẩn bị", value: "pending" },
+          { label: "Đã hoàn thành", value: "successed" },
+          { label: "Đang vận chuyển", value: "shipping" },
+          { label: "Trả hàng", value: "return" },
+          { label: "Đã hủy", value: "cancelled" },
+        ].map((status) => (
+          <Button
+            key={status.value}
+            variant={filter === status.value ? "contained" : "outlined"}
+            onClick={() => setFilter(status.value)}
+          >
+            {status.label}
+          </Button>
+        ))}
+      </Box>
+
+      {filteredOrders.length === 0 ? (
         <Typography sx={{ fontSize: "1.2rem", textAlign: "center", margin: "20px 0" }}>
-          Bạn chưa có đơn hàng nào!
+          Không có đơn hàng nào phù hợp!
         </Typography>
       ) : (
-        orders.map((order) => (
+        filteredOrders.map((order) => (
           <Box
             key={order.orderId}
             sx={{

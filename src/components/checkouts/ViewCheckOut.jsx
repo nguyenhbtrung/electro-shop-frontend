@@ -21,10 +21,6 @@ const ViewCheckOut = () => {
                     GetAvailableVouchers(),
                 ]);
 
-                console.log("Dữ liệu người dùng:", userResponse.data);
-                console.log("Dữ liệu giỏ hàng:", cartResponse.data);
-                console.log("Dữ liệu voucher:", voucherResponse.data);
-
                 setUserInfo(userResponse.data);
                 setCartItems(cartResponse.data);
                 setVouchers(voucherResponse.data);
@@ -126,7 +122,7 @@ const ViewCheckOut = () => {
                 <Typography sx={{ fontWeight: "bold", fontSize: "1rem" }}>Tổng cộng: {calculateTotal().toLocaleString()} đ</Typography>
             </Box>
 
-            <Button variant="contained" color="success" fullWidth sx={{ mt: 2 }} onClick={handleOrder}>ĐẶT HÀNG</Button>
+            <Button variant="contained" color="success" fullWidth sx={{ mt: 2 }} disabled={cartItems.length === 0} onClick={handleOrder}>ĐẶT HÀNG</Button>
         </Box>
     );
 };
