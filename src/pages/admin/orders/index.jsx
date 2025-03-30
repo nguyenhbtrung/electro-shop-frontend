@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Select, Box, Typography, Button, MenuItem } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { GetAllOrder, CancelOrder, UpdateOrderStatus, DeleteOrder } from "../../../services/orderService";
+import { GetAllOrder, UpdateOrderStatus, DeleteOrder } from "../../../services/orderService";
 
 const OrderItem = ({ item }) => {
     const navigate = useNavigate();
@@ -72,7 +72,7 @@ const getPaymentMethodLabel = (paymentMethod) => {
     }
 };
 
-const ViewUserOrders = () => {
+const ViewAllOrders = () => {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
@@ -206,7 +206,6 @@ const ViewUserOrders = () => {
                                 variant="outlined"
                                 color="error"
                                 onClick={() => handleDeleteOrder(order.orderId)}
-                                disabled={order.status === "cancelled" || order.status === "successed"}
                             >
                                 Xóa đơn hàng
                             </Button>
@@ -225,4 +224,4 @@ const ViewUserOrders = () => {
     );
 };
 
-export default ViewUserOrders;
+export default ViewAllOrders;
