@@ -117,7 +117,6 @@ const ViewUserOrders = () => {
         await CancelOrder(orderId);
         alert("Đơn hàng đã được hủy thành công!");
 
-        // Cập nhật danh sách đơn hàng sau khi hủy
         setOrders((prevOrders) =>
           prevOrders.map((order) =>
             order.orderId === orderId ? { ...order, status: "cancelled" } : order
@@ -189,7 +188,6 @@ const ViewUserOrders = () => {
               position: "relative"
             }}
           >
-            {/* Trạng thái đơn hàng + Trạng thái thanh toán + Phương thức thanh toán */}
             <Box sx={{ position: "absolute", top: "16px", right: "16px", textAlign: "right" }}>
               <Typography
                 sx={{

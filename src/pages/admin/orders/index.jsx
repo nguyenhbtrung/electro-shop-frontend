@@ -48,7 +48,6 @@ const OrderItem = ({ item }) => {
     );
 };
 
-// Hàm hiển thị trạng thái thanh toán
 const getPaymentStatusLabel = (paymentStatus) => {
     switch (paymentStatus) {
         case "pending":
@@ -60,7 +59,6 @@ const getPaymentStatusLabel = (paymentStatus) => {
     }
 };
 
-// Hàm hiển thị phương thức thanh toán
 const getPaymentMethodLabel = (paymentMethod) => {
     switch (paymentMethod) {
         case "cod":
@@ -156,7 +154,6 @@ const ViewAllOrders = () => {
                             position: "relative"
                         }}
                     >
-                        {/* Trạng thái đơn hàng + Trạng thái thanh toán + Phương thức thanh toán */}
                         <Box sx={{ position: "absolute", top: "16px", right: "16px", textAlign: "right" }}>
                             <Select
                                 value={selectedStatus[order.orderId] || order.status}

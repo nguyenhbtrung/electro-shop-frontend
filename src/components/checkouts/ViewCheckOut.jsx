@@ -1,4 +1,3 @@
-// src/components/checkouts/ViewCheckOut.jsx
 import React, { useState, useEffect } from "react";
 import { Box, Typography, TextField, Button, Radio, RadioGroup, FormControlLabel, FormControl } from "@mui/material";
 import { GetUserInfo, GetAvailableVouchers, GetUserCart, CreateOrder } from "../../services/checkoutService";
@@ -39,9 +38,7 @@ const ViewCheckOut = () => {
             if (response.status === 200) {
                 alert("Đặt hàng thành công!");
     
-                // Kiểm tra phương thức thanh toán là "vnpay"
                 if (paymentMethod === "vnpay" && response.data.paymentUrl) {
-                    // Chuyển hướng đến URL thanh toán của VNPay
                     window.open(response.data.paymentUrl, "_blank");
                 }
             } else {
