@@ -37,10 +37,6 @@ const ViewCheckOut = () => {
     }, []);
 
     const handleOrder = async () => {
-        console.log("Thông tin đặt hàng:", userInfo);
-        console.log("Phương thức thanh toán:", paymentMethod);
-        console.log("Voucher đã chọn:", selectedVoucher);
-
         try {
             const response = await CreateOrder(selectedVoucher, paymentMethod);
     

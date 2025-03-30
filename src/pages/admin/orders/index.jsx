@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Select, Box, Typography, Button, MenuItem } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { GetAllOrder, CancelOrder, UpdateOrderStatus } from "../../../services/orderService";
+import { GetAllOrder, UpdateOrderStatus, DeleteOrder } from "../../../services/orderService";
 
 const OrderItem = ({ item }) => {
     const navigate = useNavigate();
@@ -72,7 +72,7 @@ const getPaymentMethodLabel = (paymentMethod) => {
     }
 };
 
-const ViewUserOrders = () => {
+const ViewAllOrders = () => {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
@@ -118,6 +118,22 @@ const ViewUserOrders = () => {
             alert("Không thể cập nhật trạng thái đơn hàng. Vui lòng thử lại sau.");
         }
     };
+
+    const handleDeleteOrder = async (orderId) => {
+        if (window.confirm("Bạn có chắc chắn muốn xóa đơn hàng này không?")) {
+            try {
+                await DeleteOrder(orderId);
+                alert("Đơn hàng đã được xóa thành công!");
+
+                const response = await GetAllOrder();
+                setOrders(response.data);
+            } catch (err) {
+                console.error("Lỗi khi xóa đơn hàng:", err);
+                alert("Không thể xóa đơn hàng. Vui lòng thử lại sau.");
+            }
+        }
+    };
+    
 
     if (loading) return <Typography>Đang tải dữ liệu đơn hàng...</Typography>;
     if (error) return <Typography color="error">{error}</Typography>;
@@ -187,6 +203,13 @@ const ViewUserOrders = () => {
                         </Typography>
                         <Box sx={{ display: "flex", justifyContent: "flex-end", gap: "8px" }}>
                             <Button
+                                variant="outlined"
+                                color="error"
+                                onClick={() => handleDeleteOrder(order.orderId)}
+                            >
+                                Xóa đơn hàng
+                            </Button>
+                            <Button
                                 variant="contained"
                                 color="secondary"
                                 onClick={() => handleUpdateOrderStatus(order.orderId)}
@@ -201,4 +224,4 @@ const ViewUserOrders = () => {
     );
 };
 
-export default ViewUserOrders;
+export default ViewAllOrders;
