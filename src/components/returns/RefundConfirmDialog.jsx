@@ -25,7 +25,8 @@ const RefundConfirmDialog = ({ open, onClose, payment }) => {
             orderId: payment?.orderId,
             payDate: payment?.payDate,
             user: user,
-            transactionType: "02"
+            transactionType: "02",
+            txnRef: payment?.txnRef
         };
         try {
             // if (onExecuteRefund) {
