@@ -93,7 +93,16 @@ const ViewUserOrders = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [filter, setFilter] = useState("all");
+  const [selectedFilter, setSelectedFilter] = useState({ type: "all", value: "all" });
+
+  const handleFilterClick = (filterItem) => {
+    if (filterItem.type === "payment") {
+      setSelectedFilter({ type: "payment", value: filterItem.value });
+    } else {
+      setSelectedFilter({ type: "status", value: filterItem.value });
+    }
+  };
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -149,25 +158,63 @@ const ViewUserOrders = () => {
 
   if (loading) return <Typography>Đang tải dữ liệu đơn hàng...</Typography>;
   if (error) return <Typography color="error">{error}</Typography>;
-  const filteredOrders = filter === "all" ? orders : orders.filter((order) => order.status === filter);
+
+  const filteredOrders =
+    selectedFilter.type === "payment"
+      ? orders.filter(order => order.paymentStatus === selectedFilter.value)
+      : selectedFilter.value === "all"
+        ? orders
+        : orders.filter(order => order.status === selectedFilter.value);
 
   return (
     <Box>
-      <Box sx={{ display: "flex", gap: "8px", marginBottom: "16px", flexWrap: "wrap", justifyContent: "center" }}>
+      <Box
+        sx={{
+          display: "flex",
+          gap: "8px",
+          marginBottom: "16px",
+          flexWrap: "nowrap",
+          justifyContent: "center",
+          overflowX: "auto",
+        }}
+      >
         {[
-          { label: "Tất cả", value: "all" },
-          { label: "Đang chuẩn bị", value: "pending" },
-          { label: "Đã hoàn thành", value: "successed" },
-          { label: "Đang vận chuyển", value: "shipping" },
-          { label: "Trả hàng", value: "return" },
-          { label: "Đã hủy", value: "cancelled" },
-        ].map((status) => (
+          { label: "Tất cả", value: "all", type: "status" },
+          { label: "Đang chuẩn bị", value: "pending", type: "status" },
+          { label: "Đã hoàn thành", value: "successed", type: "status" },
+          { label: "Đang vận chuyển", value: "shipping", type: "status" },
+          { label: "Trả hàng", value: "return", type: "status" },
+          { label: "Đã hủy", value: "cancelled", type: "status" },
+          { label: "Chờ thanh toán", value: "pending", type: "payment" },
+          { label: "Đã thanh toán", value: "paid", type: "payment" },
+        ].map((filterItem) => (
           <Button
-            key={status.value}
-            variant={filter === status.value ? "contained" : "outlined"}
-            onClick={() => setFilter(status.value)}
+            key={filterItem.value}
+            variant={
+              (selectedFilter.type === filterItem.type && selectedFilter.value === filterItem.value)
+                ? "contained"
+                : "outlined"
+            }
+            onClick={() => handleFilterClick(filterItem)}
+            sx={{
+              fontSize: "0.7rem",
+              fontWeight: "bold",
+              backgroundColor:
+                selectedFilter.type === filterItem.type && selectedFilter.value === filterItem.value
+                  ? "#1976d2" // Màu xanh khi được chọn
+                  : "#fff", // Nền trắng khi không được chọn
+              color:
+                selectedFilter.type === filterItem.type && selectedFilter.value === filterItem.value
+                  ? "#fff"
+                  : "#1976d2",
+              border: "1px solid #1976d2",
+              "&:hover": {
+                backgroundColor: "#1565c0", // Màu xanh đậm hơn khi hover
+                color: "#fff",
+              },
+            }}
           >
-            {status.label}
+            {filterItem.label}
           </Button>
         ))}
       </Box>
@@ -181,10 +228,11 @@ const ViewUserOrders = () => {
           <Box
             key={order.orderId}
             sx={{
-              border: "1px solid #000",
               borderRadius: "8px",
               marginBottom: "24px",
               padding: "16px",
+              backgroundColor: "#",
+              boxShadow: "0px 2px 8px rgba(0, 0, 0, 0.1)",
               position: "relative"
             }}
           >
