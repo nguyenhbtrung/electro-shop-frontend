@@ -29,8 +29,9 @@ import {
 import { tokens } from "../../../theme";
 import { mockTransactions } from "../../../data/mockData";
 import { formatPrice, formatShortPrice } from "../../../utils/formatValue";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import RevenueLineChart from "../../../components/RevenueLineChart";
+import { GetNewActiveUsersCount, GetTopSellingProducts, GetTotalImportFee, GetTotalRevenue } from "../../../services/dashboardService";
 
 function AdminDashboard() {
     const theme = useTheme();
@@ -39,15 +40,52 @@ function AdminDashboard() {
     const isMdDevices = useMediaQuery("(min-width: 724px)");
     const isXsDevices = useMediaQuery("(max-width: 436px)");
 
-    const [revenue, setRevenue] = useState(86230000);
-    const [importFee, setImportFee] = useState(66660000);
+    const [revenue, setRevenue] = useState(0); //86230000
+    const [importFee, setImportFee] = useState(0); //66660000
+    const [newUsers, setNewUsers] = useState(0);
+    const [topProducts, setTopProducts] = useState([]);
 
     const mockProducts = [
-        { id: "P001", name: "Sản phẩm A", description: "Mô tả sản phẩm A", sold: 25, price: "1000000" },
-        { id: "P002", name: "Sản phẩm B", description: "Mô tả sản phẩm B", sold: 16, price: "7500000" },
-        { id: "P003", name: "Sản phẩm C", description: "Mô tả sản phẩm C", sold: 11, price: "11000000" },
+        { id: "P001", name: "Sản phẩm A", description: "Mô tả sản phẩm A", sold: 25, price: 1000000 },
+        { id: "P002", name: "Sản phẩm B", description: "Mô tả sản phẩm B", sold: 16, price: 7500000 },
+        { id: "P003", name: "Sản phẩm C", description: "Mô tả sản phẩm C", sold: 11, price: 11000000 },
         // Thêm các sản phẩm khác nếu cần
     ];
+
+    useEffect(() => {
+        const FetchTotalRevenueData = async () => {
+            const res = await GetTotalRevenue();
+            if (res?.status === 200 && res?.data) {
+                setRevenue(res.data?.totalRevenue);
+            }
+        };
+
+        const FetchTotalImportFeeData = async () => {
+            const res = await GetTotalImportFee();
+            if (res?.status === 200 && res?.data) {
+                setImportFee(res.data?.totalImportFee);
+            }
+        };
+
+        const FetchNewUsersCountData = async () => {
+            const res = await GetNewActiveUsersCount();
+            if (res?.status === 200 && res?.data) {
+                setNewUsers(res.data?.newActiveUserCount);
+            }
+        };
+
+        const FetchTopProductsData = async () => {
+            const res = await GetTopSellingProducts();
+            if (res?.status === 200 && res?.data) {
+                setTopProducts(res.data);
+            }
+        };
+
+        FetchTotalRevenueData();
+        FetchTotalImportFeeData();
+        FetchNewUsersCountData();
+        FetchTopProductsData();
+    }, []);
 
 
 
@@ -55,7 +93,7 @@ function AdminDashboard() {
         <Box m="20px">
             <Box display="flex" justifyContent="space-between">
                 <Header title="DASHBOARD" subtitle="Báo cáo & thống kê" />
-                {!isXsDevices && (
+                {/* {!isXsDevices && (
                     <Box>
                         <Button
                             variant="contained"
@@ -76,7 +114,7 @@ function AdminDashboard() {
                             DOWNLOAD REPORTS
                         </Button>
                     </Box>
-                )}
+                )} */}
             </Box>
 
             {/* GRID & CHARTS */}
@@ -143,7 +181,7 @@ function AdminDashboard() {
                         title={formatPrice(revenue - importFee)}
                         subtitle="Lợi nhuận"
                         progress="0.30"
-                        increase="+5%"
+                        // increase="+5%"
                         color={revenue - importFee > 0 ? colors.greenAccent[500] : colors.redAccent[500]}
                         icon={
                             <TrendingUp
@@ -160,7 +198,7 @@ function AdminDashboard() {
                     justifyContent="center"
                 >
                     <StatBox
-                        title="20"
+                        title={newUsers}
                         subtitle="Khách hàng mới"
                         progress="0.80"
                         increase="+43%"
@@ -194,7 +232,7 @@ function AdminDashboard() {
                                 fontWeight="600"
                                 color={colors.gray[100]}
                             >
-                                Doanh thu tạo ra
+                                Doanh thu 12 tháng gần nhất
                             </Typography>
                             <Typography
                                 variant="h5"
@@ -204,11 +242,11 @@ function AdminDashboard() {
                                 {formatPrice(revenue)}
                             </Typography>
                         </Box>
-                        <IconButton>
+                        {/* <IconButton>
                             <DownloadOutlined
                                 sx={{ fontSize: "26px", color: colors.greenAccent[500] }}
                             />
-                        </IconButton>
+                        </IconButton> */}
                     </Box>
                     <Box height="250px" mt="-20px">
                         <RevenueLineChart isDashboard={true} />
@@ -227,7 +265,7 @@ function AdminDashboard() {
                         </Typography>
                     </Box>
 
-                    {mockProducts.map((product, index) => (
+                    {topProducts.map((product, index) => (
                         <Box
                             key={`${product.id}-${index}`}
                             display="flex"
@@ -246,9 +284,9 @@ function AdminDashboard() {
                                 <Typography color={colors.greenAccent[500]} variant="h5" fontWeight="600">
                                     {product.name}
                                 </Typography>
-                                <Typography color={colors.gray[100]}>
+                                {/* <Typography color={colors.gray[100]}>
                                     {product.description}
-                                </Typography>
+                                </Typography> */}
                             </Box>
 
                             {/* Hiển thị số lượng đã bán */}
@@ -263,7 +301,7 @@ function AdminDashboard() {
                                 borderRadius="4px"
                                 ml="10px"
                             >
-                                ${formatShortPrice(product.price)}
+                                {formatShortPrice(product.price)}
                             </Box>
                         </Box>
                     ))}
@@ -272,7 +310,7 @@ function AdminDashboard() {
 
 
                 {/* Revenue Details */}
-                <Box
+                {/* <Box
                     gridColumn={isXlDevices ? "span 4" : "span 3"}
                     gridRow="span 2"
                     backgroundColor={colors.primary[400]}
@@ -300,10 +338,10 @@ function AdminDashboard() {
                             Includes extra misc expenditures and costs
                         </Typography>
                     </Box>
-                </Box>
+                </Box> */}
 
                 {/* Bar Chart */}
-                <Box
+                {/* <Box
                     gridColumn={isXlDevices ? "span 4" : "span 3"}
                     gridRow="span 2"
                     backgroundColor={colors.primary[400]}
@@ -324,10 +362,10 @@ function AdminDashboard() {
                     >
                         <BarChart isDashboard={true} />
                     </Box>
-                </Box>
+                </Box> */}
 
                 {/* Geography Chart */}
-                <Box
+                {/* <Box
                     gridColumn={isXlDevices ? "span 4" : "span 3"}
                     gridRow="span 2"
                     backgroundColor={colors.primary[400]}
@@ -344,7 +382,7 @@ function AdminDashboard() {
                     >
                         <GeographyChart isDashboard={true} />
                     </Box>
-                </Box>
+                </Box> */}
             </Box>
         </Box>
     );

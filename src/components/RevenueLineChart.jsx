@@ -2,17 +2,19 @@
 import { ResponsiveLine } from "@nivo/line";
 import { useTheme } from "@mui/material";
 import { tokens } from "../theme";
+import { useEffect, useState } from "react";
+import { GetLast12MonthsRevenue } from "../services/dashboardService";
 
 // Dữ liệu tổng doanh thu theo tháng
-const revenueData = [
+const revenueMockData = [
     {
         id: "Doanh thu",
         color: "hsl(211, 70%, 50%)",
         data: [
-            { x: "12/2024", y: 20000000 }, // 20.000.000
-            { x: "01/2025", y: 25000000 }, // 25.000.000
-            { x: "02/2025", y: 18230000 }, // 18.230.000
-            { x: "03/2025", y: 23000000 }, // 23.000.000
+            { x: "12/2024", y: 20000000 },
+            { x: "01/2025", y: 25000000 },
+            { x: "02/2025", y: 18230000 },
+            { x: "03/2025", y: 23000000 },
         ],
     },
 ];
@@ -21,6 +23,30 @@ const revenueData = [
 const RevenueLineChart = ({ isDashboard = false }) => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
+    const [revenueData, setRevenueData] = useState([
+        {
+            id: "Doanh thu",
+            color: "hsl(211, 70%, 50%)",
+            data: [{ x: "0", y: 0 },],
+        },
+    ]);
+
+    useEffect(() => {
+        const FetchData = async () => {
+            const res = await GetLast12MonthsRevenue();
+            if (res?.status === 200 && res?.data) {
+                setRevenueData([
+                    {
+                        id: "Doanh thu",
+                        color: "hsl(211, 70%, 50%)",
+                        data: res.data,
+                    },
+                ]);
+            }
+        };
+
+        FetchData();
+    }, []);
 
     return (
         <ResponsiveLine
