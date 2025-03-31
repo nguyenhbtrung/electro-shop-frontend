@@ -16,16 +16,17 @@ import {
   Security,
   HeadsetMic,
 } from '@mui/icons-material';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { formatPrice } from '../../utils/formatValue';
 import { ProductPricing } from '../../services/attributeService';
 import GetRatingByProductId from './ProductRatings';
 import Footer from '../Footer';
-import DiscountPaper from "../discounts/DiscountPaper"; 
+import DiscountPaper from "../discounts/DiscountPaper";
 import ProductCard from "./ProductCard";
 import { RecommendProduct } from '../../services/productService';
 import AddToCartDialog from "./AddToCartDialog";
+import { AddToCart } from '../../services/CartService';
 
 const ProductDetail = ({
   product,
@@ -39,10 +40,37 @@ const ProductDetail = ({
   const [pricingData, setPricingData] = useState(initialPricing);
   const [quantity, setQuantity] = useState(1);
   const [openAddToCart, setOpenAddToCart] = useState(false);
+  const navigate = useNavigate();
 
   const handleCloseAddToCart = () => {
     setOpenAddToCart(false);
   };
+
+  const handleAddToCart = async () => {
+    if (quantity > product.stock) {
+      alert("Sản phẩm không đủ tồn kho");
+      return;
+    }
+
+    // Include selected attribute IDs with the cart request
+    // const selectedAttributeIds = Object.values(selectedAttributes);
+
+    // const res = await AddToCart(product.id, quantity, selectedAttributeIds);
+    const res = await AddToCart(productId, quantity);
+    if (res?.status === 200 && res?.data) {
+      // onClose();
+      console.log(">>>check add to cart:", res?.data);
+      alert("Thêm vào giỏ hàng thành công");
+    }
+    else {
+      alert("Có lỗi xảy ra khi thêm vào giỏ hàng");
+    }
+  };
+
+  const handleBuyNow = async () => {
+    await handleAddToCart();
+    navigate("/cart");
+  }
 
   // State để lưu danh sách sản phẩm được gợi ý
   const [recommendedProducts, setRecommendedProducts] = useState([]);
@@ -302,7 +330,8 @@ const ProductDetail = ({
                           startIcon={<ShoppingCartIcon />}
                           onClick={(e) => {
                             e.stopPropagation(); // Ngăn sự kiện nổi bọt lên thẻ cha
-                            setOpenAddToCart(true);
+                            // setOpenAddToCart(true);
+                            handleAddToCart();
                           }}
                         >
                           Thêm vào giỏ hàng
@@ -313,7 +342,7 @@ const ProductDetail = ({
                           productId={product.productId}
                           discountedPrice={product.discountedPrice}
                         />
-                        <Button variant="contained" color="primary" disabled={product.stock === 0}>
+                        <Button onClick={handleBuyNow} variant="contained" color="primary" disabled={product.stock === 0}>
                           Mua ngay
                         </Button>
                       </Box>

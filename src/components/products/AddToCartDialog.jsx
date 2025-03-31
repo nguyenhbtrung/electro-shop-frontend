@@ -225,7 +225,7 @@ const AddToCartDialog = ({
                         name: res?.data?.name,
                         images: res?.data?.productImages?.map(item => item.imageUrl),
                         inStock: res?.data?.stock,
-                        originalPrice: res?.data?.price,
+                        originalPrice: res?.data?.originalPrice,
                         discountedPrice: discountedPrice,
                         url: '/products/' + res?.data?.productId,
                         productAttributeDetail: res?.data?.productAttributeDetail || []
