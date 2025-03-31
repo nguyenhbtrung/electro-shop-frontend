@@ -34,12 +34,13 @@ const ViewCheckOut = () => {
     const handleOrder = async () => {
         try {
             const response = await CreateOrder(selectedVoucher, paymentMethod);
-    
+
             if (response.status === 200) {
                 alert("Đặt hàng thành công!");
-    
+
                 if (paymentMethod === "vnpay" && response.data.paymentUrl) {
-                    window.open(response.data.paymentUrl, "_blank");
+                    // window.open(response.data.paymentUrl, "_blank");
+                    window.location.href = response.data.paymentUrl;
                 }
             } else {
                 alert("Đặt hàng thất bại. Vui lòng thử lại!");
@@ -79,7 +80,7 @@ const ViewCheckOut = () => {
 
         return subtotal;
     };
-    
+
     return (
         <Box>
             <Typography variant="h6" sx={{ fontWeight: "bold", mb: 2 }}>Thông tin nhận hàng</Typography>

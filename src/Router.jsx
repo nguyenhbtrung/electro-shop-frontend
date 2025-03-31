@@ -60,6 +60,7 @@ import EmailConfirmed from "./pages/auth/EmailConfirmed.jsx";
 import ResetPasswordForm from "./pages/auth/ResetPassword.jsx";
 import CreateVoucherPage from "./pages/admin/vouchers/CreateVoucherPage";
 import AdminDashboard from "./pages/admin/dashboard/AdminDashboard.jsx";
+import PaymentResult from "./pages/user/paymentPage/paymentResult.jsx";
 
 const AppRouter = () => {
   return (
@@ -72,6 +73,7 @@ const AppRouter = () => {
           <Route path="/product/:id" element={<ProductDetailWrapper />} />
           <Route path="history" element={<ProductViewHistoryPage />} />
           <Route path="orders" element={<OrdersPage />} />
+          <Route path="payment-result" element={<PaymentResult />} />
           <Route path="returns" element={<ReturnHistoryPage />} />
           <Route path="cart" element={<Cart />} />
           <Route path="cart/checkout" element={<CheckoutPage />} />
