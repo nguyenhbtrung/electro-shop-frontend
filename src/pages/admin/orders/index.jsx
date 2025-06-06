@@ -54,6 +54,8 @@ const getPaymentStatusLabel = (paymentStatus) => {
             return "Chờ thanh toán";
         case "paid":
             return "Đã thanh toán";
+        case "refund":
+            return "Hoàn tiền";
         default:
             return "Đã hủy";
     }
