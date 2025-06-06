@@ -315,3 +315,5 @@ const ViewUserOrders = () => {
     </Box>
   );
 };
+
+export default ViewUserOrders;
