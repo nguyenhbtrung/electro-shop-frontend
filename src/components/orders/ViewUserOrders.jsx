@@ -315,7 +315,3 @@ const ViewUserOrders = () => {
     </Box>
   );
 };
-
-export default ViewUserOrders;
-
-    mape = ((comparison_df['Giá dự đoán'] - comparison_df['Giá thực tế']) / comparison_df['Giá thực tế'] * 100).abs().mean()
