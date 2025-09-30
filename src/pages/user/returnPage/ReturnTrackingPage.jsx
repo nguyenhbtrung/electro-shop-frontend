@@ -74,7 +74,7 @@ const ReturnDetailPage = () => {
                         disableRipple
                         disableFocusRipple
                         startIcon={<ReceiptIcon />}
-                        onClick={() => navigate(`/order/${returnData?.orderId}`)}
+                        onClick={() => navigate(`/orders`)}
                         sx={{
                             "&:hover": {
                                 backgroundColor: "transparent",
