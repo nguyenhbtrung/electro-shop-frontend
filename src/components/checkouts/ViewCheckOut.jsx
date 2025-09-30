@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Box, Typography, TextField, Button, Radio, RadioGroup, FormControlLabel, FormControl } from "@mui/material";
 import { GetUserInfo, GetAvailableVouchers, GetUserCart, CreateOrder } from "../../services/checkoutService";
+import { useNavigate } from "react-router-dom";
 
 const ViewCheckOut = () => {
     const [userInfo, setUserInfo] = useState({});
@@ -8,6 +9,8 @@ const ViewCheckOut = () => {
     const [selectedVoucher, setSelectedVoucher] = useState("");
     const [cartItems, setCartItems] = useState([]);
     const [vouchers, setVouchers] = useState([]);
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -41,6 +44,8 @@ const ViewCheckOut = () => {
                 if (paymentMethod === "vnpay" && response.data.paymentUrl) {
                     // window.open(response.data.paymentUrl, "_blank");
                     window.location.href = response.data.paymentUrl;
+                } else {
+                    navigate("/orders");
                 }
             } else {
                 alert("Đặt hàng thất bại. Vui lòng thử lại!");
