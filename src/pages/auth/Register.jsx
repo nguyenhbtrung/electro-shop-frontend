@@ -1,4 +1,3 @@
-import * as React from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -13,9 +12,10 @@ import { styled } from '@mui/material/styles';
 import AppTheme from './shared-theme/AppTheme';
 import ColorModeSelect from './shared-theme/ColorModeSelect';
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { UserRegister } from "../../services/UserService";
 import FormHelperText from '@mui/material/FormHelperText';
+import { AuthContext } from '../../contexts/AuthContext';
 const Card = styled(MuiCard)(({ theme }) => ({
     display: 'flex',
     flexDirection: 'column',
@@ -71,6 +71,8 @@ export default function Register(props) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
+    const { login } = useContext(AuthContext);
+
     const handleSubmit = async (event) => {
         event.preventDefault();
         if (!validateEmail(email)) {
@@ -92,8 +94,14 @@ export default function Register(props) {
                 console.log('Đăng kí thành công: ', response);
                 const token = response.data.token;
                 console.log("token: ", token);
-                localStorage.setItem('access_token', token);
-                navigate('/');
+                login(token);
+                localStorage.setItem('userName', userName);
+                localStorage.setItem('userId', response.data.userId);
+                if (response.data.roles === "User") {
+                    navigate('/');
+                } else if (response.data.roles === "Admin") {
+                    navigate('/admin');
+                }
             }
             else {
                 console.log('Đăng kí thất bại: ', response.data[0]);
