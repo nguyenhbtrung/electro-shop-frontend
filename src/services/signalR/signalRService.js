@@ -6,7 +6,7 @@ class SignalRService {
 
         // Khởi tạo kết nối tới Hub tại địa chỉ /chathub
         this.connection = new signalR.HubConnectionBuilder()
-            .withUrl("https://localhost:7169/chathub", {
+            .withUrl(`${import.meta.env.VITE_BACKEND_URL}/chathub`, {
                 accessTokenFactory: () => {
                     return token;
                 }
