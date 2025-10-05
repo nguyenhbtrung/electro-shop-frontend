@@ -141,32 +141,32 @@ const ProductRatings = ({ productId, isAdmin }) => {
             />
             {ratings.length > 0 ? (
                 ratings.map((rating, index) => (
-                    <Box key={`${rating.ratingId}-${index}`} sx={{ backgroundColor: '#fff', mb: 2, border: '1px solid #ccc', borderRadius: 2, p: 2 }}>
+                    <Box key={`${rating.ratingId}-${index}`} sx={{ backgroundColor: 'background.custom2', mb: 2, border: '1px solid #ccc', borderRadius: 2, p: 2 }}>
                         <Box display="flex" justifyContent="space-between">
-                            <Typography variant="h5" sx={{ fontWeight: 'bold', color: theme.palette.primary.main }}>
+                            <Typography variant="h5" sx={{ fontWeight: 'bold', color: 'text.primary' }}>
                                 {rating.userName}
                                 <Box component="span" sx={{ mx: 1 }}></Box>
                                 <Rating value={rating.ratingScore} readOnly precision={0.5} />
                             </Typography>
                             <Box>
-                                <IconButton onClick={() => handleEdit(rating)} sx={{ color: theme.palette.primary.main }}>
+                                <IconButton onClick={() => handleEdit(rating)} sx={{ color: 'text.primary' }}>
                                     <EditIcon />
                                 </IconButton>
-                                <IconButton onClick={() => handleDelete(rating)} sx={{ color: theme.palette.error.main }}>
+                                <IconButton onClick={() => handleDelete(rating)} sx={{ color: 'error.main' }}>
                                     <DeleteIcon />
                                 </IconButton>
                             </Box>
                         </Box>
-                        <Typography variant="h6" color='gray'>
+                        <Typography variant="h6" color='text.secondary'>
                             {new Date(rating.timeStamp).toLocaleDateString('vi-VN')}
                         </Typography>
-                        <Typography variant="h6" sx={{ color: theme.palette.primary.main }}>
+                        <Typography variant="h6" sx={{ color: 'text.primary' }}>
                             {rating.ratingContent}
                         </Typography>
                     </Box>
                 ))
             ) : (
-                <Typography variant="h5" sx={{ fontWeight: 'bold' }}>Chưa có đánh giá nào.</Typography>
+                <Typography variant="h5" color='text.primary' sx={{ fontWeight: 'bold' }}>Chưa có đánh giá nào.</Typography>
             )}
             <UpdateRatingDialog
                 open={openEditDialog}

@@ -5,11 +5,12 @@ import ViewUserOrders from "../../../components/orders/ViewUserOrders";
 
 const OrderPage = () => {
   const navigate = useNavigate();
-  
+
   return (
     <Box sx={{ maxWidth: "800px", margin: "32px auto" }}>
       <Button
         variant="outlined"
+        color="text.primary"
         sx={{ marginBottom: "16px" }}
         onClick={() => navigate("/")}
       >

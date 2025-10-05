@@ -17,7 +17,6 @@ const ChatButton = ({ onClick, hasNotification }) => (
     >
         <Button
             variant="contained"
-            color="primary"
             onClick={onClick}
             sx={{
                 borderRadius: "50%",
@@ -25,6 +24,8 @@ const ChatButton = ({ onClick, hasNotification }) => (
                 height: 56,
                 minWidth: 0,
                 padding: 0,
+                backgroundColor: "primary.custom1",
+                color: "onPrimary.custom1"
             }}
         >
             <ChatBubble />

@@ -150,7 +150,7 @@ const ProductDetail = ({
             </Box>
           )}
           {/* Khối chứa ảnh và thông tin sản phẩm */}
-          <Box sx={{ border: '1px solid #ccc', borderRadius: 2, p: 2, backgroundColor: '#f9f9f9' }}>
+          <Box sx={{ border: '1px solid #ccc', borderRadius: 2, p: 2, backgroundColor: 'background.custom1' }}>
             <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 3 }}>
               {/* Phần ảnh */}
               <Box>
@@ -164,7 +164,7 @@ const ProductDetail = ({
                     justifyContent: 'center',
                     overflow: 'hidden',
                     position: 'relative',
-                    backgroundColor: '#fff',
+                    backgroundColor: 'background.custom2',
                   }}
                 >
                   {product.productImages && product.productImages.length > 0 ? (
@@ -246,7 +246,7 @@ const ProductDetail = ({
               {/* Phần thông tin sản phẩm */}
               <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', mx: 'auto', color: '#000' }}>
                 <Box sx={{ mb: 2, height: '20%' }}>
-                  <Typography variant="h4" sx={{ fontWeight: 'bold', fontSize: '2rem' }}>
+                  <Typography variant="h4" color='text.primary' sx={{ fontWeight: 'bold', fontSize: '2rem' }}>
                     {product.name}
                   </Typography>
                   <Typography variant="h6" sx={{ mt: 1, color: product.stock === 0 ? 'red' : 'green' }}>
@@ -261,7 +261,7 @@ const ProductDetail = ({
                       p: 2,
                       border: '1px dashed #ccc',
                       borderRadius: 2,
-                      backgroundColor: '#fff',
+                      backgroundColor: 'background.custom2',
                       width: '60%',
                     }}
                   >
@@ -269,7 +269,7 @@ const ProductDetail = ({
                       Giá: {formatPrice(pricingData.discountedPrice)}
                     </Typography>
                     {pricingData.discountValue > 0 && (
-                      <Typography variant="body1" sx={{ textDecoration: 'line-through' }}>
+                      <Typography color='text.primary' variant="body1" sx={{ textDecoration: 'line-through' }}>
                         {formatPrice(pricingData.originalPrice)}
                       </Typography>
                     )}
@@ -311,14 +311,14 @@ const ProductDetail = ({
                       )}
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap', mt: 2 }}>
                         <Box sx={{ display: 'flex', alignItems: 'center', color: '#000' }}>
-                          <Typography variant="subtitle1" sx={{ mr: 2 }}>
+                          <Typography variant="subtitle1" color='text.primary' sx={{ mr: 2 }}>
                             Số lượng:
                           </Typography>
-                          <IconButton onClick={handleDecrease} disabled={quantity <= 1} color="primary">
+                          <IconButton onClick={handleDecrease} disabled={quantity <= 1} color="color='text.primary'">
                             <Remove />
                           </IconButton>
-                          <Typography sx={{ mx: 1, minWidth: '30px', textAlign: 'center' }}>{quantity}</Typography>
-                          <IconButton onClick={handleIncrease} disabled={quantity >= product.stock} color="primary">
+                          <Typography color='text.primary' sx={{ mx: 1, minWidth: '30px', textAlign: 'center' }}>{quantity}</Typography>
+                          <IconButton onClick={handleIncrease} disabled={quantity >= product.stock} color="color='text.primary'">
                             <Add />
                           </IconButton>
                         </Box>
@@ -355,7 +355,7 @@ const ProductDetail = ({
                       p: 2,
                       border: '1px solid #ccc',
                       borderRadius: 2,
-                      backgroundColor: '#fff',
+                      backgroundColor: 'background.custom2',
                       width: '40%',
                       height: '400px',
                       display: 'flex',
@@ -370,23 +370,23 @@ const ProductDetail = ({
                         justifyContent: 'center',
                       }}
                     >
-                      <Typography variant="h6" sx={{ mb: 1, fontWeight: 'bold', color: '#000' }}>
+                      <Typography variant="h6" sx={{ mb: 1, fontWeight: 'bold', color: 'text.primary' }}>
                         Chính sách bán hàng
                       </Typography>
-                      <Box sx={{ display: 'flex', alignItems: 'center', mb: 1, color: '#000' }}>
-                        <LocalShipping color="primary" sx={{ mr: 1 }} />
+                      <Box sx={{ display: 'flex', alignItems: 'center', mb: 1, color: 'text.primary' }}>
+                        <LocalShipping color="text.primary" sx={{ mr: 1 }} />
                         <Typography variant="body2">Miễn phí giao hàng toàn quốc</Typography>
                       </Box>
-                      <Box sx={{ display: 'flex', alignItems: 'center', mb: 1, color: '#000' }}>
-                        <Replay color="primary" sx={{ mr: 1 }} />
+                      <Box sx={{ display: 'flex', alignItems: 'center', mb: 1, color: 'text.primary' }}>
+                        <Replay color="text.primary" sx={{ mr: 1 }} />
                         <Typography variant="body2">Đổi trả trong 7 ngày</Typography>
                       </Box>
-                      <Box sx={{ display: 'flex', alignItems: 'center', mb: 1, color: '#000' }}>
-                        <Security color="primary" sx={{ mr: 1 }} />
+                      <Box sx={{ display: 'flex', alignItems: 'center', mb: 1, color: 'text.primary' }}>
+                        <Security color="text.primary" sx={{ mr: 1 }} />
                         <Typography variant="body2">Bảo hành chính hãng 12 tháng</Typography>
                       </Box>
-                      <Box sx={{ display: 'flex', alignItems: 'center', color: '#000' }}>
-                        <HeadsetMic color="primary" sx={{ mr: 1 }} />
+                      <Box sx={{ display: 'flex', alignItems: 'center', color: 'text.primary' }}>
+                        <HeadsetMic color="text.primary" sx={{ mr: 1 }} />
                         <Typography variant="body2">Tổng đài hỗ trợ 24/7</Typography>
                       </Box>
                     </Box>
@@ -408,11 +408,11 @@ const ProductDetail = ({
           </Box>
 
           {/* Phần mô tả sản phẩm bổ sung */}
-          <Box sx={{ mt: 2, p: 2, border: '1px solid #ccc', borderRadius: 2, backgroundColor: '#fff' }}>
-            <Typography variant="h7" sx={{ fontWeight: 'bold', fontSize: '2rem', color: '#000' }}>
+          <Box sx={{ mt: 2, p: 2, border: '1px solid #ccc', borderRadius: 2, backgroundColor: 'background.custom2' }}>
+            <Typography variant="h7" sx={{ fontWeight: 'bold', fontSize: '2rem', color: 'text.primary' }}>
               Mô tả sản phẩm:
             </Typography>
-            <Typography variant="subtitle1" sx={{ mb: 1, color: '#000' }}>
+            <Typography variant="subtitle1" sx={{ mb: 1, color: 'text.primary' }}>
               Thương hiệu:{' '}
               {product.brand ? (
                 <Link to={`/brands/${product.brand.brandId}`} style={{ textDecoration: 'none', color: '#1976d2' }}>
@@ -422,7 +422,7 @@ const ProductDetail = ({
                 'Không xác định'
               )}
             </Typography>
-            <Typography variant="subtitle1" sx={{ mb: 1, color: '#000' }}>
+            <Typography variant="subtitle1" sx={{ mb: 1, color: 'text.primary' }}>
               Danh mục:{' '}
               {product.categories && product.categories.length > 0 ? (
                 product.categories.map((cat, index) => (
@@ -437,12 +437,12 @@ const ProductDetail = ({
                 'Chưa phân loại'
               )}
             </Typography>
-            <Typography variant="subtitle1" sx={{ mb: 1, color: '#000' }}>
+            <Typography variant="subtitle1" sx={{ mb: 1, color: 'text.primary' }}>
               Đã bán: {product.unitsSold} sản phẩm
             </Typography>
             {/* Thêm thông tin bổ sung từ product.info */}
             {product.info && (
-              <Typography variant="body1" sx={{ mt: 2, color: '#000' }}>
+              <Typography variant="body1" sx={{ mt: 2, color: 'text.primary' }}>
                 {product.info}
               </Typography>
             )}

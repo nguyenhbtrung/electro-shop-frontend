@@ -33,7 +33,7 @@ const OrderItem = ({ item }) => {
           <Typography variant="h6">{item.productName || "Sản phẩm không có tên"}</Typography>
           <Button
             variant="text"
-            color="primary"
+            color="text.primary"
             sx={{ opacity: 0.5, fontSize: "0.8rem" }}
             href={`/product/${item.productId}`}
           >

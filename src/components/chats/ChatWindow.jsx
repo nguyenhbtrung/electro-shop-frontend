@@ -115,9 +115,10 @@ const ChatWindow = ({ onClose, signalRService }) => {
                     alignItems: "center",
                     padding: 1,
                     borderBottom: "1px solid #ccc",
+                    backgroundColor: "background.custom2"
                 }}
             >
-                <Typography variant="h6">Chat</Typography>
+                <Typography variant="h6">Nhắn tin với shop</Typography>
                 <IconButton size="small" onClick={onClose}>
                     <CloseIcon />
                 </IconButton>
@@ -129,7 +130,7 @@ const ChatWindow = ({ onClose, signalRService }) => {
                     flex: 1,
                     overflowY: "auto",
                     padding: 1,
-                    backgroundColor: "#f9f9f9",
+                    backgroundColor: "background.custom1",
                 }}
             >
                 {messages.map((msg) => (
@@ -169,6 +170,7 @@ const ChatWindow = ({ onClose, signalRService }) => {
                     alignItems: "center",
                     padding: 1,
                     borderTop: "1px solid #ccc",
+                    backgroundColor: "background.custom2"
                 }}
             >
                 <TextField
@@ -179,7 +181,7 @@ const ChatWindow = ({ onClose, signalRService }) => {
                     size="small"
                     variant="outlined"
                 />
-                <IconButton color="primary" onClick={handleSend}>
+                <IconButton sx={{ color: "primary.custom1" }} onClick={handleSend}>
                     <SendIcon />
                 </IconButton>
             </Box>
