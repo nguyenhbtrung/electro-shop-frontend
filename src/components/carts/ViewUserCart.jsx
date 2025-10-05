@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { Box, Typography, Button } from "@mui/material";
-import { useNavigate } from "react-router-dom"; 
+import { useNavigate } from "react-router-dom";
 import { DeleteCartItem, EditCartItemQuantity } from "../../services/CartService";
+import { formatPrice } from "../../utils/formatValue";
 
 const CartItem = ({ item, onUpdateQuantity, onRemove }) => {
-    const navigate = useNavigate(); 
+    const navigate = useNavigate();
 
     const handleNavigate = (path) => {
         navigate(path);
@@ -32,9 +33,24 @@ const CartItem = ({ item, onUpdateQuantity, onRemove }) => {
             />
             <Box sx={{ flex: 1, marginLeft: "16px" }}>
                 <Typography variant="h6">{item.productName}</Typography>
-                <Typography color="text.secondary">
-                    {item.price.toLocaleString()} đ
-                </Typography>
+
+                {item.price > item.discountedPrice ? (
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                        <Typography
+                            color="text.secondary"
+                            sx={{ textDecoration: "line-through" }}
+                        >
+                            {formatPrice(item.price)}
+                        </Typography>
+                        <Typography color="error" fontWeight="bold">
+                            {formatPrice(item.discountedPrice)}
+                        </Typography>
+                    </Box>
+                ) : (
+                    <Typography color="error" fontWeight="bold">
+                        {formatPrice(item.price)}
+                    </Typography>
+                )}
             </Box>
             <Box sx={{ display: "flex", alignItems: "center" }}>
                 <Button
@@ -46,8 +62,9 @@ const CartItem = ({ item, onUpdateQuantity, onRemove }) => {
                         fontSize: "1.2rem",
                         minWidth: "40px",
                         border: "none",
+                        color: "text.primary",
                         "&:hover": {
-                            backgroundColor: "#f0f0f0",
+                            backgroundColor: "action.hover",
                         },
                     }}
                 >
@@ -63,8 +80,9 @@ const CartItem = ({ item, onUpdateQuantity, onRemove }) => {
                         fontSize: "1.2rem",
                         minWidth: "40px",
                         border: "none",
+                        color: "text.primary",
                         "&:hover": {
-                            backgroundColor: "#f0f0f0",
+                            backgroundColor: "action.hover",
                         },
                     }}
                 >
@@ -79,7 +97,7 @@ const CartItem = ({ item, onUpdateQuantity, onRemove }) => {
 };
 
 const ViewUserCart = ({ cartItems, setCartItems }) => {
-    const navigate = useNavigate(); 
+    const navigate = useNavigate();
 
     const removeItem = async (productId) => {
         try {
@@ -110,7 +128,7 @@ const ViewUserCart = ({ cartItems, setCartItems }) => {
     };
 
     const totalPrice = cartItems.reduce(
-        (sum, item) => sum + item.price * item.quantity,
+        (sum, item) => sum + item.discountedPrice * item.quantity,
         0
     );
 
@@ -118,6 +136,7 @@ const ViewUserCart = ({ cartItems, setCartItems }) => {
         <Box>
             <Button
                 variant="outlined"
+                color="text.primary"
                 sx={{ marginBottom: "16px" }}
                 onClick={() => navigate("/")}
             >
@@ -151,7 +170,7 @@ const ViewUserCart = ({ cartItems, setCartItems }) => {
 
             <Box sx={{ display: "flex", justifyContent: "space-between", marginTop: "16px" }}>
                 <Typography variant="h6">Tổng tiền:</Typography>
-                <Typography color="primary" variant="h6">
+                <Typography color="text.primary" variant="h6">
                     {totalPrice.toLocaleString()} đ
                 </Typography>
             </Box>

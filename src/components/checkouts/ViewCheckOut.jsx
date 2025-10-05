@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Box, Typography, TextField, Button, Radio, RadioGroup, FormControlLabel, FormControl } from "@mui/material";
 import { GetUserInfo, GetAvailableVouchers, GetUserCart, CreateOrder } from "../../services/checkoutService";
 import { useNavigate } from "react-router-dom";
+import { formatPrice } from "../../utils/formatValue";
 
 const ViewCheckOut = () => {
     const [userInfo, setUserInfo] = useState({});
@@ -68,7 +69,7 @@ const ViewCheckOut = () => {
     };
 
     const calculateTotal = () => {
-        let subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+        let subtotal = cartItems.reduce((sum, item) => sum + item.discountedPrice * item.quantity, 0);
 
         if (selectedVoucher) {
             const voucher = vouchers.find(v => v.voucherCode === selectedVoucher);
@@ -107,7 +108,7 @@ const ViewCheckOut = () => {
                     <img src={item.productImage} alt={item.productName} style={{ width: 80, height: 80, objectFit: "cover", marginRight: 16 }} />
                     <Box>
                         <Typography sx={{ fontWeight: "bold" }}>{item.productName}</Typography>
-                        <Typography>{item.price.toLocaleString()} đ x {item.quantity}</Typography>
+                        <Typography>{formatPrice(item.discountedPrice)} x {item.quantity}</Typography>
                     </Box>
                 </Box>
             ))}
@@ -122,7 +123,7 @@ const ViewCheckOut = () => {
 
             <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "10px" }}>
                 <Typography>Phí vận chuyển: Miễn phí</Typography>
-                <Typography sx={{ fontWeight: "bold", fontSize: "1rem" }}>Tổng cộng: {calculateTotal().toLocaleString()} đ</Typography>
+                <Typography sx={{ fontWeight: "bold", fontSize: "1rem" }}>Tổng cộng: {formatPrice(calculateTotal())}</Typography>
             </Box>
 
             <Button variant="contained" color="success" fullWidth sx={{ mt: 2 }} disabled={cartItems.length === 0} onClick={handleOrder}>ĐẶT HÀNG</Button>

@@ -11,6 +11,7 @@ const PaymentPage = () => {
     <Box sx={{ maxWidth: "600px", margin: "32px auto", p: 4, border: "1px solid #ccc", borderRadius: "8px" }}>
       <Button
         variant="outlined"
+        color="text.primary"
         sx={{ marginBottom: "16px", border: "none" }}
         onClick={() => navigate("/")}
       >
