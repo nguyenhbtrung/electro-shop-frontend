@@ -4,6 +4,7 @@ import ProductCard from "../../../components/products/ProductCard";
 import Footer from "../../../components/Footer";
 import { GetDiscountedProduct, GetProductsByUser } from "../../../services/productService";
 import { GetAllBanners } from "../../../services/BannerService";
+import ProductCardSkeleton from "../../../components/products/ProductCardSkeleton";
 
 const HomePage = () => {
     // Các state đã có cho sản phẩm:
@@ -164,20 +165,19 @@ const HomePage = () => {
                 <Typography variant="h5" sx={{ mb: 2, fontWeight: "bold", fontSize: "1.5rem" }}>
                     Sản phẩm khuyến mãi
                 </Typography>
-                {discountProducts?.length > 0 && (
-                    <Box
-                        sx={{
-                            display: "grid",
-                            gridTemplateColumns: "repeat(5, 1fr)", // 5 sản phẩm trên 1 hàng
-                            gap: 2,
-                            mb: 4,
-                        }}
-                    >
-                        {discountProducts.map((product) => (
-                            <ProductCard key={product.productId} product={product} />
-                        ))}
-                    </Box>
-                )}
+                <Box
+                    sx={{
+                        display: "grid",
+                        gridTemplateColumns: "repeat(5, 1fr)", // 5 sản phẩm trên 1 hàng
+                        gap: 2,
+                        mb: 4,
+                    }}
+                >
+
+                    {discountProducts?.length > 0
+                        ? discountProducts.map(product => <ProductCard key={product.productId} product={product} />)
+                        : Array.from(new Array(5)).map((_, index) => <ProductCardSkeleton key={index} />)}
+                </Box>
 
                 {/* Hàng sản phẩm bán chạy */}
                 <Typography variant="h5" sx={{ mb: 2, fontWeight: "bold", fontSize: "1.5rem" }}>
@@ -190,9 +190,9 @@ const HomePage = () => {
                         gap: 2,
                     }}
                 >
-                    {bestSellingProducts.map((product) => (
-                        <ProductCard key={product.productId} product={product} />
-                    ))}
+                    {bestSellingProducts?.length > 0
+                        ? bestSellingProducts.map(product => <ProductCard key={product.productId} product={product} />)
+                        : Array.from(new Array(5)).map((_, index) => <ProductCardSkeleton key={index} />)}
                 </Box>
             </Container>
 
