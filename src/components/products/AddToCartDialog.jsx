@@ -126,6 +126,7 @@ const ThumbnailImage = styled('img')({
 
 const NavigationButton = styled(IconButton)({
     position: 'absolute',
+    color: "#000",
     backgroundColor: 'rgba(255, 255, 255, 0.7)',
     '&:hover': {
         backgroundColor: 'rgba(255, 255, 255, 0.9)',
@@ -137,6 +138,7 @@ const ZoomButton = styled(IconButton)({
     position: 'absolute',
     top: 8,
     right: 8,
+    color: "#000",
     backgroundColor: 'rgba(255, 255, 255, 0.7)',
     '&:hover': {
         backgroundColor: 'rgba(255, 255, 255, 0.9)',
@@ -402,7 +404,7 @@ const AddToCartDialog = ({
                     <Grid container spacing={3}>
                         {/* Product Image Gallery */}
                         <Grid item xs={12} md={6}>
-                            <MainImageContainer>
+                            <MainImageContainer sx={{ backgroundColor: "background.custom3" }}>
                                 <NavigationButton
                                     sx={{ left: 8 }}
                                     onClick={goToPrevImage}
@@ -530,7 +532,7 @@ const AddToCartDialog = ({
                                     onClick={() => navigate(`/product/${productId}`)}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    color="primary"
+                                    color="text.primary"
                                     sx={{
                                         // textDecoration: 'none',
                                         cursor: 'pointer'

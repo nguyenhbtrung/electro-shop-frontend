@@ -83,6 +83,13 @@ export const tokens = (mode) => ({
         300: "#5393ff",
         400: "#dd3333",
       },
+      custom: {
+        100: "#363b47ff",
+        200: "#434957",
+        300: "#4d4d4d",
+      },
+
+
     }
     : {
       gray: {
@@ -161,6 +168,11 @@ export const tokens = (mode) => ({
         300: "#2979ff",
         400: "#dd3333",
       },
+      custom: {
+        100: "#f9f9f9",
+        200: "#fff",
+        300: "#f5f5f5",
+      }
     }),
 });
 
@@ -175,6 +187,7 @@ export const themeSettings = (mode) => {
         ? {
           primary: {
             main: colors.primary[500],
+            custom1: colors.primary[100],
           },
           secondary: {
             main: colors.greenAccent[500],
@@ -186,6 +199,12 @@ export const themeSettings = (mode) => {
           },
           background: {
             default: colors.primary[500],
+            custom1: colors.custom[100],
+            custom2: colors.custom[200],
+            custom3: colors.custom[300],
+          },
+          onPrimary: {
+            custom1: colors.primary[400],
           },
           hyu: {
             main: colors.hyu[100],
@@ -194,6 +213,7 @@ export const themeSettings = (mode) => {
         : {
           primary: {
             main: colors.primary[100],
+            custom1: colors.primary[100],
           },
           secondary: {
             main: colors.greenAccent[500],
@@ -205,6 +225,12 @@ export const themeSettings = (mode) => {
           },
           background: {
             default: colors.primary[500],
+            custom1: colors.custom[100],
+            custom2: colors.custom[200],
+            custom3: colors.custom[300],
+          },
+          onPrimary: {
+            custom1: colors.primary[400],
           },
           huy: {
             main: colors.hyu[200],
@@ -248,11 +274,13 @@ export const ColorModeContext = createContext({
 });
 
 export const useMode = () => {
-  const [mode, setMode] = useState("light");
+  const [mode, setMode] = useState(localStorage.getItem("theme") || "light");
 
   const colorMode = useMemo(() => ({
-    toggleColorMode: () =>
-      setMode((prev) => (prev === "light" ? "dark" : "light")),
+    toggleColorMode: () => {
+      localStorage.setItem("theme", mode === "light" ? "dark" : "light");
+      setMode((prev) => (prev === "light" ? "dark" : "light"))
+    },
   }));
 
   const theme = useMemo(() => createTheme(themeSettings(mode), [mode]));
