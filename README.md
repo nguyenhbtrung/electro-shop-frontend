@@ -1,7 +1,8 @@
 # ElectroShop Frontend - React (Vite + Material UI + SignalR)
 
 ## 📌 Overview
-This is a modern e-commerce application frontend built with **React + Vite**, using **Material UI** for the interface, **SignalR** for real-time customer support chat, **Formik** for form handling, and **React Router** for routing.
+This is a modern e-commerce frontend application built with **React + Vite**.
+It features a responsive UI powered by **Material UI**, seamless API communication using **Axios**, real-time customer support chat via **SignalR**, and navigation handled by **React Router**.
 
 Backend repository: [electro-shop-backend](https://github.com/nguyenhbtrung/electro-shop-backend)
 
@@ -11,13 +12,11 @@ Backend repository: [electro-shop-backend](https://github.com/nguyenhbtrung/elec
 - [React](https://react.dev/)
 - [Vite](https://vitejs.dev/)
 - [Material UI](https://mui.com/)
+- [Axios](https://axios-http.com/)
 - [SignalR](https://learn.microsoft.com/en-us/aspnet/core/signalr/introduction)
 - [React Router](https://reactrouter.com/)
 - [Formik](https://formik.org/)
 - [Yup](https://github.com/jquense/yup)
-- [Axios](https://axios-http.com/)
-- [FullCalendar](https://fullcalendar.io/)
-- [Nivo Charts](https://nivo.rocks/)
 - [Yarn](https://yarnpkg.com/) (Package Manager)
 
 ---
@@ -29,16 +28,14 @@ Backend repository: [electro-shop-backend](https://github.com/nguyenhbtrung/elec
 │   ├── assets/       # Static assets
 │   ├── components/   # Reusable components
 │   ├── contexts/     # React contexts
-│   ├── data/         # Mock data
 │   ├── pages/        # Page components
-│   │   ├── admin/    # Admin dashboard
+│   │   ├── admin/    # Admin interface
 │   │   ├── auth/     # Authentication
 │   │   └── user/     # User interface
-│   ├── services/     # API services
-│   ├── theme/        # Theme configuration
+│   ├── services/     # API config, services
 │   ├── utils/        # Utility functions
+│   ├── theme.js      # Theme configuration
 │   ├── Router.jsx    # Route configurations
-│   ├── App.jsx       # Root component
 │   └── main.jsx      # Entry point
 ├── .env             # Environment variables
 ├── package.json
@@ -48,7 +45,7 @@ Backend repository: [electro-shop-backend](https://github.com/nguyenhbtrung/elec
 ---
 
 ## ⚙️ Environment Variables
-Create a `.env` file in the project root:
+Create a `.env` file in the project root and set the backend URL:
 
 ```env
 VITE_BACKEND_URL=https://localhost:7169
@@ -99,7 +96,6 @@ SignalR is used for real-time customer support chat:
 - Real-time messaging between:
   - Customers and support staff
   - Admin chat management
-  - Notification system
 
 ---
 
@@ -123,32 +119,25 @@ Built with Material UI (v6):
 - Token stored in localStorage
 - Protected routes
 - Role-based access control
-- User profile management
-
----
-
-## 📱 Mobile Support
-
-- Responsive design
-- Touch-friendly interface
-- Mobile-optimized shopping experience
-- Adaptive navigation
-- Responsive admin dashboard
 
 ---
 
 ## 📊 Features
-
 - Product Management
 - Category Management
+- Brand Management
 - Order Processing
 - Customer Support Chat
 - User Management
 - Analytics Dashboard
-- Stock Management
+- Stock & Supplier Management
 - Return Management
+- Banner Management
 - Voucher & Discount System
 - Rating System
+- Browsing history for customer
+- Browse products by category and brand
+- Search and filter products
 
 ---
 
