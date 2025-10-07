@@ -162,9 +162,25 @@ const HomePage = () => {
                 </Box>
 
                 {/* Hàng sản phẩm khuyến mãi */}
-                <Typography variant="h5" sx={{ mb: 2, fontWeight: "bold", fontSize: "1.5rem" }}>
-                    Sản phẩm khuyến mãi
-                </Typography>
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 2 }}>
+                    <Typography
+                        variant="h5"
+                        sx={{ fontWeight: "bold", fontSize: "1.5rem" }}
+                    >
+                        Sản phẩm khuyến mãi
+                    </Typography>
+
+                    {import.meta.env.VITE_APP_ENV === "production" && !discountProducts?.length && (
+                        <Typography
+                            variant="body1"
+                            color="text.secondary"
+                            sx={{ fontStyle: "italic" }}
+                        >
+                            (Có thể cần chờ lên tới 50s để tải sản phẩm lần đầu do máy chủ tạm ngưng)
+                        </Typography>
+                    )}
+                </Box>
+
                 <Box
                     sx={{
                         display: "grid",
