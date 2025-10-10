@@ -58,7 +58,7 @@ VITE_BACKEND_URL=https://localhost:7169
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/your-username/electro-shop-frontend.git
+git clone https://github.com/nguyenhbtrung/electro-shop-frontend.git
 cd electro-shop-frontend
 ```
 
