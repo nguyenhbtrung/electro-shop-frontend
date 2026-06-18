@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import  { useEffect, useState } from "react";
 import { Container, Box, Typography, Paper } from "@mui/material";
 import ProductCard from "../../../components/products/ProductCard";
 import Footer from "../../../components/Footer";
