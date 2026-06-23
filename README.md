@@ -1,6 +1,6 @@
-# ElectroShop Frontend - React (Vite + Material UI + SignalR)
+# ElectroShop Frontend - React (Vite)
 
-## 📌 Overview
+## Overview
 This is a modern e-commerce frontend application built with **React + Vite**.
 It features a responsive UI powered by **Material UI**, seamless API communication using **Axios**, real-time customer support chat via **SignalR**, and navigation handled by **React Router**.
 
@@ -8,7 +8,7 @@ Backend repository: [electro-shop-backend](https://github.com/nguyenhbtrung/elec
 
 ---
 
-## 🚀 Tech Stack
+## Tech Stack
 - [React](https://react.dev/)
 - [Vite](https://vitejs.dev/)
 - [Material UI](https://mui.com/)
@@ -21,7 +21,7 @@ Backend repository: [electro-shop-backend](https://github.com/nguyenhbtrung/elec
 
 ---
 
-## 📂 Project Structure
+## Project Structure
 ```
 .
 ├── src/
@@ -44,7 +44,7 @@ Backend repository: [electro-shop-backend](https://github.com/nguyenhbtrung/elec
 
 ---
 
-## ⚙️ Environment Variables
+## Environment Variables
 Create a `.env` file in the project root and set the backend URL:
 
 ```env
@@ -53,7 +53,7 @@ VITE_BACKEND_URL=https://localhost:7169
 
 ---
 
-## 📦 Installation & Setup
+## Installation & Setup
 
 ### 1. Clone the repository
 
@@ -78,7 +78,7 @@ The app will be available at: [http://localhost:5173](http://localhost:5173)
 
 ---
 
-## 🛠️ Available Scripts
+## Available Scripts
 
 ```bash
 yarn dev      # Start development server
@@ -89,7 +89,7 @@ yarn lint     # Run ESLint
 
 ---
 
-## 🔌 SignalR Integration
+## SignalR Integration
 
 SignalR is used for real-time customer support chat:
 - Connection setup in `services/signalR/`
@@ -99,7 +99,7 @@ SignalR is used for real-time customer support chat:
 
 ---
 
-## 🎨 UI Components
+## UI Components
 
 Built with Material UI (v6):
 - Responsive admin dashboard
@@ -113,7 +113,7 @@ Built with Material UI (v6):
 
 ---
 
-## 🔒 Authentication
+## Authentication
 
 - JWT-based authentication
 - Token stored in localStorage
@@ -122,7 +122,7 @@ Built with Material UI (v6):
 
 ---
 
-## 📊 Features
+## Features
 - Product Management
 - Category Management
 - Brand Management
@@ -141,7 +141,7 @@ Built with Material UI (v6):
 
 ---
 
-## 📝 Notes
+## Notes
 
 * Ensure `.env` is configured properly
 * Backend server must be running for full functionality
