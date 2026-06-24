@@ -1,15 +1,19 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Box, Typography, Checkbox, Button, IconButton, Grid, Paper, Avatar } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { GetProductViewHistories } from '../../../services/historyService';
 import { GetAllProduct } from '../../../services/productService'; // đảm bảo hàm này được định nghĩa
+import { Link } from 'react-router-dom';
+import AddToCartDialog from '../../../components/products/AddToCartDialog';
 
 const ManageHistory = () => {
     const [histories, setHistories] = useState([]);
     const [products, setProducts] = useState([]);
     const [checkedItems, setCheckedItems] = useState([]);
     const [selectAll, setSelectAll] = useState(false);
+    const [openAddToCart, setOpenAddToCart] = useState(false);
+    const [selectedProduct, setSelectedProduct] = useState({productId: '', discountedPrice: 0});
 
     // Hàm lấy dữ liệu lịch sử và danh sách sản phẩm
     const fetchData = async () => {
@@ -48,6 +52,15 @@ const ManageHistory = () => {
         newCheckedItems[index] = checked;
         setCheckedItems(newCheckedItems);
         setSelectAll(newCheckedItems.every(item => item));
+    };
+
+    const handleOpenAddToCart = (product) => {
+        setSelectedProduct(product);
+        setOpenAddToCart(true);
+    }; 
+
+    const handleCloseAddToCart = () => {
+        setOpenAddToCart(false);
     };
 
     // Hàm tra cứu thông tin sản phẩm dựa trên productId
@@ -99,22 +112,26 @@ const ManageHistory = () => {
                             </Grid>
                             {/* Ảnh sản phẩm */}
                             <Grid item>
-                                <Avatar
-                                    variant="square"
-                                    src={
-                                        product.productImages && product.productImages.length > 0
-                                            ? product.productImages[0].imageUrl
-                                            : 'https://via.placeholder.com/80'
-                                    }
-                                    alt={product.name || `Sản phẩm ${history.productId}`}
-                                    sx={{ width: 120, height: 120 }}
-                                />
+                                <Link to={`/product/${product.productId}`}>
+                                    <Avatar
+                                        variant="square"
+                                        src={
+                                            product.productImages && product.productImages.length > 0
+                                                ? product.productImages[0].imageUrl
+                                                : 'https://via.placeholder.com/80'
+                                        }
+                                        alt={product.name || `Sản phẩm ${product.productId}`}
+                                        sx={{ width: 120, height: 120 }}
+                                    />
+                                </Link>
                             </Grid>
                             {/* Thông tin sản phẩm */}
                             <Grid item xs>
-                                <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
-                                    {product.name || `Sản phẩm ${history.productId}`}
-                                </Typography>
+                                <Link to={`/product/${product.productId}`}>
+                                    <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+                                        {product.name || `Sản phẩm ${history.productId}`}
+                                    </Typography>
+                                </Link>
                                 <Typography variant="body2">
                                     Giá:{' '}
                                     {product.discountedPrice
@@ -124,7 +141,7 @@ const ManageHistory = () => {
                             </Grid>
                             {/* Nút thêm vào giỏ hàng */}
                             <Grid item>
-                                <Button variant="contained" color="secondary" startIcon={<ShoppingCartIcon />}>
+                                <Button onClick={() => handleOpenAddToCart(product)} variant="contained" color="secondary" startIcon={<ShoppingCartIcon />}>
                                     THÊM VÀO GIỎ HÀNG
                                 </Button>
                             </Grid>
@@ -132,6 +149,12 @@ const ManageHistory = () => {
                     </Paper>
                 );
             })}
+            <AddToCartDialog
+                open={openAddToCart}
+                onClose={handleCloseAddToCart}
+                productId={selectedProduct.productId}
+                discountedPrice={selectedProduct.discountedPrice}
+            />
         </Box>
     );
 };
