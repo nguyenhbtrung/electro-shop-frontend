@@ -37,6 +37,10 @@ export const UpdateUser = (data) => {
     return axiosInstance.put(url + '/admin', data);
 }
 
+export const UpdateMyProfile = (data) => {
+    return axiosInstance.put(url + '/user', data);
+}
+
 export const UserUpdate = (userName, data) => {
     return axiosInstance.put(`${url}` + `/user/${userName}`, data);
 }

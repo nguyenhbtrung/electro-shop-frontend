@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import {
   Box,
   Typography,
@@ -27,6 +27,7 @@ import ProductCard from "./ProductCard";
 import { RecommendProduct } from '../../services/productService';
 import AddToCartDialog from "./AddToCartDialog";
 import { AddToCart } from '../../services/CartService';
+import { AuthContext } from '../../contexts/AuthContext';
 
 const ProductDetail = ({
   product,
@@ -40,6 +41,9 @@ const ProductDetail = ({
   const [pricingData, setPricingData] = useState(initialPricing);
   const [quantity, setQuantity] = useState(1);
   const [openAddToCart, setOpenAddToCart] = useState(false);
+
+  const { isLoggedIn } = useContext(AuthContext)
+
   const navigate = useNavigate();
 
   const handleCloseAddToCart = () => {
@@ -47,6 +51,11 @@ const ProductDetail = ({
   };
 
   const handleAddToCart = async () => {
+    if (!isLoggedIn) {
+        navigate("/login");
+        return;
+    }
+
     if (quantity > product.stock) {
       alert("Sản phẩm không đủ tồn kho");
       return;
@@ -68,6 +77,10 @@ const ProductDetail = ({
   };
 
   const handleBuyNow = async () => {
+    if (!isLoggedIn) {
+        navigate("/login");
+        return;
+    }
     await handleAddToCart();
     navigate("/cart");
   }
