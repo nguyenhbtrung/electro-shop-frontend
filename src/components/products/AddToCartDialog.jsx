@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
     Dialog,
     DialogTitle,
@@ -23,6 +23,7 @@ import { GetProduct } from '../../services/productService';
 import { AddToCart } from '../../services/CartService';
 import { ProductPricing } from '../../services/attributeService';
 import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../../contexts/AuthContext';
 
 // Styled components
 const StrikethroughText = styled(Typography)({
@@ -211,6 +212,9 @@ const AddToCartDialog = ({
     const [attributeGroups, setAttributeGroups] = useState({});
     const [selectedAttributes, setSelectedAttributes] = useState({});
     const [pricingData, setPricingData] = useState({ originalPrice: 0, discountedPrice: 0 });
+
+    const { isLoggedIn } = useContext(AuthContext)
+
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -343,6 +347,11 @@ const AddToCartDialog = ({
     };
 
     const handleAddToCart = async () => {
+        if (!isLoggedIn) {
+            navigate("/login");
+            return;
+        }
+
         if (quantity > product.inStock) {
             alert("Sản phẩm không đủ tồn kho");
             return;
@@ -364,6 +373,11 @@ const AddToCartDialog = ({
     };
 
     const handleBuyNow = async () => {
+        if (!isLoggedIn) {
+            navigate("/login");
+            return;
+        }
+
         if (quantity > product.inStock) {
             alert("Sản phẩm không đủ tồn kho");
             return;
