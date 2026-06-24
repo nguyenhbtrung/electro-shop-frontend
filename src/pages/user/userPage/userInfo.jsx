@@ -9,7 +9,7 @@ import AlertDialog from "../../../components/AlertDialog";
 import InfoDialog from "../../../components/InfoDialog";
 import { Formik } from "formik";
 import { useState } from "react";
-import { UpdateAvatar, UpdateUser } from "../../../services/UserService";
+import { UpdateAvatar, UpdateMyProfile } from "../../../services/UserService";
 import * as yup from "yup";
 import { useMediaQuery } from "@mui/material";
 import { Avatar } from "@mui/material";
@@ -103,7 +103,7 @@ const UserInfoPage = () => {
 	}, []);
 
 	const handleFormSubmit = async (values) => {
-		const response = await UpdateUser(values);
+		const response = await UpdateMyProfile(values);
 		if (response.status === 200) {
 			setInfo(`Cập nhập người dùng thành công!`);
 			setInfoDialogOpen(true);
