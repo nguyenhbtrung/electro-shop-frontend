@@ -104,7 +104,7 @@ const Navbar = () => {
             horizontal: "right",
           }}
         >
-          <MenuItem onClick={() => navigate("/")}>Trang người dùng</MenuItem>
+          <MenuItem onClick={() => window.open("/", "_blank")}>Trang người dùng</MenuItem>
           <MenuItem onClick={() => navigate("/profile")}>Hồ sơ</MenuItem>
           <MenuItem onClick={handleLogout}>Đăng xuất</MenuItem>
         </Menu>

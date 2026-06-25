@@ -97,6 +97,7 @@ export default function Register(props) {
                 login(token);
                 localStorage.setItem('userName', userName);
                 localStorage.setItem('userId', response.data.userId);
+                localStorage.setItem('role', response.data.roles);
                 if (response.data.roles === "User") {
                     navigate('/');
                 } else if (response.data.roles === "Admin") {

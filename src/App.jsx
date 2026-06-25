@@ -1,8 +1,9 @@
-import React, { createContext, useState } from "react";
+import { createContext, useState } from "react";
 import { Box, CssBaseline, ThemeProvider } from "@mui/material";
 import { ColorModeContext, useMode } from "./theme";
 import { Navbar, SideBar } from "./pages/admin";
 import { Outlet } from "react-router-dom";
+import NotFound from "./pages/error/NotFound";
 
 export const ToggledContext = createContext(null);
 
@@ -11,6 +12,10 @@ function App() {
   const [toggled, setToggled] = useState(false);
   const values = { toggled, setToggled };
 
+  const role = localStorage.getItem("role") ?? "";
+  if (role !== "Admin") {
+    return <NotFound/>
+  }
 
   return (
     <ColorModeContext.Provider value={colorMode}>
