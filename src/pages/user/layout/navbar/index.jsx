@@ -1,8 +1,7 @@
-import React, { useState, useContext } from "react";
+import  { useState, useContext } from "react";
 import {
     Box,
     IconButton,
-    InputBase,
     Typography,
     useMediaQuery,
     useTheme,
@@ -17,7 +16,6 @@ import {
     MenuOutlined,
     NotificationsOutlined,
     PersonOutlined,
-    SearchOutlined,
     ShoppingCartOutlined,
 } from "@mui/icons-material";
 import { ColorModeContext, tokens } from "../../../../theme";
@@ -25,6 +23,7 @@ import { ToggledContext } from "../../AppUser";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../../../contexts/AuthContext";
 import { Search } from "../../../../services/filterProductService";
+import SearchBar from "../../../../components/SearchBar";
 
 const Navbar = () => {
     const theme = useTheme();
@@ -35,7 +34,6 @@ const Navbar = () => {
     const { toggled, setToggled } = useContext(ToggledContext);
     const navigate = useNavigate();
     const { isLoggedIn, logout } = useContext(AuthContext);
-    const [searchTerm, setSearchTerm] = useState("");
     const [anchorEl, setAnchorEl] = useState(null);
 
     const openProfileMenu = Boolean(anchorEl);
@@ -77,7 +75,7 @@ const Navbar = () => {
         }
     };
 
-    const handleSearch = () => {
+    const handleSearch = (searchTerm) => {
         Search(searchTerm)
             .then((response) => {
                 navigate("/search", { state: { results: response.data } });
@@ -96,6 +94,7 @@ const Navbar = () => {
     };
 
     return (
+        <Box>
         <Box display="flex" alignItems="center" justifyContent="space-between" p={2}>
             {/* Phần bên trái: menu, logo, tiêu đề và tìm kiếm */}
             <Box display="flex" alignItems="center" gap={2}>
@@ -121,26 +120,9 @@ const Navbar = () => {
                         GTG SHOP
                     </Typography>
                 </IconButton>
-                <Box
-                    display="flex"
-                    alignItems="center"
-                    bgcolor={colors.primary[400]}
-                    borderRadius="3px"
-                    sx={{
-                        display: `${isXsDevices ? "none" : "flex"}`,
-                        width: "550px",
-                    }}
-                >
-                    <InputBase
-                        placeholder="Search"
-                        sx={{ ml: 2, flex: 1 }}
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                    />
-                    <IconButton type="button" sx={{ p: 1 }} onClick={handleSearch}>
-                        <SearchOutlined />
-                    </IconButton>
-                </Box>
+
+                {!isMdDevices && <SearchBar onSearch={handleSearch} />}
+
             </Box>
 
             {/* Phần bên phải: các icon */}
@@ -223,6 +205,23 @@ const Navbar = () => {
                 )}
             </Box>
         </Box>
+
+        {isMdDevices && (
+            <Box
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                width="100%"
+                // borderBottom={1}
+                // borderColor="divider"
+                pb={2}
+                pl={{ xs: 2, sm: 3}}
+                pr={{ xs: 3, sm: 4}}
+            >
+                <SearchBar onSearch={handleSearch} />
+            </Box>
+        )}
+    </Box>
     );
 };
 

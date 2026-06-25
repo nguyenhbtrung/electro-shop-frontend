@@ -32,14 +32,18 @@ const Card = styled(MuiCard)(({ theme }) => ({
     flexDirection: 'column',
     alignSelf: 'center',
     width: '100%',
-    padding: theme.spacing(4),
+    maxWidth: '100%',
+    padding: theme.spacing(3),
     gap: theme.spacing(2),
     margin: 'auto',
+
     [theme.breakpoints.up('sm')]: {
         maxWidth: '450px',
     },
+
     boxShadow:
         'hsla(220, 30%, 5%, 0.05) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.05) 0px 15px 35px -5px',
+
     ...theme.applyStyles('dark', {
         boxShadow:
             'hsla(220, 30%, 5%, 0.5) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.08) 0px 15px 35px -5px',
@@ -47,12 +51,15 @@ const Card = styled(MuiCard)(({ theme }) => ({
 }));
 
 const SignInContainer = styled(Stack)(({ theme }) => ({
-    height: 'calc((1 - var(--template-frame-height, 0)) * 100dvh)',
-    minHeight: '100%',
+    position: 'relative',
+    minHeight: '100vh',
     padding: theme.spacing(2),
+    overflowX: 'hidden',
+
     [theme.breakpoints.up('sm')]: {
         padding: theme.spacing(4),
     },
+
     '&::before': {
         content: '""',
         display: 'block',
@@ -62,6 +69,7 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
         backgroundImage:
             'radial-gradient(ellipse at 50% 50%, hsl(210, 100%, 97%), hsl(0, 0%, 100%))',
         backgroundRepeat: 'no-repeat',
+
         ...theme.applyStyles('dark', {
             backgroundImage:
                 'radial-gradient(at 50% 50%, hsla(210, 100%, 16%, 0.5), hsl(220, 30%, 5%))',
@@ -70,15 +78,21 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
 }));
 
 const InfoCard = styled(Paper)(({ theme }) => ({
-    padding: theme.spacing(4),
+    padding: theme.spacing(3),
     borderRadius: theme.spacing(2),
     height: 'fit-content',
     backgroundColor:
         theme.palette.mode === 'dark'
             ? theme.palette.background.paper
             : '#ffffff',
+
+    [theme.breakpoints.up('md')]: {
+        padding: theme.spacing(4),
+    },
+
     '& .MuiTypography-root': {
         fontFamily: 'Roboto, sans-serif',
+        wordBreak: 'break-word',
     },
 }));
 
@@ -187,17 +201,24 @@ export default function Login(props) {
 
             <Grid
                 container
-                spacing={4}
+                spacing={{ xs: 2, md: 4 }}
                 alignItems="center"
                 justifyContent="center"
                 sx={{
                     width: '100%',
-                    maxWidth: '1200px',
+                    // maxWidth: '1200px',      
                     mx: 'auto',
                 }}
             >
                 {/* LEFT PANEL */}
-                <Grid item xs={12} md={5}>
+                <Grid
+                    item
+                    xs={12}
+                    md={5}
+                    sx={{
+                        order: { xs: 2, md: 1 },
+                    }}
+                >
                     <InfoCard elevation={2}>
                         <Typography
                             variant="h4"
@@ -309,12 +330,20 @@ export default function Login(props) {
                 </Grid>
 
                 {/* RIGHT PANEL - LOGIN FORM */}
-                <Grid item xs={12} md={7}>
+                <Grid
+                    item
+                    xs={12}
+                    md={7}
+                    sx={{
+                        order: { xs: 1, md: 2 },
+                    }}
+                >
                     <Card
                         variant="outlined"
                         sx={{
+                            width: '100%',
                             maxWidth: 500,
-                            ml: { md: 'auto' },
+                            mx: 'auto',
                         }}
                     >
                         <Link
@@ -329,7 +358,11 @@ export default function Login(props) {
                             variant="h4"
                             sx={{
                                 width: '100%',
-                                fontSize: 'clamp(2rem, 10vw, 2.15rem)',
+                                fontSize: {
+                                    xs: '1.75rem',
+                                    sm: '2rem',
+                                    md: '2.15rem',
+                                },
                                 textAlign: 'center',
                                 fontFamily: 'Roboto, sans-serif',
                             }}
@@ -384,6 +417,9 @@ export default function Login(props) {
                                     sx={{
                                         display: 'flex',
                                         justifyContent: 'space-between',
+                                        alignItems: 'center',
+                                        flexWrap: 'wrap',
+                                        gap: 1,
                                     }}
                                 >
                                     <FormLabel
