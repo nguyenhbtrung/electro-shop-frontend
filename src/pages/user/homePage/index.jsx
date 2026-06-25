@@ -30,7 +30,7 @@ const HomePage = () => {
 
     return (
         <>
-            <Container sx={{ py: 4 }}>
+            <Container sx={{ py: {xs: 2, sm: 4} }}>
                 {/* Khu vực Banner Quảng Cáo */}
                 <BannerSection />
 
