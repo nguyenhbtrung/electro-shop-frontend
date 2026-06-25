@@ -11,6 +11,10 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 import MuiCard from '@mui/material/Card';
+import Grid from '@mui/material/Grid';
+import Divider from '@mui/material/Divider';
+import Paper from '@mui/material/Paper';
+
 import { styled } from '@mui/material/styles';
 import ForgotPassword from './ForgotPassword';
 import AppTheme from './shared-theme/AppTheme';
@@ -62,6 +66,19 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
             backgroundImage:
                 'radial-gradient(at 50% 50%, hsla(210, 100%, 16%, 0.5), hsl(220, 30%, 5%))',
         }),
+    },
+}));
+
+const InfoCard = styled(Paper)(({ theme }) => ({
+    padding: theme.spacing(4),
+    borderRadius: theme.spacing(2),
+    height: 'fit-content',
+    backgroundColor:
+        theme.palette.mode === 'dark'
+            ? theme.palette.background.paper
+            : '#ffffff',
+    '& .MuiTypography-root': {
+        fontFamily: 'Roboto, sans-serif',
     },
 }));
 
@@ -153,133 +170,342 @@ export default function Login(props) {
     };
 
     return (
-        <AppTheme {...props}>
-            <CssBaseline enableColorScheme />
-            <SignInContainer direction="column" justifyContent="space-between">
-                <ColorModeSelect sx={{ position: 'fixed', top: '1rem', right: '1rem' }} />
-                <Card variant="outlined">
-                    <Link onClick={handleClickHome} sx={{ fontFamily: 'Roboto, sans-serif' }}>&larr; Quay lại trang chủ</Link>
-                    <Typography
-                        component="h1"
-                        variant="h4"
-                        sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)', textAlign: 'center', fontFamily: 'Roboto, sans-serif' }}
-                    >
-                        Đăng nhập
-                    </Typography>
-                    <Box
-                        component="form"
-                        onSubmit={handleSubmit}
-                        noValidate
+    <AppTheme {...props}>
+        <CssBaseline enableColorScheme />
+
+        <SignInContainer
+            direction="column"
+            justifyContent="center"
+        >
+            <ColorModeSelect
+                sx={{
+                    position: 'fixed',
+                    top: '1rem',
+                    right: '1rem',
+                }}
+            />
+
+            <Grid
+                container
+                spacing={4}
+                alignItems="center"
+                justifyContent="center"
+                sx={{
+                    width: '100%',
+                    maxWidth: '1200px',
+                    mx: 'auto',
+                }}
+            >
+                {/* LEFT PANEL */}
+                <Grid item xs={12} md={5}>
+                    <InfoCard elevation={2}>
+                        <Typography
+                            variant="h4"
+                            gutterBottom
+                            sx={{
+                                fontWeight: 700,
+                                fontFamily: 'Roboto, sans-serif',
+                            }}
+                        >
+                            ElectroShop Demo
+                        </Typography>
+
+                        <Typography
+                            variant="body1"
+                            color="text.secondary"
+                            sx={{ mb: 3 }}
+                        >
+                            Thông tin tài khoản test và thanh toán VNPay Sandbox.
+                        </Typography>
+
+                        <Divider sx={{ mb: 3 }} />
+
+                        <Typography
+                            variant="h6"
+                            sx={{
+                                mb: 2,
+                                fontWeight: 600,
+                                fontFamily: 'Roboto, sans-serif',
+                            }}
+                        >
+                            Tài khoản test
+                        </Typography>
+
+                        <Box sx={{ mb: 3 }}>
+                            <Typography sx={{ fontWeight: 600 }}>
+                                Customer
+                            </Typography>
+                            <Typography>
+                                Tên tài khoản: <strong>test01</strong>
+                            </Typography>
+                            <Typography>
+                                Mật khẩu: <strong>test01.Password</strong>
+                            </Typography>
+                        </Box>
+
+                        <Box sx={{ mb: 4 }}>
+                            <Typography sx={{ fontWeight: 600 }}>
+                                Admin
+                            </Typography>
+                            <Typography>
+                                Tên tài khoản: <strong>admin01</strong>
+                            </Typography>
+                            <Typography>
+                                Mật khẩu: <strong>admin01.Password</strong>
+                            </Typography>
+                        </Box>
+
+                        <Divider sx={{ mb: 3 }} />
+
+                        <Typography
+                            variant="h6"
+                            sx={{
+                                mb: 2,
+                                fontWeight: 600,
+                                fontFamily: 'Roboto, sans-serif',
+                            }}
+                        >
+                            Test thanh toán VNPay Sandbox
+                        </Typography>
+
+                        <Typography
+                            // variant="body1"
+                            // color="text.secondary"
+                            sx={{ mb: 1 }}
+                        >
+                            Truy cập{' '}
+                            <Link
+                                href="https://sandbox.vnpayment.vn/apis/vnpay-demo/#th%C3%B4ng-tin-th%E1%BA%BB-test"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                VNPay Sandbox Test Credentials
+                            </Link>{' '}
+                            để lấy thông tin xác thực dùng thử, hoặc có thể dùng các thông tin sau:
+                        </Typography>
+
+                        <Typography sx={{ mb: 1 }}>
+                            Ngân hàng: <strong>NCB</strong>
+                        </Typography>
+
+                        <Typography sx={{ mb: 1 }}>
+                            Số thẻ: <strong>9704198526191432198</strong>
+                        </Typography>
+
+                        <Typography sx={{ mb: 1 }}>
+                            Chủ thẻ: <strong>NGUYEN VAN A</strong>
+                        </Typography>
+
+                        <Typography sx={{ mb: 1 }}>
+                            Ngày phát hành: <strong>07/15</strong>
+                        </Typography>
+
+                        <Typography sx={{ mb: 2 }}>
+                            OTP: <strong>123456</strong>
+                        </Typography>
+
+                        
+                    </InfoCard>
+                </Grid>
+
+                {/* RIGHT PANEL - LOGIN FORM */}
+                <Grid item xs={12} md={7}>
+                    <Card
+                        variant="outlined"
                         sx={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            width: '100%',
-                            gap: 2,
+                            maxWidth: 500,
+                            ml: { md: 'auto' },
                         }}
                     >
-                        <FormControl>
-                            <FormLabel htmlFor="userName" sx={{ textAlign: 'left', fontFamily: 'Roboto, sans-serif' }}>Tên tài khoản</FormLabel>
-                            <TextField
-                                id="userName"
-                                type="userName"
-                                name="userName"
-                                placeholder="Nhập tên tài khoản"
-                                autoComplete="email"
-                                autoFocus
-                                required
-                                fullWidth
-                                variant="outlined"
-                                onChange={handleUserNameChange}
-                                sx={{
-                                    fontFamily: 'Roboto, sans-serif',
-                                    '& .MuiInputBase-input::placeholder': {
-                                        fontFamily: 'Roboto, sans-serif',
-                                        fontSize: '16px',
-                                    },
-                                }}
-                            />
-                        </FormControl>
-                        <FormControl>
-                            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                                <FormLabel htmlFor="password" sx={{ fontFamily: 'Roboto, sans-serif' }} >Mật khẩu</FormLabel>
-                                <Link
-                                    component="button"
-                                    type="button"
-                                    onClick={handleClickOpen}
-                                    variant="body2"
-                                    sx={{ alignSelf: 'baseline', fontFamily: 'Roboto, sans-serif' }}
-                                >
-                                    Quên mật khẩu?
-                                </Link>
-                            </Box>
-                            <TextField
-                                name="password"
-                                placeholder="Điền mật khẩu của bạn"
-                                type={showPassword ? 'text' : 'password'}
-                                id="password"
-                                autoComplete="current-password"
-                                autoFocus
-                                required
-                                fullWidth
-                                variant="outlined"
-                                onChange={handlePasswordChange}
-                                sx={{
-                                    fontFamily: 'Roboto, sans-serif',
-                                    '& .MuiInputBase-input::placeholder': {
-                                        fontFamily: 'Roboto, sans-serif',
-                                        fontSize: '16px',
-                                    },
-                                }}
-                                InputProps={{
-                                    endAdornment: (
-                                        <InputAdornment position="end">
-                                            <IconButton
-                                                aria-label="toggle password visibility"
-                                                onClick={handleTogglePasswordVisibility}
-                                                edge="end"
-                                            >
-                                                {showPassword ? <VisibilityOff /> : <Visibility />}
-                                            </IconButton>
-                                        </InputAdornment>
-                                    ),
-                                }}
-                            />
-                            {/* Show error message if password is invalid */}
-                            {passwordError && (
-                                <FormHelperText sx={{ fontSize: '14px', fontFamily: 'Roboto, sans-serif', color: 'error.main' }}>
-                                    {passwordErrorMessage}
-                                </FormHelperText>
-                            )}
-                        </FormControl>
-                        <FormControlLabel
-                            control={<Checkbox value="remember" color="primary" />}
-                            sx={{ fontFamily: 'Roboto, sans-serif' }}
-                            label="Ghi nhớ tôi"
-                        />
-                        <ForgotPassword open={open} handleClose={handleClose} />
-                        <Button
-                            type="submit"
-                            fullWidth
-                            variant="contained"
+                        <Link
+                            onClick={handleClickHome}
                             sx={{ fontFamily: 'Roboto, sans-serif' }}
                         >
+                            &larr; Quay lại trang chủ
+                        </Link>
+
+                        <Typography
+                            component="h1"
+                            variant="h4"
+                            sx={{
+                                width: '100%',
+                                fontSize: 'clamp(2rem, 10vw, 2.15rem)',
+                                textAlign: 'center',
+                                fontFamily: 'Roboto, sans-serif',
+                            }}
+                        >
                             Đăng nhập
-                        </Button>
-                        <Typography sx={{ textAlign: 'center', fontFamily: 'Roboto, sans-serif' }}>
-                            Chưa có tài khoản?{' '}
-                            <span>
+                        </Typography>
+
+                        <Box
+                            component="form"
+                            onSubmit={handleSubmit}
+                            noValidate
+                            sx={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                width: '100%',
+                                gap: 2,
+                            }}
+                        >
+                            <FormControl>
+                                <FormLabel
+                                    htmlFor="userName"
+                                    sx={{
+                                        textAlign: 'left',
+                                        fontFamily: 'Roboto, sans-serif',
+                                    }}
+                                >
+                                    Tên tài khoản
+                                </FormLabel>
+
+                                <TextField
+                                    id="userName"
+                                    type="userName"
+                                    name="userName"
+                                    placeholder="Nhập tên tài khoản"
+                                    autoComplete="email"
+                                    autoFocus
+                                    required
+                                    fullWidth
+                                    variant="outlined"
+                                    onChange={handleUserNameChange}
+                                    sx={{
+                                        '& .MuiInputBase-input::placeholder': {
+                                            fontFamily: 'Roboto, sans-serif',
+                                            fontSize: '16px',
+                                        },
+                                    }}
+                                />
+                            </FormControl>
+
+                            <FormControl>
+                                <Box
+                                    sx={{
+                                        display: 'flex',
+                                        justifyContent: 'space-between',
+                                    }}
+                                >
+                                    <FormLabel
+                                        htmlFor="password"
+                                        sx={{
+                                            fontFamily: 'Roboto, sans-serif',
+                                        }}
+                                    >
+                                        Mật khẩu
+                                    </FormLabel>
+
+                                    <Link
+                                        component="button"
+                                        type="button"
+                                        onClick={handleClickOpen}
+                                        variant="body2"
+                                        sx={{
+                                            alignSelf: 'baseline',
+                                            fontFamily: 'Roboto, sans-serif',
+                                        }}
+                                    >
+                                        Quên mật khẩu?
+                                    </Link>
+                                </Box>
+
+                                <TextField
+                                    name="password"
+                                    placeholder="Điền mật khẩu của bạn"
+                                    type={showPassword ? 'text' : 'password'}
+                                    id="password"
+                                    autoComplete="current-password"
+                                    required
+                                    fullWidth
+                                    variant="outlined"
+                                    onChange={handlePasswordChange}
+                                    sx={{
+                                        '& .MuiInputBase-input::placeholder': {
+                                            fontFamily: 'Roboto, sans-serif',
+                                            fontSize: '16px',
+                                        },
+                                    }}
+                                    InputProps={{
+                                        endAdornment: (
+                                            <InputAdornment position="end">
+                                                <IconButton
+                                                    aria-label="toggle password visibility"
+                                                    onClick={handleTogglePasswordVisibility}
+                                                    edge="end"
+                                                >
+                                                    {showPassword ? (
+                                                        <Visibility />
+                                                    ) : (
+                                                        <VisibilityOff />
+                                                    )}
+                                                </IconButton>
+                                            </InputAdornment>
+                                        ),
+                                    }}
+                                />
+
+                                {passwordError && (
+                                    <FormHelperText
+                                        sx={{
+                                            fontSize: '14px',
+                                            fontFamily: 'Roboto, sans-serif',
+                                            color: 'error.main',
+                                        }}
+                                    >
+                                        {passwordErrorMessage}
+                                    </FormHelperText>
+                                )}
+                            </FormControl>
+
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        value="remember"
+                                        color="primary"
+                                    />
+                                }
+                                label="Ghi nhớ tôi"
+                            />
+
+                            <ForgotPassword
+                                open={open}
+                                handleClose={handleClose}
+                            />
+
+                            <Button
+                                type="submit"
+                                fullWidth
+                                variant="contained"
+                                sx={{
+                                    fontFamily: 'Roboto, sans-serif',
+                                }}
+                            >
+                                Đăng nhập
+                            </Button>
+
+                            <Typography
+                                sx={{
+                                    textAlign: 'center',
+                                    fontFamily: 'Roboto, sans-serif',
+                                }}
+                            >
+                                Chưa có tài khoản?{' '}
                                 <Link
                                     variant="body2"
-                                    sx={{ textAlign: 'center', fontFamily: 'Roboto, sans-serif' }}
                                     onClick={handleSignUpClick}
+                                    sx={{
+                                        cursor: 'pointer',
+                                        fontFamily: 'Roboto, sans-serif',
+                                    }}
                                 >
                                     Đăng kí ngay
                                 </Link>
-                            </span>
-                        </Typography>
-                    </Box>
-                </Card>
-            </SignInContainer>
-        </AppTheme>
-    );
+                            </Typography>
+                        </Box>
+                    </Card>
+                </Grid>
+            </Grid>
+        </SignInContainer>
+    </AppTheme>
+);
 }
